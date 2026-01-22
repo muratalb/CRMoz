@@ -1,0 +1,1417 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alb Enerji CRM Demo</title>
+  <style>
+    :root {
+      --bg: #f5f6f8;
+      --card: #ffffff;
+      --text: #121417;
+      --muted: #6b7280;
+      --line: #e6e8ec;
+      --accent: #2563eb;
+      --accent-dark: #111827;
+      --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+      --radius: 16px;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      letter-spacing: 0.1px;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(245, 246, 248, 0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 32px 8px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .pill-toggle {
+      display: flex;
+      background: var(--card);
+      border-radius: 999px;
+      padding: 4px;
+      box-shadow: var(--shadow);
+      gap: 4px;
+    }
+    .pill-toggle button {
+      border: none;
+      background: transparent;
+      padding: 8px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .pill-toggle button.active {
+      background: var(--accent-dark);
+      color: #fff;
+    }
+    nav {
+      display: flex;
+      gap: 16px;
+      padding: 8px 32px 16px;
+      overflow-x: auto;
+    }
+    nav button {
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 6px 0;
+      border-bottom: 2px solid transparent;
+      transition: 0.2s;
+    }
+    nav button.active {
+      color: var(--text);
+      border-color: var(--text);
+    }
+    main {
+      padding: 24px 32px 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .page-title {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+    }
+    .muted { color: var(--muted); }
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+    .grid.cols-4 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .grid.cols-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+    .grid.cols-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .kpi {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .kpi h3 { margin: 0; font-size: 13px; color: var(--muted); font-weight: 500; }
+    .kpi span { font-size: 22px; font-weight: 600; }
+
+    .button-row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 18px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .btn.primary { background: var(--accent-dark); color: #fff; }
+    .btn.secondary { background: transparent; border: 1px solid var(--line); color: var(--text); }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .list-item {
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+    }
+    .list-item h4 { margin: 0; font-size: 15px; }
+    .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tag {
+      background: #eef2ff;
+      color: #3730a3;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+    }
+    .badge {
+      background: #f3f4f6;
+      color: #374151;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+    .kanban {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+    .kanban-column {
+      background: #f8fafc;
+      border-radius: 16px;
+      padding: 12px;
+      border: 1px solid var(--line);
+    }
+    .kanban-column h4 { margin: 0 0 8px; font-size: 13px; color: var(--muted); }
+    .kanban-card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 12px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .kanban-card small { color: var(--muted); }
+    .input, select, textarea {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      font-size: 13px;
+      background: #fff;
+    }
+    textarea { min-height: 80px; }
+    .form-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+    .drawer {
+      position: fixed;
+      right: 24px;
+      top: 120px;
+      width: 360px;
+      max-height: 70vh;
+      overflow: auto;
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      padding: 20px;
+      display: none;
+    }
+    .drawer.active { display: block; }
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .timeline-item {
+      border-left: 2px solid var(--line);
+      padding-left: 12px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--accent-dark);
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: 0.3s;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .progress-bar {
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      position: relative;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #1d4ed8, #38bdf8);
+      border-radius: 999px;
+    }
+    .progress-marker {
+      position: absolute;
+      top: -6px;
+      width: 2px;
+      height: 22px;
+      background: #cbd5f5;
+    }
+    .quote-preview {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid var(--line);
+    }
+    .quote-preview h2 { margin-top: 0; }
+    .subtle-line { border-top: 1px solid var(--line); margin: 12px 0; }
+    .icon {
+      width: 18px;
+      height: 18px;
+      display: inline-block;
+    }
+    @media (max-width: 900px) {
+      .drawer { position: static; width: 100%; }
+      .topbar { flex-direction: column; align-items: flex-start; gap: 12px; }
+      nav { padding-left: 16px; padding-right: 16px; }
+      main { padding: 20px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <div class="brand">
+        <svg class="icon" viewBox="0 0 24 24" fill="none"><path d="M4 13.5L12 3l8 10.5" stroke="#111827" stroke-width="1.6" stroke-linecap="round"/><path d="M6 13.5h12l-1.8 7.5H7.8L6 13.5z" stroke="#111827" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Alb Enerji CRM
+      </div>
+      <div class="pill-toggle" id="roleToggle"></div>
+    </div>
+    <nav id="navTabs"></nav>
+  </header>
+  <main id="app"></main>
+  <div class="drawer" id="leadDrawer"></div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const STORAGE_KEY = "alb_crm_data_v1";
+    const SETTINGS_KEY = "alb_crm_settings_v1";
+    const ROLE_KEY = "alb_crm_role";
+    const roles = ["YÖNETİCİ", "SATIŞ", "TEKNİK OFİS"];
+    const tabs = [
+      "Ana Panel",
+      "Pipeline",
+      "Lead’ler",
+      "Müşteriler",
+      "Teklifler",
+      "Siparişler",
+      "Görevler",
+      "Partner Programı",
+      "Ayarlar / Veri"
+    ];
+
+    const defaultSettings = {
+      currency: "USD",
+      defaultPanelWattage: 550,
+      defaultWarehouse: "Antalya"
+    };
+
+    const emptyData = () => ({
+      leads: [],
+      accounts: [],
+      opportunities: [],
+      quotes: [],
+      orders: [],
+      tasks: [],
+      partners: [],
+      purchases: [],
+      shipments: [],
+      counters: {
+        lead: 1,
+        account: 1,
+        opportunity: 1,
+        quote: 1,
+        order: 1,
+        task: 1,
+        partner: 1,
+        quoteSeq: 1,
+        orderSeq: 1
+      }
+    });
+
+    const state = {
+      activeTab: tabs[0],
+      role: localStorage.getItem(ROLE_KEY) || roles[0],
+      data: emptyData(),
+      settings: defaultSettings
+    };
+
+    const toast = document.getElementById("toast");
+
+    const showToast = (message) => {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2200);
+    };
+
+    const formatUSD = (value) => {
+      return new Intl.NumberFormat("tr-TR", {
+        style: "currency",
+        currency: state.settings.currency,
+        maximumFractionDigits: 0
+      }).format(value || 0);
+    };
+
+    const daysBetween = (dateA, dateB) => {
+      const a = new Date(dateA);
+      const b = new Date(dateB);
+      return Math.max(0, Math.round((b - a) / (1000 * 60 * 60 * 24)));
+    };
+
+    const computeOpportunityValue = (opp) => {
+      const qty = Number(opp.expectedPanelsQty || 0);
+      const watt = Number(opp.panelWattage || state.settings.defaultPanelWattage || 0);
+      const price = Number(opp.targetPricePerWatt || 0);
+      return Math.round(qty * watt * price);
+    };
+
+    // Partner bonus pricing engine with retroactive tiers and weighted wattage
+    const partnerBonusEngine = (purchases) => {
+      const tiers = [
+        { max: 399, price: 0.19, label: "0–399" },
+        { max: 699, price: 0.185, label: "400–699" },
+        { max: 999, price: 0.18, label: "700–999" },
+        { max: Infinity, price: 0.175, label: "1000+" }
+      ];
+      const totalPanels = purchases.reduce((sum, p) => sum + Number(p.qtyPanels || 0), 0);
+      const totalWattage = purchases.reduce((sum, p) => sum + (Number(p.qtyPanels || 0) * Number(p.panelWattage || state.settings.defaultPanelWattage)), 0);
+      const avgWatt = totalPanels ? totalWattage / totalPanels : state.settings.defaultPanelWattage;
+      let currentTier = tiers[0];
+      for (const tier of tiers) {
+        if (totalPanels <= tier.max) {
+          currentTier = tier;
+          break;
+        }
+      }
+      const basePrice = tiers[0].price;
+      const discountValue = (basePrice - currentTier.price) * totalWattage;
+      const bonusPanels = totalPanels ? Math.max(0, discountValue / (currentTier.price * avgWatt)) : 0;
+      const nextThreshold = totalPanels < 400 ? 400 : totalPanels < 700 ? 700 : totalPanels < 1000 ? 1000 : null;
+      const remainingToNext = nextThreshold ? Math.max(0, nextThreshold - totalPanels) : 0;
+      return {
+        totalPanels,
+        totalWattage,
+        avgWatt,
+        currentTier,
+        bonusPanels,
+        remainingToNext,
+        nextThreshold
+      };
+    };
+
+    const loadData = () => {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        state.data = { ...emptyData(), ...parsed };
+      }
+      const savedSettings = localStorage.getItem(SETTINGS_KEY);
+      state.settings = savedSettings ? { ...defaultSettings, ...JSON.parse(savedSettings) } : defaultSettings;
+    };
+
+    const saveData = () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.data));
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(state.settings));
+    };
+
+    const generateId = (type) => {
+      const id = `${type}-${state.data.counters[type]}`;
+      state.data.counters[type] += 1;
+      return id;
+    };
+
+    const generateQuoteNo = () => {
+      const year = new Date().getFullYear();
+      const seq = String(state.data.counters.quoteSeq).padStart(4, "0");
+      state.data.counters.quoteSeq += 1;
+      return `ALB-Q-${year}-${seq}`;
+    };
+
+    const generateOrderNo = () => {
+      const year = new Date().getFullYear();
+      const seq = String(state.data.counters.orderSeq).padStart(4, "0");
+      state.data.counters.orderSeq += 1;
+      return `ALB-O-${year}-${seq}`;
+    };
+
+    const renderRoleToggle = () => {
+      const container = document.getElementById("roleToggle");
+      container.innerHTML = roles.map(role => `
+        <button class="${state.role === role ? "active" : ""}" data-role="${role}">${role}</button>
+      `).join("");
+      container.querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.role = btn.dataset.role;
+          localStorage.setItem(ROLE_KEY, state.role);
+          renderApp();
+        });
+      });
+    };
+
+    const renderTabs = () => {
+      const nav = document.getElementById("navTabs");
+      nav.innerHTML = tabs.map(tab => `
+        <button class="${state.activeTab === tab ? "active" : ""}" data-tab="${tab}">${tab}</button>
+      `).join("");
+      nav.querySelectorAll("button").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.activeTab = btn.dataset.tab;
+          renderApp();
+        });
+      });
+    };
+
+    const renderDashboard = () => {
+      const app = document.getElementById("app");
+      const now = new Date();
+      const month = now.getMonth();
+      const monthLeads = state.data.leads.filter(lead => new Date(lead.createdAt).getMonth() === month);
+      const pipelineValue = state.data.opportunities.reduce((sum, opp) => sum + computeOpportunityValue(opp), 0);
+      const quotesByStatus = state.data.quotes.reduce((acc, quote) => {
+        acc[quote.status] = (acc[quote.status] || 0) + 1;
+        return acc;
+      }, {});
+      const closedOpps = state.data.opportunities.filter(opp => opp.closedAt);
+      const avgCycle = closedOpps.length
+        ? Math.round(closedOpps.reduce((sum, opp) => sum + daysBetween(opp.createdAt, opp.closedAt), 0) / closedOpps.length)
+        : 0;
+      const weekTasks = state.data.tasks.filter(task => {
+        const due = new Date(task.dueDate);
+        return due >= now && due <= new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7);
+      });
+      const hottest = [...state.data.opportunities]
+        .sort((a, b) => (computeOpportunityValue(b) * (b.probability || 0)) - (computeOpportunityValue(a) * (a.probability || 0)))
+        .slice(0, 5);
+
+      const overdueTasks = state.data.tasks.filter(task => task.status === "Açık" && new Date(task.dueDate) < now);
+      const coldLeads = state.data.leads.filter(lead => lead.lastTouchAt && daysBetween(lead.lastTouchAt, now) > 7);
+      const stuckOpps = state.data.opportunities.filter(opp => daysBetween(opp.stageUpdatedAt || opp.createdAt, now) > 14);
+      const focusItems = [
+        ...overdueTasks.map(task => `Geciken görev: ${task.title}`),
+        ...coldLeads.map(lead => `7 gündür temas yok: ${lead.companyName}`),
+        ...stuckOpps.map(opp => `Aşamada takıldı: ${opp.title}`)
+      ].slice(0, 5);
+
+      app.innerHTML = `
+        <div class="page-title">
+          <div>
+            <h1>Ana Panel</h1>
+            <p class="muted">Bugün şu ${Math.max(1, focusItems.length)} adım satış hızını artırır.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn secondary" id="seedData">Demo verisi yükle</button>
+          </div>
+        </div>
+        <section class="grid cols-4">
+          <div class="card kpi"><h3>Bu ay yeni lead</h3><span>${monthLeads.length}</span></div>
+          <div class="card kpi"><h3>Pipeline toplam değeri</h3><span>${formatUSD(pipelineValue)}</span></div>
+          <div class="card kpi"><h3>Teklifler</h3><span>${quotesByStatus.Taslak || 0} Taslak · ${quotesByStatus.Gönderildi || 0} Gönderildi · ${quotesByStatus.Kabul || 0} Kabul</span></div>
+          <div class="card kpi"><h3>Ortalama satış döngüsü</h3><span>${avgCycle ? avgCycle + " gün" : "—"}</span></div>
+          <div class="card kpi"><h3>Bu hafta vadesi gelen görevler</h3><span>${weekTasks.length}</span></div>
+          <div class="card kpi"><h3>En sıcak fırsatlar</h3><span>${hottest.length}</span></div>
+        </section>
+        <section class="grid cols-2">
+          <div class="card">
+            <h3>Bugün odak</h3>
+            <div class="list">
+              ${focusItems.length ? focusItems.map(item => `<div class="list-item"><span>${item}</span></div>`).join("") : `<div class="list-item"><span>Bugün için kritik aksiyon görünmüyor.</span></div>`}
+            </div>
+          </div>
+          <div class="card">
+            <h3>En sıcak fırsatlar</h3>
+            <div class="list">
+              ${hottest.map(opp => `
+                <div class="list-item">
+                  <div>
+                    <h4>${opp.title}</h4>
+                    <div class="muted">${opp.owner} · ${opp.stage}</div>
+                  </div>
+                  <div>${formatUSD(computeOpportunityValue(opp))}</div>
+                </div>
+              `).join("") || `<div class="list-item">Henüz fırsat yok.</div>`}
+            </div>
+          </div>
+        </section>
+      `;
+      document.getElementById("seedData").addEventListener("click", () => {
+        seedDemoData();
+        showToast("Demo verisi yüklendi");
+        renderApp();
+      });
+    };
+
+    const renderPipeline = () => {
+      const app = document.getElementById("app");
+      const stages = ["Lead", "Nitelikli", "Teklif", "Revize", "LC-Ödeme", "Üretim", "Hazır", "Sevk", "Tamamlandı", "Kaybedildi"];
+      const filters = {
+        owner: "",
+        segment: "",
+        city: "",
+        source: ""
+      };
+
+      app.innerHTML = `
+        <div class="page-title">
+          <div>
+            <h1>Pipeline</h1>
+            <p class="muted">Fırsatlarınızı aşama bazında görün ve hızla ilerletin.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" id="newOpp">Yeni Fırsat</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="form-grid">
+            <div>
+              <label class="muted">Sorumlu</label>
+              <select id="filterOwner" class="input">
+                <option value="">Tümü</option>
+                ${[...new Set(state.data.opportunities.map(o => o.owner))].map(owner => `<option value="${owner}">${owner}</option>`).join("")}
+              </select>
+            </div>
+            <div>
+              <label class="muted">Segment</label>
+              <select id="filterSegment" class="input">
+                <option value="">Tümü</option>
+                ${[...new Set(state.data.leads.map(l => l.segment))].map(segment => `<option value="${segment}">${segment}</option>`).join("")}
+              </select>
+            </div>
+            <div>
+              <label class="muted">Şehir</label>
+              <select id="filterCity" class="input">
+                <option value="">Tümü</option>
+                ${[...new Set(state.data.leads.map(l => l.city))].map(city => `<option value="${city}">${city}</option>`).join("")}
+              </select>
+            </div>
+            <div>
+              <label class="muted">Kaynak</label>
+              <select id="filterSource" class="input">
+                <option value="">Tümü</option>
+                ${[...new Set(state.data.leads.map(l => l.source))].map(source => `<option value="${source}">${source}</option>`).join("")}
+              </select>
+            </div>
+          </div>
+        </div>
+        <section class="kanban" id="kanban"></section>
+      `;
+
+      const renderKanban = () => {
+        const container = document.getElementById("kanban");
+        const filtered = state.data.opportunities.filter(opp => {
+          const lead = state.data.leads.find(l => l.id === opp.leadId) || {};
+          return (!filters.owner || opp.owner === filters.owner)
+            && (!filters.segment || lead.segment === filters.segment)
+            && (!filters.city || lead.city === filters.city)
+            && (!filters.source || lead.source === filters.source);
+        });
+
+        container.innerHTML = stages.map(stage => {
+          const stageOpps = filtered.filter(opp => opp.stage === stage);
+          return `
+            <div class="kanban-column">
+              <h4>${stage} (${stageOpps.length})</h4>
+              ${stageOpps.map(opp => {
+                const age = daysBetween(opp.stageUpdatedAt || opp.createdAt, new Date());
+                return `
+                  <div class="kanban-card">
+                    <strong>${opp.title}</strong>
+                    <small>${opp.companyName || "Şirket"} · ${age} gün</small>
+                    <div class="muted">${opp.expectedPanelsQty} panel · ${formatUSD(computeOpportunityValue(opp))}</div>
+                    <div class="button-row">
+                      <select class="input" data-move="${opp.id}">
+                        ${stages.map(s => `<option value="${s}" ${s === opp.stage ? "selected" : ""}>${s}</option>`).join("")}
+                      </select>
+                    </div>
+                  </div>
+                `;
+              }).join("") || `<div class="kanban-card"><small>Boş</small></div>`}
+            </div>
+          `;
+        }).join("");
+
+        container.querySelectorAll("select[data-move]").forEach(select => {
+          select.addEventListener("change", () => {
+            const opp = state.data.opportunities.find(o => o.id === select.dataset.move);
+            opp.stage = select.value;
+            opp.stageUpdatedAt = new Date().toISOString();
+            saveData();
+            renderKanban();
+          });
+        });
+      };
+
+      renderKanban();
+
+      document.getElementById("filterOwner").addEventListener("change", (e) => { filters.owner = e.target.value; renderKanban(); });
+      document.getElementById("filterSegment").addEventListener("change", (e) => { filters.segment = e.target.value; renderKanban(); });
+      document.getElementById("filterCity").addEventListener("change", (e) => { filters.city = e.target.value; renderKanban(); });
+      document.getElementById("filterSource").addEventListener("change", (e) => { filters.source = e.target.value; renderKanban(); });
+
+      document.getElementById("newOpp").addEventListener("click", () => {
+        const newOpp = {
+          id: generateId("opportunity"),
+          leadId: "",
+          accountId: "",
+          title: "Yeni fırsat",
+          stage: "Lead",
+          expectedPanelsQty: 500,
+          panelModel: "Alb Mono",
+          panelWattage: state.settings.defaultPanelWattage,
+          targetPricePerWatt: 0.19,
+          expectedCloseDate: new Date().toISOString().slice(0, 10),
+          probability: 40,
+          competitor: "",
+          owner: state.role,
+          createdAt: new Date().toISOString(),
+          stageUpdatedAt: new Date().toISOString(),
+          timeline: []
+        };
+        state.data.opportunities.push(newOpp);
+        saveData();
+        showToast("Fırsat oluşturuldu");
+        renderApp();
+      });
+    };
+
+    const renderLeads = () => {
+      const app = document.getElementById("app");
+      app.innerHTML = `
+        <div class="page-title">
+          <div>
+            <h1>Lead’ler</h1>
+            <p class="muted">Yeni fırsatlar için tek ekran.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" id="newLead">Yeni Lead</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="form-grid">
+            <input class="input" id="leadSearch" placeholder="Şirket, kişi veya şehir ara" />
+            <select class="input" id="leadStatus">
+              <option value="">Durum: Tümü</option>
+              <option>Yeni</option>
+              <option>Temas Edildi</option>
+              <option>Nitelikli</option>
+              <option>Elendi</option>
+            </select>
+            <select class="input" id="leadSource">
+              <option value="">Kaynak: Tümü</option>
+              <option>Instagram</option>
+              <option>Facebook</option>
+              <option>LinkedIn</option>
+              <option>Web</option>
+              <option>Fuar</option>
+              <option>Referans</option>
+            </select>
+          </div>
+        </div>
+        <div class="card">
+          <div class="list" id="leadList"></div>
+        </div>
+      `;
+
+      const renderLeadList = () => {
+        const search = document.getElementById("leadSearch").value.toLowerCase();
+        const status = document.getElementById("leadStatus").value;
+        const source = document.getElementById("leadSource").value;
+        const list = document.getElementById("leadList");
+        const filtered = state.data.leads.filter(lead => {
+          const matchText = `${lead.companyName} ${lead.contactName} ${lead.city}`.toLowerCase().includes(search);
+          return matchText
+            && (!status || lead.status === status)
+            && (!source || lead.source === source);
+        });
+        list.innerHTML = filtered.map(lead => `
+          <div class="list-item" data-lead="${lead.id}">
+            <div>
+              <h4>${lead.companyName}</h4>
+              <div class="muted">${lead.contactName} · ${lead.city} · ${lead.source}</div>
+              <div class="tags">${lead.tags.map(tag => `<span class="tag">${tag}</span>`).join("")}</div>
+            </div>
+            <div class="badge">${lead.status}</div>
+          </div>
+        `).join("") || `<div class="list-item">Henüz lead yok.</div>`;
+
+        list.querySelectorAll(".list-item[data-lead]").forEach(item => {
+          item.addEventListener("click", () => openLeadDrawer(item.dataset.lead));
+        });
+      };
+
+      const openLeadDrawer = (leadId) => {
+        const lead = state.data.leads.find(l => l.id === leadId);
+        const drawer = document.getElementById("leadDrawer");
+        const timeline = lead.timeline || [];
+        drawer.innerHTML = `
+          <h3>${lead.companyName}</h3>
+          <p class="muted">${lead.contactName} · ${lead.phone || "Telefon yok"}</p>
+          <div class="subtle-line"></div>
+          <p><strong>İlgi alanı:</strong> ${lead.interest}</p>
+          <p><strong>Durum:</strong> ${lead.status}</p>
+          <div class="subtle-line"></div>
+          <h4>Notlar</h4>
+          <div class="timeline">
+            ${timeline.map(item => `<div class="timeline-item">${item}</div>`).join("") || "Not yok"}
+          </div>
+          <div class="subtle-line"></div>
+          <div class="button-row">
+            <button class="btn primary" id="createOpp">Fırsat oluştur</button>
+            <button class="btn secondary" id="closeDrawer">Kapat</button>
+          </div>
+        `;
+        drawer.classList.add("active");
+        document.getElementById("closeDrawer").addEventListener("click", () => drawer.classList.remove("active"));
+        document.getElementById("createOpp").addEventListener("click", () => {
+          const opp = {
+            id: generateId("opportunity"),
+            leadId: lead.id,
+            accountId: "",
+            title: `${lead.companyName} - Yeni fırsat`,
+            stage: "Lead",
+            expectedPanelsQty: 400,
+            panelModel: "Alb Mono",
+            panelWattage: state.settings.defaultPanelWattage,
+            targetPricePerWatt: 0.19,
+            expectedCloseDate: new Date().toISOString().slice(0, 10),
+            probability: 30,
+            owner: lead.owner,
+            createdAt: new Date().toISOString(),
+            stageUpdatedAt: new Date().toISOString(),
+            timeline: []
+          };
+          state.data.opportunities.push(opp);
+          saveData();
+          showToast("Fırsat oluşturuldu");
+          renderApp();
+        });
+      };
+
+      renderLeadList();
+      ["leadSearch", "leadStatus", "leadSource"].forEach(id => {
+        document.getElementById(id).addEventListener("input", renderLeadList);
+        document.getElementById(id).addEventListener("change", renderLeadList);
+      });
+      document.getElementById("newLead").addEventListener("click", () => {
+        const lead = {
+          id: generateId("lead"),
+          createdAt: new Date().toISOString(),
+          source: "Web",
+          status: "Yeni",
+          companyName: "Yeni Şirket",
+          contactName: "Yeni kişi",
+          phone: "",
+          email: "",
+          city: "İstanbul",
+          country: "Türkiye",
+          segment: "Konut",
+          interest: "Panel",
+          notes: [],
+          tags: ["Yeni"],
+          owner: state.role,
+          lastTouchAt: new Date().toISOString(),
+          nextActionAt: new Date(Date.now() + 3 * 86400000).toISOString(),
+          timeline: ["Lead oluşturuldu"]
+        };
+        state.data.leads.push(lead);
+        saveData();
+        showToast("Lead eklendi");
+        renderApp();
+      });
+    };
+
+    const renderAccounts = () => {
+      const app = document.getElementById("app");
+      app.innerHTML = `
+        <div class="page-title">
+          <div>
+            <h1>Müşteriler</h1>
+            <p class="muted">Hesaplar, kontaklar ve notlar.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" id="newAccount">Yeni Müşteri</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="list">
+            ${state.data.accounts.map(account => `
+              <div class="list-item">
+                <div>
+                  <h4>${account.companyName}</h4>
+                  <div class="muted">${account.city} · ${account.type}</div>
+                </div>
+                <span class="badge">${account.contacts?.length || 0} kişi</span>
+              </div>
+            `).join("") || `<div class="list-item">Müşteri yok.</div>`}
+          </div>
+        </div>
+      `;
+      document.getElementById("newAccount").addEventListener("click", () => {
+        const account = {
+          id: generateId("account"),
+          companyName: "Yeni Hesap",
+          taxNo: "",
+          city: "Ankara",
+          country: "Türkiye",
+          type: "Son kullanıcı",
+          contacts: [],
+          accountNotes: []
+        };
+        state.data.accounts.push(account);
+        saveData();
+        showToast("Müşteri eklendi");
+        renderApp();
+      });
+    };
+
+    const renderQuotes = () => {
+      const app = document.getElementById("app");
+      app.innerHTML = `
+        <div class="page-title">
+          <div>
+            <h1>Teklifler</h1>
+            <p class="muted">Fırsattan teklif oluşturun ve paylaşın.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" id="newQuote">Yeni Teklif</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="list">
+            ${state.data.quotes.map(quote => `
+              <div class="list-item">
+                <div>
+                  <h4>${quote.quoteNo}</h4>
+                  <div class="muted">${quote.status} · ${formatUSD(quote.totals.grandTotalUSD)}</div>
+                </div>
+                <button class="btn secondary" data-preview="${quote.id}">Yazdırılabilir Görünüm</button>
+              </div>
+            `).join("") || `<div class="list-item">Teklif yok.</div>`}
+          </div>
+        </div>
+        <div class="card" id="quotePreview" style="display:none;"></div>
+      `;
+
+      document.querySelectorAll("[data-preview]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const quote = state.data.quotes.find(q => q.id === btn.dataset.preview);
+          const preview = document.getElementById("quotePreview");
+          preview.style.display = "block";
+          preview.innerHTML = `
+            <div class="quote-preview">
+              <h2>Alb Enerji Teklif</h2>
+              <p class="muted">${quote.quoteNo} · ${quote.status}</p>
+              <div class="subtle-line"></div>
+              <h4>Kalemler</h4>
+              ${quote.items.map(item => `
+                <div class="list-item">
+                  <div>${item.description}</div>
+                  <div>${item.qty} ${item.unit} · ${formatUSD(item.unitPriceUSD)}</div>
+                </div>
+              `).join("")}
+              <div class="subtle-line"></div>
+              <div class="list-item"><strong>Toplam</strong><strong>${formatUSD(quote.totals.grandTotalUSD)}</strong></div>
+              <p class="muted">Ödeme: ${quote.paymentTerms} · Teslimat: ${quote.deliveryTerms || "-"}</p>
+            </div>
+          `;
+          preview.scrollIntoView({ behavior: "smooth" });
+        });
+      });
+
+      document.getElementById("newQuote").addEventListener("click", () => {
+        const opp = state.data.opportunities[0];
+        if (!opp) {
+          showToast("Önce fırsat oluşturun");
+          return;
+        }
+        const quote = {
+          id: generateId("quote"),
+          opportunityId: opp.id,
+          quoteNo: generateQuoteNo(),
+          items: [
+            { type: "Panel", description: "Alb Mono 550W", qty: 500, unit: "Adet", unitPriceUSD: 90 }
+          ],
+          totals: { subtotalUSD: 45000, discountUSD: 0, shippingUSD: 1500, grandTotalUSD: 46500 },
+          paymentTerms: "LC90",
+          deliveryTerms: "FOB",
+          status: "Taslak",
+          pdfPreviewMode: true
+        };
+        state.data.quotes.push(quote);
+        saveData();
+        showToast("Teklif oluşturuldu");
+        renderApp();
+      });
+    };
+
+    const renderOrders = () => {
+      const app = document.getElementById("app");
+      app.innerHTML = `
+        <div class="page-title">
+          <div>
+            <h1>Siparişler</h1>
+            <p class="muted">Sipariş durumlarını tek ekrandan yönetin.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" id="newOrder">Yeni Sipariş</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="list">
+            ${state.data.orders.map(order => `
+              <div class="list-item">
+                <div>
+                  <h4>${order.orderNo}</h4>
+                  <div class="muted">${order.status} · ${order.warehouse}</div>
+                </div>
+                <span class="badge">${order.promisedShipDate || "-"}</span>
+              </div>
+            `).join("") || `<div class="list-item">Sipariş yok.</div>`}
+          </div>
+        </div>
+      `;
+      document.getElementById("newOrder").addEventListener("click", () => {
+        const opp = state.data.opportunities[0];
+        if (!opp) {
+          showToast("Önce fırsat oluşturun");
+          return;
+        }
+        const order = {
+          id: generateId("order"),
+          opportunityId: opp.id,
+          orderNo: generateOrderNo(),
+          status: "Alındı",
+          promisedShipDate: new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10),
+          warehouse: state.settings.defaultWarehouse,
+          logisticsNotes: ""
+        };
+        state.data.orders.push(order);
+        saveData();
+        showToast("Sipariş oluşturuldu");
+        renderApp();
+      });
+    };
+
+    const renderTasks = () => {
+      const app = document.getElementById("app");
+      const now = new Date();
+      const filter = document.getElementById("taskFilter")?.value || "bugun";
+      const filtered = state.data.tasks.filter(task => {
+        const due = new Date(task.dueDate);
+        if (filter === "bugun") return due.toDateString() === now.toDateString();
+        if (filter === "hafta") return due <= new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7);
+        if (filter === "gecikmis") return due < now && task.status === "Açık";
+        return true;
+      });
+
+      app.innerHTML = `
+        <div class="page-title">
+          <div>
+            <h1>Görevler</h1>
+            <p class="muted">Satış ritmini korumak için odak listesi.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" id="newTask">Yeni Görev</button>
+          </div>
+        </div>
+        <div class="card">
+          <select class="input" id="taskFilter">
+            <option value="bugun">Bugün</option>
+            <option value="hafta">Bu hafta</option>
+            <option value="gecikmis">Gecikmiş</option>
+            <option value="tum">Tümü</option>
+          </select>
+        </div>
+        <div class="card">
+          <div class="list">
+            ${filtered.map(task => `
+              <div class="list-item">
+                <div>
+                  <h4>${task.title}</h4>
+                  <div class="muted">${task.owner} · ${task.dueDate}</div>
+                </div>
+                <div class="button-row">
+                  <button class="btn secondary" data-action="call" data-id="${task.id}">Arandı</button>
+                  <button class="btn secondary" data-action="quote" data-id="${task.id}">Teklif gönderildi</button>
+                  <button class="btn secondary" data-action="meeting" data-id="${task.id}">Toplantı yapıldı</button>
+                </div>
+              </div>
+            `).join("") || `<div class="list-item">Görev yok.</div>`}
+          </div>
+        </div>
+      `;
+
+      document.getElementById("taskFilter").value = filter;
+      document.getElementById("taskFilter").addEventListener("change", renderTasks);
+      document.getElementById("newTask").addEventListener("click", () => {
+        const task = {
+          id: generateId("task"),
+          title: "Yeni görev",
+          relatedTo: "lead",
+          dueDate: new Date().toISOString().slice(0, 10),
+          priority: "Orta",
+          status: "Açık",
+          owner: state.role
+        };
+        state.data.tasks.push(task);
+        saveData();
+        showToast("Görev oluşturuldu");
+        renderApp();
+      });
+
+      document.querySelectorAll("[data-action]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const task = state.data.tasks.find(t => t.id === btn.dataset.id);
+          const actionText = btn.dataset.action === "call" ? "Arama tamamlandı" : btn.dataset.action === "quote" ? "Teklif gönderildi" : "Toplantı yapıldı";
+          task.status = "Bitti";
+          const relatedOpp = state.data.opportunities[0];
+          if (relatedOpp) {
+            relatedOpp.timeline = relatedOpp.timeline || [];
+            relatedOpp.timeline.push(`${actionText} · ${new Date().toLocaleDateString("tr-TR")}`);
+          }
+          saveData();
+          showToast("Görev kapatıldı");
+          renderApp();
+        });
+      });
+    };
+
+    const renderPartners = () => {
+      const app = document.getElementById("app");
+      app.innerHTML = `
+        <div class="page-title">
+          <div>
+            <h1>Partner Programı</h1>
+            <p class="muted">Bayi performansı ve bonus takibi.</p>
+          </div>
+          <div class="button-row">
+            ${state.role === "YÖNETİCİ" ? `<button class="btn primary" id="newPartner">Yeni Partner</button>` : ""}
+          </div>
+        </div>
+        <div class="grid cols-2">
+          ${state.data.partners.map(partner => {
+            const partnerPurchases = state.data.purchases.filter(p => p.partnerId === partner.id);
+            const engine = partnerBonusEngine(partnerPurchases);
+            const shipped = state.data.shipments.filter(s => s.partnerId === partner.id).reduce((sum, s) => sum + s.qtyPanels, 0);
+            const remaining = Math.max(0, engine.bonusPanels - shipped);
+            const progress = Math.min(100, (engine.totalPanels / partner.yearlyTarget) * 100);
+            return `
+              <div class="card">
+                <h3>${partner.companyName}</h3>
+                <p class="muted">Hedef: ${partner.yearlyTarget} panel · Güncel kademe: ${engine.currentTier.label} (${engine.currentTier.price}$/W)</p>
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width:${progress}%"></div>
+                  <div class="progress-marker" style="left:0%"></div>
+                  <div class="progress-marker" style="left:40%"></div>
+                  <div class="progress-marker" style="left:70%"></div>
+                  <div class="progress-marker" style="left:100%"></div>
+                </div>
+                <p class="muted">Bir sonraki seviye için kalan panel: ${engine.remainingToNext || "-"}</p>
+                <div class="list">
+                  <div class="list-item"><span>Toplam alım</span><strong>${engine.totalPanels} panel</strong></div>
+                  <div class="list-item"><span>Bonus panel hakkı</span><strong>${engine.bonusPanels.toFixed(1)}</strong></div>
+                  <div class="list-item"><span>Sevk edilen bonus</span><strong>${shipped}</strong></div>
+                  <div class="list-item"><span>Kalan bonus</span><strong>${remaining.toFixed(1)}</strong></div>
+                </div>
+                ${state.role === "YÖNETİCİ" ? `
+                  <div class="button-row">
+                    <button class="btn secondary" data-ship="${partner.id}">Bonus sevki kaydet</button>
+                    <button class="btn secondary" data-purchase="${partner.id}">Alım ekle</button>
+                  </div>
+                ` : ""}
+              </div>
+            `;
+          }).join("") || `<div class="card">Partner yok.</div>`}
+        </div>
+      `;
+
+      document.querySelectorAll("[data-ship]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.data.shipments.push({
+            id: `ship-${Date.now()}`,
+            partnerId: btn.dataset.ship,
+            date: new Date().toISOString().slice(0, 10),
+            qtyPanels: 20
+          });
+          saveData();
+          showToast("Bonus sevki kaydedildi");
+          renderApp();
+        });
+      });
+      document.querySelectorAll("[data-purchase]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          state.data.purchases.push({
+            id: `purchase-${Date.now()}`,
+            partnerId: btn.dataset.purchase,
+            date: new Date().toISOString().slice(0, 10),
+            qtyPanels: 80,
+            panelWattage: state.settings.defaultPanelWattage
+          });
+          saveData();
+          showToast("Alım eklendi");
+          renderApp();
+        });
+      });
+      document.getElementById("newPartner")?.addEventListener("click", () => {
+        const partner = {
+          id: generateId("partner"),
+          accountId: "",
+          companyName: "Yeni Bayi",
+          yearlyTarget: 1000
+        };
+        state.data.partners.push(partner);
+        saveData();
+        showToast("Partner eklendi");
+        renderApp();
+      });
+    };
+
+    const renderSettings = () => {
+      const app = document.getElementById("app");
+      app.innerHTML = `
+        <div class="page-title">
+          <div>
+            <h1>Ayarlar / Veri</h1>
+            <p class="muted">Verinizi yönetin ve dışa aktarın.</p>
+          </div>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">
+            <h3>Veri İşlemleri</h3>
+            <div class="button-row">
+              <button class="btn primary" id="exportData">JSON dışa aktar</button>
+              <button class="btn secondary" id="importData">JSON içe aktar</button>
+              <button class="btn secondary" id="resetData">Tüm veriyi sıfırla</button>
+              <button class="btn secondary" id="seedDataSettings">Demo verisi yükle</button>
+            </div>
+            <textarea class="input" id="importArea" placeholder="İçe aktarılacak JSON burada"></textarea>
+          </div>
+          <div class="card">
+            <h3>Temel Ayarlar</h3>
+            <div class="form-grid">
+              <div>
+                <label class="muted">Para birimi</label>
+                <select class="input" id="currency">
+                  <option value="USD">USD</option>
+                </select>
+              </div>
+              <div>
+                <label class="muted">Varsayılan panel watt</label>
+                <input class="input" id="panelWatt" type="number" value="${state.settings.defaultPanelWattage}" />
+              </div>
+              <div>
+                <label class="muted">Varsayılan depo</label>
+                <select class="input" id="warehouse">
+                  <option ${state.settings.defaultWarehouse === "Antalya" ? "selected" : ""}>Antalya</option>
+                  <option ${state.settings.defaultWarehouse === "Tivat" ? "selected" : ""}>Tivat</option>
+                  <option ${state.settings.defaultWarehouse === "Other" ? "selected" : ""}>Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="button-row" style="margin-top:12px;">
+              <button class="btn primary" id="saveSettings">Ayarları kaydet</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById("exportData").addEventListener("click", () => {
+        const blob = new Blob([JSON.stringify(state.data, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "alb-crm-data.json";
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+      document.getElementById("importData").addEventListener("click", () => {
+        try {
+          const text = document.getElementById("importArea").value;
+          const parsed = JSON.parse(text);
+          state.data = { ...emptyData(), ...parsed };
+          saveData();
+          showToast("Veri içe aktarıldı");
+          renderApp();
+        } catch (error) {
+          showToast("JSON formatını kontrol edin");
+        }
+      });
+      document.getElementById("resetData").addEventListener("click", () => {
+        state.data = emptyData();
+        saveData();
+        showToast("Veriler sıfırlandı");
+        renderApp();
+      });
+      document.getElementById("seedDataSettings").addEventListener("click", () => {
+        seedDemoData();
+        showToast("Demo verisi yüklendi");
+        renderApp();
+      });
+      document.getElementById("saveSettings").addEventListener("click", () => {
+        state.settings.defaultPanelWattage = Number(document.getElementById("panelWatt").value || 550);
+        state.settings.defaultWarehouse = document.getElementById("warehouse").value;
+        saveData();
+        showToast("Ayarlar kaydedildi");
+      });
+    };
+
+    const renderApp = () => {
+      renderRoleToggle();
+      renderTabs();
+      document.getElementById("leadDrawer").classList.remove("active");
+      if (state.activeTab === "Ana Panel") return renderDashboard();
+      if (state.activeTab === "Pipeline") return renderPipeline();
+      if (state.activeTab === "Lead’ler") return renderLeads();
+      if (state.activeTab === "Müşteriler") return renderAccounts();
+      if (state.activeTab === "Teklifler") return renderQuotes();
+      if (state.activeTab === "Siparişler") return renderOrders();
+      if (state.activeTab === "Görevler") return renderTasks();
+      if (state.activeTab === "Partner Programı") return renderPartners();
+      if (state.activeTab === "Ayarlar / Veri") return renderSettings();
+    };
+
+    // Demo data generator for internal CRM walkthroughs
+    const seedDemoData = () => {
+      state.data = emptyData();
+      const sources = ["Instagram", "LinkedIn", "Web", "Fuar", "Referans", "Facebook"];
+      const segments = ["Konut", "Ticari", "EPC", "Bayi"];
+      const cities = ["İstanbul", "Ankara", "İzmir", "Antalya", "Bursa", "Adana"];
+      for (let i = 0; i < 12; i++) {
+        state.data.leads.push({
+          id: generateId("lead"),
+          createdAt: new Date(Date.now() - i * 86400000).toISOString(),
+          source: sources[i % sources.length],
+          status: ["Yeni", "Temas Edildi", "Nitelikli", "Elendi"][i % 4],
+          companyName: `Lead Şirket ${i + 1}`,
+          contactName: `Kişi ${i + 1}`,
+          phone: "+90 5xx xxx xx xx",
+          email: `lead${i + 1}@example.com`,
+          city: cities[i % cities.length],
+          country: "Türkiye",
+          segment: segments[i % segments.length],
+          interest: ["Panel", "EPC", "Depolama", "EV Şarj"][i % 4],
+          notes: [],
+          tags: ["Sıcak"],
+          owner: i % 2 === 0 ? "SATIŞ" : "TEKNİK OFİS",
+          lastTouchAt: new Date(Date.now() - (i + 2) * 86400000).toISOString(),
+          nextActionAt: new Date(Date.now() + (i + 1) * 86400000).toISOString(),
+          timeline: ["Demo lead oluşturuldu"]
+        });
+      }
+      for (let i = 0; i < 6; i++) {
+        state.data.opportunities.push({
+          id: generateId("opportunity"),
+          leadId: state.data.leads[i].id,
+          accountId: "",
+          title: `Fırsat ${i + 1}`,
+          stage: ["Lead", "Nitelikli", "Teklif", "Revize", "Üretim", "Sevk"][i],
+          expectedPanelsQty: 400 + i * 60,
+          panelModel: "Alb Mono",
+          panelWattage: 550,
+          targetPricePerWatt: 0.19 - i * 0.002,
+          expectedCloseDate: new Date(Date.now() + i * 86400000).toISOString().slice(0, 10),
+          probability: 30 + i * 10,
+          competitor: "",
+          owner: i % 2 === 0 ? "SATIŞ" : "YÖNETİCİ",
+          createdAt: new Date(Date.now() - i * 86400000).toISOString(),
+          stageUpdatedAt: new Date(Date.now() - i * 86400000).toISOString(),
+          timeline: []
+        });
+      }
+      for (let i = 0; i < 4; i++) {
+        const quoteId = generateId("quote");
+        state.data.quotes.push({
+          id: quoteId,
+          opportunityId: state.data.opportunities[i].id,
+          quoteNo: generateQuoteNo(),
+          items: [
+            { type: "Panel", description: `Alb Mono ${550}W`, qty: 500 + i * 50, unit: "Adet", unitPriceUSD: 90 - i }
+          ],
+          totals: { subtotalUSD: 45000 + i * 2000, discountUSD: 0, shippingUSD: 1500, grandTotalUSD: 46500 + i * 2000 },
+          paymentTerms: ["LC90", "Kredi Kartı", "Nakit", "Vade"][i % 4],
+          deliveryTerms: ["FOB", "CIF", "CIP", "Exworks"][i % 4],
+          status: ["Taslak", "Gönderildi", "Kabul", "Red"][i % 4],
+          pdfPreviewMode: true
+        });
+      }
+      for (let i = 0; i < 2; i++) {
+        state.data.orders.push({
+          id: generateId("order"),
+          opportunityId: state.data.opportunities[i].id,
+          orderNo: generateOrderNo(),
+          status: ["Alındı", "Üretimde"][i],
+          promisedShipDate: new Date(Date.now() + (10 + i * 5) * 86400000).toISOString().slice(0, 10),
+          warehouse: i === 0 ? "Antalya" : "Tivat",
+          logisticsNotes: ""
+        });
+      }
+      for (let i = 0; i < 8; i++) {
+        state.data.tasks.push({
+          id: generateId("task"),
+          title: `Görev ${i + 1}`,
+          relatedTo: "opportunity",
+          dueDate: new Date(Date.now() + (i - 2) * 86400000).toISOString().slice(0, 10),
+          priority: ["Düşük", "Orta", "Yüksek"][i % 3],
+          status: "Açık",
+          owner: i % 2 === 0 ? "SATIŞ" : "TEKNİK OFİS"
+        });
+      }
+      const partnerNames = ["Ege Solar", "Balkan EPC", "Atlas Enerji"];
+      partnerNames.forEach((name, idx) => {
+        state.data.partners.push({
+          id: generateId("partner"),
+          accountId: "",
+          companyName: name,
+          yearlyTarget: 1000
+        });
+        const partnerId = state.data.partners[idx].id;
+        const purchaseSets = [
+          [200, 250],
+          [500, 320],
+          [700, 420, 180]
+        ];
+        purchaseSets[idx].forEach((qty, pIdx) => {
+          state.data.purchases.push({
+            id: `purchase-${Date.now()}-${idx}-${pIdx}`,
+            partnerId,
+            date: new Date(Date.now() - pIdx * 86400000).toISOString().slice(0, 10),
+            qtyPanels: qty,
+            panelWattage: 550 + idx * 10
+          });
+        });
+        state.data.shipments.push({
+          id: `ship-${Date.now()}-${idx}`,
+          partnerId,
+          date: new Date().toISOString().slice(0, 10),
+          qtyPanels: 40 + idx * 10
+        });
+      });
+      state.data.accounts.push({
+        id: generateId("account"),
+        companyName: "Alb Enerji Demo",
+        taxNo: "1234567890",
+        city: "İstanbul",
+        country: "Türkiye",
+        type: "EPC",
+        contacts: [{ name: "Ayşe Demir", role: "Satınalma", phone: "+90 5xx", email: "ayse@example.com" }],
+        accountNotes: ["Demo hesap notu"]
+      });
+      saveData();
+    };
+
+    loadData();
+    renderApp();
+  </script>
+</body>
+</html>
