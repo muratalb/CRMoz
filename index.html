@@ -1013,6 +1013,23 @@
     };
 
     document.addEventListener("click", (event) => {
+      const roleTarget = event.target.closest("[data-role]");
+      if (roleTarget) {
+        state.role = roleTarget.dataset.role;
+        localStorage.setItem(ROLE_KEY, state.role);
+        renderApp();
+        return;
+      }
+
+      const tabTarget = event.target.closest("[data-tab]");
+      if (tabTarget && !tabTarget.dataset.action) {
+        state.activeTab = tabTarget.dataset.tab;
+        state.selected = { entity: null, id: null };
+        state.detailTab = "Özet";
+        renderApp();
+        return;
+      }
+
       const target = event.target.closest("[data-action]");
       if (!target) return;
       const action = target.dataset.action;
