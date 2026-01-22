@@ -991,6 +991,7 @@
     };
 
     const renderDashboard = () => {
+      try {
       const leads = Array.isArray(state.data.leads) ? state.data.leads : [];
       const opportunities = Array.isArray(state.data.opportunities) ? state.data.opportunities : [];
       const quotes = Array.isArray(state.data.quotes) ? state.data.quotes : [];
@@ -1013,7 +1014,7 @@
       const openOrders = orders.filter(order => order.status !== "Tamamlandı").length;
       const backlogValue = acceptedQuotes
         .filter(quote => !orders.some(order => order.quoteId === quote.id))
-        .reduce((sum, quote) => sum + Number(quote.totals?.grandTotalUSD || 0), 0);
+        .reduce((sum, quote) => sum + Number((quote.totals && quote.totals.grandTotalUSD) || 0), 0);
       const panelItems = acceptedQuotes.reduce((items, quote) => {
         const lineItems = Array.isArray(quote.items) ? quote.items : [];
         return items.concat(lineItems);
@@ -1023,7 +1024,7 @@
         ? (panelItems.reduce((sum, item) => sum + Number(item.pricePerWatt || 0), 0) / panelItems.length).toFixed(3)
         : "0.000";
       const avgDealSize = acceptedQuotes.length
-        ? Math.round(acceptedQuotes.reduce((sum, quote) => sum + Number(quote.totals?.grandTotalUSD || 0), 0) / acceptedQuotes.length)
+        ? Math.round(acceptedQuotes.reduce((sum, quote) => sum + Number((quote.totals && quote.totals.grandTotalUSD) || 0), 0) / acceptedQuotes.length)
         : 0;
       const avgCycleDays = opportunities.length
         ? Math.round(opportunities.reduce((sum, opp) => sum + daysBetween(opp.createdAt, opp.stageUpdatedAt || nowISO()), 0) / opportunities.length)
@@ -1057,6 +1058,14 @@
           </section>
         ` : ""}
       `;
+      } catch (error) {
+        return `
+          <div class="card">
+            <h2>Ana Panel</h2>
+            <p class="muted">Ana panel verileri yüklenemedi. Ayarlar / Veri bölümünden demo verisini yeniden yükleyin veya veriyi sıfırlayın.</p>
+          </div>
+        `;
+      }
     };
 
     const renderLeads = () => {
