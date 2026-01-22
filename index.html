@@ -445,12 +445,19 @@
     };
 
     const loadData = () => {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        state.data = { ...emptyData(), ...JSON.parse(saved) };
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          state.data = { ...emptyData(), ...JSON.parse(saved) };
+        } else {
+          state.data = emptyData();
+        }
+        const savedSettings = localStorage.getItem(SETTINGS_KEY);
+        state.settings = savedSettings ? { ...defaultSettings, ...JSON.parse(savedSettings) } : defaultSettings;
+      } catch (error) {
+        state.data = emptyData();
+        state.settings = { ...defaultSettings };
       }
-      const savedSettings = localStorage.getItem(SETTINGS_KEY);
-      state.settings = savedSettings ? { ...defaultSettings, ...JSON.parse(savedSettings) } : defaultSettings;
       ensureDefaults();
     };
 
@@ -2122,6 +2129,7 @@
         timeline: ["Görev oluşturuldu"]
       });
 
+      ensureDefaults();
       saveData();
     };
 
