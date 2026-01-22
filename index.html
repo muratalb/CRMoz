@@ -462,6 +462,7 @@
         id: generateId("lead"),
         createdAt: nowISO(),
         updatedAt: nowISO(),
+        accountId: "",
         source: "Web",
         status: "Yeni",
         companyName: "",
@@ -1003,9 +1004,11 @@
             <div class="list-item"><span>Durum</span><strong>${lead.status}</strong></div>
             <div class="list-item"><span>Kaynak</span><strong>${lead.source}</strong></div>
             <div class="list-item"><span>Sorumlu</span><strong>${lead.owner}</strong></div>
+            <div class="list-item"><span>Müşteri</span><strong>${lead.accountId ? "Oluşturuldu" : "Henüz yok"}</strong></div>
           </div>
           <div class="button-row" style="margin-top:16px;">
             <button class="btn primary" id="leadCreateOpp">Fırsat oluştur</button>
+            <button class="btn secondary" id="leadConvert" ${lead.accountId ? "disabled" : ""}>Müşteriye dönüştür</button>
             <button class="btn secondary" id="leadEdit">Düzenle</button>
           </div>
         ` : ""}
@@ -1095,6 +1098,7 @@
       if (lead) {
         document.getElementById("leadEdit")?.addEventListener("click", () => openLeadModal(lead.id));
         document.getElementById("leadCreateOpp")?.addEventListener("click", () => openOpportunityModal(null, lead));
+        document.getElementById("leadConvert")?.addEventListener("click", () => convertLeadToAccount(lead));
         document.getElementById("addLeadNote")?.addEventListener("click", () => {
           const note = document.getElementById("leadNoteInput").value.trim();
           if (!note) return;
@@ -1178,13 +1182,12 @@
       renderListLayout(
         "Müşteriler",
         "Hesaplar, kontaklar ve notlar.",
-        `<button class="btn primary" id="newAccount">Yeni Müşteri</button>`,
+        `<div class="hint">Müşteriler yalnızca lead dönüşümü ile oluşur.</div>`,
         `<input class="input" id="accountSearch" placeholder="Arama" value="${search}" />`,
         listHtml,
         detailHtml
       );
 
-      document.getElementById("newAccount").addEventListener("click", () => openAccountModal());
       document.getElementById("accountSearch").addEventListener("input", (e) => { state.accountSearch = e.target.value; renderAccounts(); });
       document.querySelectorAll("[data-detail]").forEach(btn => btn.addEventListener("click", () => { state.selected = { type: "account", id: btn.dataset.detail.split("-")[1] }; renderAccounts(); }));
       document.querySelectorAll("[data-edit]").forEach(btn => btn.addEventListener("click", () => openAccountModal(btn.dataset.edit.split("-")[1])));
@@ -1504,10 +1507,11 @@
         ` : ""}
       ` : `<div class="empty">Bir sipariş seçin.</div>`;
 
+      const hasOpportunities = state.data.opportunities.length > 0;
       renderListLayout(
         "Siparişler",
         "Sipariş durumlarını tek ekrandan yönetin.",
-        `<button class="btn primary" id="newOrder" ${can("createOrder") ? "" : "disabled"}>Yeni Sipariş</button>`,
+        `<button class="btn primary" id="newOrder" ${can("createOrder") && hasOpportunities ? "" : "disabled"}>Yeni Sipariş</button>`,
         `<input class="input" id="orderSearch" placeholder="Arama" value="${search}" />`,
         listHtml,
         detailHtml
@@ -1899,6 +1903,42 @@
       });
     };
 
+    const convertLeadToAccount = (lead) => {
+      if (!lead || lead.accountId) {
+        showToast("Bu lead zaten müşteriye dönüştürüldü");
+        return;
+      }
+      openConfirm({
+        title: "Müşteriye dönüştür",
+        subtitle: "Lead üzerinden müşteri hesabı oluşturulacak.",
+        onConfirm: () => {
+          const accountId = generateId("account");
+          const account = {
+            id: accountId,
+            createdAt: nowISO(),
+            updatedAt: nowISO(),
+            companyName: lead.companyName,
+            taxNo: "",
+            city: lead.city,
+            country: lead.country || "Türkiye",
+            type: lead.segment === "Bayi" ? "Bayi" : lead.segment === "EPC" ? "EPC" : "Son kullanıcı",
+            contacts: lead.contactName ? [{ name: lead.contactName, role: "İlgili kişi", phone: lead.phone, email: lead.email }] : [],
+            accountNotes: [],
+            timeline: []
+          };
+          state.data.accounts.unshift(account);
+          lead.accountId = accountId;
+          lead.status = "Nitelikli";
+          lead.updatedAt = nowISO();
+          addTimeline("accounts", accountId, "Lead’den müşteri oluşturuldu");
+          addTimeline("leads", lead.id, "Müşteriye dönüştürüldü");
+          saveData();
+          showToast("Müşteri oluşturuldu");
+          renderLeads();
+        }
+      });
+    };
+
     const openAccountModal = (id) => {
       const account = id ? state.data.accounts.find(item => item.id === id) : null;
       openModal({
@@ -1965,7 +2005,7 @@
               createdAt: nowISO(),
               updatedAt: nowISO(),
               leadId: lead?.id || "",
-              accountId: "",
+              accountId: lead?.accountId || "",
               stage: "Lead",
               stageUpdatedAt: nowISO(),
               timeline: [],
@@ -2176,29 +2216,43 @@
         showToast("Yönetici onayı gerekir");
         return;
       }
+      const opportunities = state.data.opportunities;
+      if (!opportunities.length) {
+        showToast("Önce fırsat oluşturun");
+        return;
+      }
+      const selectedOppId = order?.opportunityId || quote?.opportunityId || "";
+      const selectedOppLabel = opportunities.find(opp => opp.id === selectedOppId);
+      const selectedOppValue = selectedOppLabel ? `${selectedOppLabel.id} · ${selectedOppLabel.title}` : "";
       openModal({
         title: id ? "Sipariş düzenle" : "Yeni sipariş",
         subtitle: "Sipariş bilgileri",
         fields: [
+          { label: "Fırsat", name: "opportunityId", type: "select", value: selectedOppValue, options: opportunities.map(opp => `${opp.id} · ${opp.title}`) },
           { label: "Durum", name: "status", type: "select", value: order?.status || "Alındı", options: ["Alındı", "Üretimde", "Hazır", "Sevk", "İptal", "Tamam"] },
           { label: "Vaat edilen sevk", name: "promisedShipDate", type: "date", value: order?.promisedShipDate || shortDate(nowISO()) },
           { label: "Depo", name: "warehouse", type: "select", value: order?.warehouse || state.settings.defaultWarehouse, options: ["Antalya", "Tivat", "Other"] },
           { label: "Lojistik notu", name: "logisticsNotes", type: "textarea", value: order?.logisticsNotes || "" }
         ],
         onSave: (values) => {
+          const oppId = values.opportunityId?.split(" · ")[0] || "";
+          if (!oppId) {
+            showToast("Sipariş için fırsat seçin");
+            return;
+          }
           if (order) {
-            Object.assign(order, values, { updatedAt: nowISO() });
+            Object.assign(order, values, { opportunityId: oppId, updatedAt: nowISO() });
             addTimeline("orders", order.id, "Sipariş güncellendi");
           } else {
             const newOrder = {
               id: generateId("order"),
               createdAt: nowISO(),
               updatedAt: nowISO(),
-              opportunityId: quote?.opportunityId || "",
+              opportunityId: oppId,
               orderNo: generateOrderNo(),
               timeline: []
             };
-            Object.assign(newOrder, values);
+            Object.assign(newOrder, values, { opportunityId: oppId });
             addTimeline("orders", newOrder.id, "Sipariş oluşturuldu");
             state.data.orders.unshift(newOrder);
           }
