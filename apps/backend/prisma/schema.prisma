@@ -1,0 +1,264 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  YONETICI
+  SATIS
+  TEKNIK_OFIS
+  PARTNER
+}
+
+enum EntityType {
+  Lead
+  Opportunity
+  Quote
+  Order
+  Account
+  Partner
+}
+
+model User {
+  id          String   @id @default(uuid())
+  name        String
+  email       String   @unique
+  passwordHash String
+  role        Role
+  isActive    Boolean  @default(true)
+  lastLoginAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  leads       Lead[]   @relation("LeadOwner")
+  accounts    Account[] @relation("AccountOwner")
+  opportunities Opportunity[] @relation("OpportunityOwner")
+  tasks       Task[]   @relation("TaskOwner")
+}
+
+model Lead {
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  deletedAt     DateTime?
+  source        String
+  status        String
+  companyName   String
+  contactName   String?
+  phone         String?
+  email         String?
+  city          String?
+  country       String
+  segment       String
+  interest      String
+  ownerId       String
+  lastTouchAt   DateTime?
+  nextActionAt  DateTime?
+  tags          String[]
+  accountId     String?
+
+  owner         User     @relation("LeadOwner", fields: [ownerId], references: [id])
+  account       Account? @relation(fields: [accountId], references: [id])
+
+  @@index([ownerId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model Account {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+  companyName String
+  taxNo       String?
+  city        String?
+  country     String
+  type        String
+  ownerId     String
+
+  owner       User      @relation("AccountOwner", fields: [ownerId], references: [id])
+  contacts    Contact[]
+  opportunities Opportunity[]
+  leads       Lead[]
+
+  @@index([ownerId])
+}
+
+model Contact {
+  id        String  @id @default(uuid())
+  accountId String
+  name      String
+  role      String?
+  phone     String?
+  email     String?
+
+  account   Account @relation(fields: [accountId], references: [id])
+}
+
+model Opportunity {
+  id                String   @id @default(uuid())
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  deletedAt         DateTime?
+  title             String
+  stage             String
+  stageUpdatedAt    DateTime
+  leadId            String?
+  accountId         String?
+  expectedPanelsQty Int
+  panelModel        String?
+  panelWattage      Int
+  targetPricePerWatt Float
+  expectedCloseDate DateTime
+  probability       Int
+  competitor        String?
+  ownerId           String
+
+  owner       User @relation("OpportunityOwner", fields: [ownerId], references: [id])
+  lead        Lead? @relation(fields: [leadId], references: [id])
+  account     Account? @relation(fields: [accountId], references: [id])
+  quotes      Quote[]
+  orders      Order[]
+
+  @@index([ownerId])
+  @@index([stage])
+}
+
+model Activity {
+  id          String   @id @default(uuid())
+  entityType  EntityType
+  entityId    String
+  type        String
+  message     String
+  createdAt   DateTime @default(now())
+  createdById String
+
+  @@index([entityType, entityId])
+}
+
+model Quote {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+  opportunityId String
+  quoteNo     String
+  status      String
+  paymentTerms String
+  deliveryTerms String?
+  currency    String
+  subtotal    Float
+  discount    Float
+  shipping    Float
+  grandTotal  Float
+  createdById String
+  approvedById String?
+
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id])
+  items       QuoteItem[]
+
+  @@index([status])
+}
+
+model QuoteItem {
+  id         String @id @default(uuid())
+  quoteId    String
+  type       String
+  description String
+  qty        Int
+  unit       String
+  unitPrice  Float
+  total      Float
+
+  quote      Quote @relation(fields: [quoteId], references: [id])
+}
+
+model Order {
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  deletedAt     DateTime?
+  opportunityId String
+  orderNo       String
+  status        String
+  promisedShipDate DateTime?
+  warehouse     String?
+  logisticsNotes String?
+  createdById   String
+
+  opportunity Opportunity @relation(fields: [opportunityId], references: [id])
+}
+
+model Task {
+  id            String   @id @default(uuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  deletedAt     DateTime?
+  title         String
+  dueDate       DateTime
+  priority      String
+  status        String
+  ownerId       String
+  relatedEntityType String?
+  relatedEntityId   String?
+
+  owner         User @relation("TaskOwner", fields: [ownerId], references: [id])
+
+  @@index([ownerId])
+}
+
+model Partner {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  deletedAt   DateTime?
+  accountId   String?
+  companyName String
+  yearlyTargetPanels Int @default(1000)
+  partnerCode String
+  portalUserId String?
+
+  purchases   PartnerPurchase[]
+  shipments   PartnerShipment[]
+}
+
+model PartnerPurchase {
+  id           String   @id @default(uuid())
+  partnerId    String
+  date         DateTime
+  qtyPanels    Int
+  panelWattage Int
+  createdById  String
+
+  partner      Partner @relation(fields: [partnerId], references: [id])
+}
+
+model PartnerShipment {
+  id           String   @id @default(uuid())
+  partnerId    String
+  date         DateTime
+  qtyPanels    Int
+  createdById  String
+
+  partner      Partner @relation(fields: [partnerId], references: [id])
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId    String
+  action     String
+  entityType String
+  entityId   String
+  beforeJson Json?
+  afterJson  Json?
+  createdAt  DateTime @default(now())
+  ip         String?
+  userAgent  String?
+
+  @@index([entityType, entityId])
+}
