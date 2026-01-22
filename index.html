@@ -1018,7 +1018,7 @@
       const panelItems = acceptedQuotes.reduce((items, quote) => {
         const lineItems = Array.isArray(quote.items) ? quote.items : [];
         return items.concat(lineItems);
-      }, []).filter(item => item.type === "Panel");
+      }, []).filter(item => item && item.type === "Panel");
       const totalPanelsSold = panelItems.reduce((sum, item) => sum + Number(item.qty || 0), 0);
       const avgPricePerWatt = panelItems.length
         ? (panelItems.reduce((sum, item) => sum + Number(item.pricePerWatt || 0), 0) / panelItems.length).toFixed(3)
