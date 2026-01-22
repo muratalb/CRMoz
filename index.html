@@ -3,28 +3,26 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Alb Enerji CRM Demo</title>
+  <title>Alb Enerji CRM</title>
   <style>
     :root {
       --bg: #f5f6f8;
       --card: #ffffff;
-      --text: #111827;
+      --text: #121417;
       --muted: #6b7280;
       --line: #e6e8ec;
-      --accent: #1f2937;
-      --accent-soft: #eff6ff;
-      --primary: #111827;
-      --shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
-      --radius: 18px;
+      --accent: #111827;
+      --accent-soft: #eef2ff;
+      --shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+      --radius: 16px;
     }
-
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       background: var(--bg);
       color: var(--text);
-      letter-spacing: 0.2px;
+      letter-spacing: 0.1px;
     }
     header {
       position: sticky;
@@ -44,29 +42,29 @@
     .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       font-size: 20px;
       font-weight: 600;
     }
     .pill-toggle {
       display: flex;
-      gap: 6px;
-      padding: 4px;
-      border-radius: 999px;
       background: var(--card);
+      border-radius: 999px;
+      padding: 4px;
       box-shadow: var(--shadow);
+      gap: 4px;
     }
     .pill-toggle button {
       border: none;
       background: transparent;
       padding: 8px 16px;
       border-radius: 999px;
-      font-size: 12px;
       cursor: pointer;
+      font-size: 12px;
       color: var(--muted);
     }
     .pill-toggle button.active {
-      background: var(--primary);
+      background: var(--accent);
       color: #fff;
     }
     nav {
@@ -81,7 +79,7 @@
       font-size: 14px;
       color: var(--muted);
       cursor: pointer;
-      padding: 6px 2px;
+      padding: 6px 0;
       border-bottom: 2px solid transparent;
     }
     nav button.active {
@@ -89,65 +87,36 @@
       border-color: var(--text);
     }
     main {
-      padding: 24px 32px 80px;
+      padding: 24px 32px 64px;
       display: flex;
       flex-direction: column;
       gap: 24px;
     }
     h1 { margin: 0; font-size: 28px; font-weight: 600; }
-    h2 { margin: 0; font-size: 20px; font-weight: 600; }
-    h3 { margin: 0; font-size: 16px; font-weight: 600; }
-    p { margin: 6px 0 0; }
+    h2 { margin: 0; font-size: 18px; font-weight: 600; }
     .muted { color: var(--muted); }
-    .page-header {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: flex-end;
-    }
     .card {
       background: var(--card);
       border-radius: var(--radius);
-      padding: 20px;
       box-shadow: var(--shadow);
+      padding: 20px;
     }
     .grid { display: grid; gap: 16px; }
-    .grid.cols-4 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-    .grid.cols-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
     .grid.cols-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .grid.cols-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
     .btn {
       border: none;
       border-radius: 999px;
       padding: 10px 18px;
+      cursor: pointer;
       font-size: 13px;
       font-weight: 500;
-      cursor: pointer;
     }
-    .btn.primary { background: var(--primary); color: #fff; }
+    .btn.primary { background: var(--accent); color: #fff; }
     .btn.secondary { background: transparent; border: 1px solid var(--line); color: var(--text); }
-    .btn.subtle { background: var(--accent-soft); color: var(--primary); }
-    .btn:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
+    .btn.subtle { background: var(--accent-soft); color: #1f2937; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .button-row { display: flex; gap: 10px; flex-wrap: wrap; }
-    .list { display: flex; flex-direction: column; gap: 12px; }
-    .list-item {
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-    }
-    .badge {
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 11px;
-      background: #f3f4f6;
-      color: #374151;
-    }
     .input, select, textarea {
       width: 100%;
       border-radius: 12px;
@@ -156,42 +125,56 @@
       font-size: 13px;
       background: #fff;
     }
-    textarea { min-height: 84px; resize: vertical; }
+    textarea { min-height: 80px; }
     label { font-size: 12px; color: var(--muted); display: block; margin-bottom: 6px; }
-    .form-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
-    .detail-tabs { display: flex; gap: 12px; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
+    .list { display: flex; flex-direction: column; gap: 12px; }
+    .list-item {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .badge {
+      background: #f3f4f6;
+      color: #374151;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+    .kpi h3 { margin: 0; font-size: 12px; color: var(--muted); font-weight: 500; }
+    .kpi span { font-size: 22px; font-weight: 600; }
+    .detail-tabs {
+      display: flex;
+      gap: 12px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 12px;
+    }
     .detail-tabs button {
       border: none;
       background: transparent;
-      padding: 10px 0;
+      padding: 8px 0;
       font-size: 13px;
       color: var(--muted);
       cursor: pointer;
       border-bottom: 2px solid transparent;
     }
     .detail-tabs button.active { color: var(--text); border-color: var(--text); }
-    .timeline {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-    .timeline-item {
-      border-left: 2px solid var(--line);
-      padding-left: 12px;
-      font-size: 12px;
-      color: var(--muted);
-    }
+    .timeline { display: flex; flex-direction: column; gap: 8px; }
+    .timeline-item { border-left: 2px solid var(--line); padding-left: 12px; font-size: 12px; color: var(--muted); }
     .toast {
       position: fixed;
-      right: 24px;
       bottom: 24px;
-      background: var(--primary);
+      right: 24px;
+      background: var(--accent);
       color: #fff;
       padding: 12px 16px;
       border-radius: 12px;
       box-shadow: var(--shadow);
       opacity: 0;
-      transform: translateY(10px);
+      transform: translateY(12px);
       transition: 0.3s;
     }
     .toast.show { opacity: 1; transform: translateY(0); }
@@ -210,95 +193,27 @@
       background: var(--card);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      width: min(720px, 100%);
+      width: min(760px, 100%);
       padding: 24px;
     }
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-    }
-    .modal-footer {
-      display: flex;
-      justify-content: flex-end;
-      gap: 12px;
-      margin-top: 16px;
-    }
-    .hint {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 4px;
-    }
-    .kanban {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
-    }
-    .kanban-column {
-      background: #f8fafc;
-      border-radius: 16px;
-      padding: 12px;
-      border: 1px solid var(--line);
-    }
-    .kanban-card {
-      background: var(--card);
-      border-radius: 12px;
-      padding: 12px;
-      box-shadow: var(--shadow);
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
-    .progress-bar {
-      height: 10px;
-      background: #e5e7eb;
-      border-radius: 999px;
-      position: relative;
-      overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #1d4ed8, #38bdf8);
-    }
-    .progress-marker {
-      position: absolute;
-      top: -6px;
-      width: 2px;
-      height: 22px;
-      background: #cbd5f5;
-    }
+    .modal-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; }
+    .hint { font-size: 11px; color: var(--muted); margin-top: 4px; }
     .empty {
       border: 1px dashed var(--line);
-      border-radius: 14px;
-      padding: 18px;
+      border-radius: 12px;
+      padding: 16px;
       color: var(--muted);
       font-size: 13px;
       text-align: center;
     }
-    .search-row {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-    .table th, .table td {
-      text-align: left;
-      padding: 10px;
-      border-bottom: 1px solid var(--line);
-    }
+    .table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .table th, .table td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
     .table td:last-child { text-align: right; }
     @media (max-width: 900px) {
-      .topbar { flex-direction: column; align-items: flex-start; }
-      main { padding: 20px 16px 80px; }
-      nav { padding: 8px 16px 16px; }
+      .topbar { flex-direction: column; align-items: flex-start; gap: 12px; }
+      nav { padding-left: 16px; padding-right: 16px; }
+      main { padding: 20px 16px 60px; }
     }
   </style>
 </head>
@@ -306,7 +221,7 @@
   <header>
     <div class="topbar">
       <div class="brand">
-        <svg class="icon" viewBox="0 0 24 24" width="18" height="18" fill="none"><path d="M4 13.5L12 3l8 10.5" stroke="#111827" stroke-width="1.6" stroke-linecap="round"/><path d="M6 13.5h12l-1.8 7.5H7.8L6 13.5z" stroke="#111827" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 13.5L12 3l8 10.5" stroke="#111827" stroke-width="1.6" stroke-linecap="round"/><path d="M6 13.5h12l-1.8 7.5H7.8L6 13.5z" stroke="#111827" stroke-width="1.6" stroke-linecap="round"/></svg>
         Alb Enerji CRM
       </div>
       <div class="pill-toggle" id="roleToggle"></div>
@@ -320,27 +235,13 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    const STORAGE_KEY = "alb_crm_data_v2";
-    const SETTINGS_KEY = "alb_crm_settings_v2";
+    const STORAGE_KEY = "alb_crm_data_v3";
+    const SETTINGS_KEY = "alb_crm_settings_v3";
     const ROLE_KEY = "alb_crm_role";
     const roles = ["YÖNETİCİ", "SATIŞ", "TEKNİK OFİS"];
-    const tabs = [
-      "Ana Panel",
-      "Pipeline",
-      "Lead’ler",
-      "Müşteriler",
-      "Teklifler",
-      "Siparişler",
-      "Görevler",
-      "Partner Programı",
-      "Ayarlar / Veri"
-    ];
+    const tabs = ["Ana Panel", "Lead’ler", "Müşteriler", "Pipeline", "Teklifler", "Siparişler", "Görevler", "Partner Programı", "Ayarlar / Veri"];
 
-    const defaultSettings = {
-      currency: "USD",
-      defaultPanelWattage: 550,
-      defaultWarehouse: "Antalya"
-    };
+    const defaultSettings = { currency: "USD", defaultPanelWattage: 550, defaultWarehouse: "Antalya" };
 
     const emptyData = () => ({
       leads: [],
@@ -352,19 +253,7 @@
       partners: [],
       purchases: [],
       shipments: [],
-      counters: {
-        lead: 1,
-        account: 1,
-        opportunity: 1,
-        quote: 1,
-        order: 1,
-        task: 1,
-        partner: 1,
-        purchase: 1,
-        shipment: 1,
-        quoteSeq: 1,
-        orderSeq: 1
-      }
+      counters: { lead: 1, account: 1, opportunity: 1, quote: 1, order: 1, task: 1, partner: 1, quoteSeq: 1, orderSeq: 1 }
     });
 
     const state = {
@@ -372,8 +261,9 @@
       role: localStorage.getItem(ROLE_KEY) || roles[0],
       data: emptyData(),
       settings: defaultSettings,
-      selected: { type: null, id: null },
-      detailTab: "Özet"
+      selected: { entity: null, id: null },
+      detailTab: "Özet",
+      modal: { type: null, mode: null, context: null }
     };
 
     const toast = document.getElementById("toast");
@@ -386,32 +276,23 @@
       setTimeout(() => toast.classList.remove("show"), 2200);
     };
 
-    const formatUSD = (value) => new Intl.NumberFormat("tr-TR", {
-      style: "currency",
-      currency: state.settings.currency,
-      maximumFractionDigits: 0
-    }).format(value || 0);
-
-    const daysBetween = (start, end) => {
-      const a = new Date(start);
-      const b = new Date(end);
-      return Math.max(0, Math.round((b - a) / (1000 * 60 * 60 * 24)));
-    };
-
     const nowISO = () => new Date().toISOString();
     const shortDate = (value) => value ? new Date(value).toISOString().slice(0, 10) : "";
+    const formatUSD = (value) => new Intl.NumberFormat("tr-TR", { style: "currency", currency: state.settings.currency, maximumFractionDigits: 0 }).format(value || 0);
 
     const generateId = (type) => {
       const id = `${type}-${state.data.counters[type]}`;
       state.data.counters[type] += 1;
       return id;
     };
+
     const generateQuoteNo = () => {
       const year = new Date().getFullYear();
       const seq = String(state.data.counters.quoteSeq).padStart(4, "0");
       state.data.counters.quoteSeq += 1;
       return `ALB-Q-${year}-${seq}`;
     };
+
     const generateOrderNo = () => {
       const year = new Date().getFullYear();
       const seq = String(state.data.counters.orderSeq).padStart(4, "0");
@@ -426,154 +307,71 @@
       return Math.round(qty * watt * price);
     };
 
-    const can = (action) => {
-      const role = state.role;
-      const rules = {
-        editTargetPrice: ["YÖNETİCİ"],
-        editDiscount: ["YÖNETİCİ"],
-        markQuoteAccepted: ["YÖNETİCİ"],
-        createOrder: ["YÖNETİCİ"],
-        manageShipments: ["YÖNETİCİ"],
-        moveToAdvancedStage: ["YÖNETİCİ"],
-        editPricing: ["YÖNETİCİ", "SATIŞ"],
-        createQuote: ["YÖNETİCİ", "SATIŞ"],
-        editOpportunity: ["YÖNETİCİ", "SATIŞ", "TEKNİK OFİS"],
-        editLead: ["YÖNETİCİ", "SATIŞ"],
-        editTask: ["YÖNETİCİ", "SATIŞ"],
-        editPartner: ["YÖNETİCİ"]
-      };
-      return (rules[action] || ["YÖNETİCİ"]).includes(role);
-    };
-
-    const fieldLock = (entity, field) => {
-      const role = state.role;
-      if (entity === "opportunity" && field === "targetPricePerWatt") return role !== "YÖNETİCİ";
-      if (entity === "quote" && field === "discountUSD") return role !== "YÖNETİCİ";
-      if (entity === "quoteItem" && field === "unitPriceUSD") return role === "TEKNİK OFİS";
-      if (entity === "quote" && field === "status") return role !== "YÖNETİCİ";
-      return false;
-    };
-
-    const withDefaults = (item, defaults) => ({ ...defaults, ...item });
-
-    const normalizeData = () => {
-      const data = state.data;
-      data.leads = data.leads.map(lead => withDefaults(lead, {
-        id: generateId("lead"),
-        createdAt: nowISO(),
-        updatedAt: nowISO(),
-        accountId: "",
-        source: "Web",
-        status: "Yeni",
-        companyName: "",
-        contactName: "",
-        phone: "",
-        email: "",
-        city: "",
-        country: "Türkiye",
-        segment: "Konut",
-        interest: "Panel",
-        notes: [],
-        tags: [],
-        owner: "SATIŞ",
-        lastTouchAt: nowISO(),
-        nextActionAt: nowISO(),
-        timeline: []
+    const ensureDefaults = () => {
+      const d = state.data;
+      d.leads = d.leads.map(lead => ({
+        id: lead.id || generateId("lead"),
+        createdAt: lead.createdAt || nowISO(),
+        updatedAt: lead.updatedAt || nowISO(),
+        status: lead.status || "Yeni",
+        source: lead.source || "Web",
+        companyName: lead.companyName || "",
+        contactName: lead.contactName || "",
+        phone: lead.phone || "",
+        email: lead.email || "",
+        city: lead.city || "",
+        country: lead.country || "Türkiye",
+        segment: lead.segment || "Konut",
+        interest: lead.interest || "Panel",
+        owner: lead.owner || "SATIŞ",
+        tags: lead.tags || [],
+        timeline: lead.timeline || [],
+        accountId: lead.accountId || null,
+        lastTouchAt: lead.lastTouchAt || nowISO(),
+        nextActionAt: lead.nextActionAt || nowISO()
       }));
-      data.accounts = data.accounts.map(account => withDefaults(account, {
-        id: generateId("account"),
-        createdAt: nowISO(),
-        updatedAt: nowISO(),
-        companyName: "",
-        taxNo: "",
-        city: "",
-        country: "Türkiye",
-        type: "Son kullanıcı",
-        contacts: [],
-        accountNotes: [],
-        timeline: []
+      d.accounts = d.accounts.map(account => ({
+        id: account.id || generateId("account"),
+        createdAt: account.createdAt || nowISO(),
+        updatedAt: account.updatedAt || nowISO(),
+        type: account.type || "Son kullanıcı",
+        companyName: account.companyName || "",
+        taxNo: account.taxNo || "",
+        city: account.city || "",
+        country: account.country || "Türkiye",
+        contacts: account.contacts || [],
+        notes: account.notes || [],
+        timeline: account.timeline || []
       }));
-      data.opportunities = data.opportunities.map(opp => withDefaults(opp, {
-        id: generateId("opportunity"),
-        createdAt: nowISO(),
-        updatedAt: nowISO(),
-        leadId: "",
-        accountId: "",
-        title: "",
-        stage: "Lead",
-        expectedPanelsQty: 0,
-        panelModel: "",
-        panelWattage: state.settings.defaultPanelWattage,
-        targetPricePerWatt: 0.19,
-        expectedCloseDate: shortDate(nowISO()),
-        probability: 30,
-        competitor: "",
-        owner: "SATIŞ",
-        timeline: [],
-        stageUpdatedAt: nowISO()
+      d.opportunities = d.opportunities.map(opp => ({
+        id: opp.id || generateId("opportunity"),
+        createdAt: opp.createdAt || nowISO(),
+        updatedAt: opp.updatedAt || nowISO(),
+        title: opp.title || "",
+        stage: opp.stage || "Lead",
+        stageUpdatedAt: opp.stageUpdatedAt || nowISO(),
+        expectedPanelsQty: opp.expectedPanelsQty ?? 0,
+        panelModel: opp.panelModel || "",
+        panelWattage: opp.panelWattage ?? state.settings.defaultPanelWattage,
+        targetPricePerWatt: opp.targetPricePerWatt ?? 0.19,
+        probability: opp.probability ?? 30,
+        owner: opp.owner || "SATIŞ",
+        leadId: opp.leadId || null,
+        accountId: opp.accountId || null,
+        sourceEpcAccountId: opp.sourceEpcAccountId || null
       }));
-      data.quotes = data.quotes.map(quote => withDefaults(quote, {
-        id: generateId("quote"),
-        createdAt: nowISO(),
-        updatedAt: nowISO(),
-        opportunityId: "",
-        quoteNo: generateQuoteNo(),
-        items: [],
-        totals: { subtotalUSD: 0, discountUSD: 0, shippingUSD: 0, grandTotalUSD: 0 },
-        paymentTerms: "LC90",
-        deliveryTerms: "FOB",
-        status: "Taslak",
-        pdfPreviewMode: true,
-        timeline: []
-      }));
-      data.orders = data.orders.map(order => withDefaults(order, {
-        id: generateId("order"),
-        createdAt: nowISO(),
-        updatedAt: nowISO(),
-        opportunityId: "",
-        orderNo: generateOrderNo(),
-        status: "Alındı",
-        promisedShipDate: shortDate(nowISO()),
-        warehouse: state.settings.defaultWarehouse,
-        logisticsNotes: "",
-        timeline: []
-      }));
-      data.tasks = data.tasks.map(task => withDefaults(task, {
-        id: generateId("task"),
-        createdAt: nowISO(),
-        updatedAt: nowISO(),
-        title: "",
-        relatedTo: "",
-        dueDate: shortDate(nowISO()),
-        priority: "Orta",
-        status: "Açık",
-        owner: "SATIŞ"
-      }));
-      data.partners = data.partners.map(partner => withDefaults(partner, {
-        id: generateId("partner"),
-        createdAt: nowISO(),
-        updatedAt: nowISO(),
-        accountId: "",
-        companyName: "",
-        yearlyTarget: 1000,
-        timeline: []
-      }));
-      data.purchases = data.purchases.map(purchase => withDefaults(purchase, {
-        id: generateId("purchase"),
-        createdAt: nowISO(),
-        updatedAt: nowISO(),
-        partnerId: "",
-        date: shortDate(nowISO()),
-        qtyPanels: 0,
-        panelWattage: state.settings.defaultPanelWattage
-      }));
-      data.shipments = data.shipments.map(shipment => withDefaults(shipment, {
-        id: generateId("shipment"),
-        createdAt: nowISO(),
-        updatedAt: nowISO(),
-        partnerId: "",
-        date: shortDate(nowISO()),
-        qtyPanels: 0
+      d.quotes = d.quotes.map(quote => ({
+        id: quote.id || generateId("quote"),
+        createdAt: quote.createdAt || nowISO(),
+        updatedAt: quote.updatedAt || nowISO(),
+        quoteNo: quote.quoteNo || generateQuoteNo(),
+        status: quote.status || "Taslak",
+        opportunityId: quote.opportunityId || null,
+        paymentTerms: quote.paymentTerms || "LC90",
+        deliveryTerms: quote.deliveryTerms || "FOB",
+        items: quote.items || [],
+        totals: quote.totals || { subtotalUSD: 0, discountUSD: 0, shippingUSD: 0, grandTotalUSD: 0 },
+        timeline: quote.timeline || []
       }));
     };
 
@@ -584,1974 +382,912 @@
       }
       const savedSettings = localStorage.getItem(SETTINGS_KEY);
       state.settings = savedSettings ? { ...defaultSettings, ...JSON.parse(savedSettings) } : defaultSettings;
-      normalizeData();
+      ensureDefaults();
     };
+
     const saveData = () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state.data));
       localStorage.setItem(SETTINGS_KEY, JSON.stringify(state.settings));
     };
 
-    const addTimeline = (collection, id, text) => {
+    const addTimeline = (collection, id, message) => {
       const item = state.data[collection].find(entry => entry.id === id);
       if (!item) return;
       item.timeline = item.timeline || [];
-      item.timeline.unshift(`${new Date().toLocaleDateString("tr-TR")} · ${text}`);
+      item.timeline.unshift(`${new Date().toLocaleDateString("tr-TR")} · ${message}`);
     };
 
-    // Partner bonus engine (retroactive, weighted wattage, multi-threshold)
-    const partnerBonusEngine = (purchases, shipments = []) => {
-      const tiers = [
-        { threshold: 0, price: 0.19 },
-        { threshold: 400, price: 0.185 },
-        { threshold: 700, price: 0.18 },
-        { threshold: 1000, price: 0.175 }
-      ];
-      const sorted = [...purchases].sort((a, b) => new Date(a.date) - new Date(b.date));
-      const totalPanels = sorted.reduce((sum, p) => sum + Number(p.qtyPanels || 0), 0);
-      const wattForFirstN = (n) => {
-        let remaining = n;
-        let watt = 0;
-        for (const purchase of sorted) {
-          if (remaining <= 0) break;
-          const qty = Math.min(remaining, Number(purchase.qtyPanels || 0));
-          watt += qty * Number(purchase.panelWattage || state.settings.defaultPanelWattage);
-          remaining -= qty;
-        }
-        return watt;
-      };
-      const crossings = [
-        { threshold: 400, from: 0.19, to: 0.185 },
-        { threshold: 700, from: 0.185, to: 0.18 },
-        { threshold: 1000, from: 0.18, to: 0.175 }
-      ];
-      const discountValue = crossings.reduce((sum, cross) => {
-        if (totalPanels >= cross.threshold) {
-          const wattage = wattForFirstN(cross.threshold);
-          return sum + (cross.from - cross.to) * wattage;
-        }
-        return sum;
-      }, 0);
-      const currentTier = totalPanels >= 1000 ? tiers[3] : totalPanels >= 700 ? tiers[2] : totalPanels >= 400 ? tiers[1] : tiers[0];
-      const baseWattage = totalPanels ? wattForFirstN(Math.min(totalPanels, currentTier.threshold || totalPanels)) : 0;
-      const weightedAvgWatt = baseWattage && (currentTier.threshold ? baseWattage / currentTier.threshold : state.settings.defaultPanelWattage);
-      const earnedBonusPanels = currentTier.price && weightedAvgWatt ? discountValue / (currentTier.price * weightedAvgWatt) : 0;
-      const shippedPanels = shipments.reduce((sum, s) => sum + Number(s.qtyPanels || 0), 0);
-      const remainingPanels = Math.max(0, earnedBonusPanels - shippedPanels);
-      const nextThreshold = totalPanels < 400 ? 400 : totalPanels < 700 ? 700 : totalPanels < 1000 ? 1000 : null;
-      const remainingToNext = nextThreshold ? Math.max(0, nextThreshold - totalPanels) : 0;
-      const lastPurchaseBonus = (() => {
-        if (!sorted.length) return 0;
-        const trimmed = sorted.slice(0, -1);
-        const prev = partnerBonusEngine(trimmed, shipments);
-        return Math.max(0, earnedBonusPanels - prev.earnedBonusPanels);
-      })();
-      return {
-        totalPanels,
-        currentTier,
-        earnedBonusPanels,
-        shippedPanels,
-        remainingPanels,
-        nextThreshold,
-        remainingToNext,
-        lastPurchaseBonus
-      };
-    };
+    const getLead = (id) => state.data.leads.find(l => l.id === id);
+    const getAccount = (id) => state.data.accounts.find(a => a.id === id);
+    const getOpportunity = (id) => state.data.opportunities.find(o => o.id === id);
+    const getQuote = (id) => state.data.quotes.find(q => q.id === id);
 
-    const openModal = ({ title, subtitle, fields, onSave, confirmText = "Kaydet" }) => {
-      modalContent.innerHTML = `
-        <div class="modal-header">
-          <div>
-            <h2>${title}</h2>
-            <p class="muted">${subtitle || ""}</p>
+    const openModal = ({ type, mode, entityId, context }) => {
+      state.modal = { type, mode, context };
+      const modeLabel = mode === "edit" ? "Düzenle" : "Yeni";
+      let body = "";
+
+      if (type === "lead") {
+        const lead = mode === "edit" ? getLead(entityId) : null;
+        body = `
+          <div class="modal-header">
+            <div>
+              <h2>${modeLabel} Lead</h2>
+              <p class="muted">Lead bilgilerini girin.</p>
+            </div>
+            <button class="btn secondary" data-action="modal-close">Kapat</button>
           </div>
-          <button class="btn secondary" id="modalClose">Kapat</button>
-        </div>
-        <div class="modal-body" style="margin-top:16px;">
-          <div class="form-grid">
-            ${fields.map(field => {
-              if (field.type === "textarea") {
-                return `
-                  <div style="grid-column: span 2;">
-                    <label>${field.label}</label>
-                    <textarea class="input" data-field="${field.name}" ${field.disabled ? "disabled" : ""}>${field.value || ""}</textarea>
-                    ${field.hint ? `<div class="hint">${field.hint}</div>` : ""}
-                  </div>
-                `;
-              }
-              if (field.type === "select") {
-                return `
-                  <div>
-                    <label>${field.label}</label>
-                    <select class="input" data-field="${field.name}" ${field.disabled ? "disabled" : ""}>
-                      ${field.options.map(opt => `<option value="${opt}" ${opt === field.value ? "selected" : ""}>${opt}</option>`).join("")}
-                    </select>
-                    ${field.hint ? `<div class="hint">${field.hint}</div>` : ""}
-                  </div>
-                `;
-              }
-              return `
-                <div>
-                  <label>${field.label}</label>
-                  <input class="input" type="${field.type || "text"}" data-field="${field.name}" value="${field.value ?? ""}" ${field.disabled ? "disabled" : ""} />
-                  ${field.hint ? `<div class="hint">${field.hint}</div>` : ""}
+          <div style="margin-top:16px;">
+            <div class="grid cols-2">
+              <div><label>Şirket adı</label><input class="input" data-field="companyName" value="${lead?.companyName || ""}" /></div>
+              <div><label>İlgili kişi</label><input class="input" data-field="contactName" value="${lead?.contactName || ""}" /></div>
+              <div><label>Telefon</label><input class="input" data-field="phone" value="${lead?.phone || ""}" /></div>
+              <div><label>E-posta</label><input class="input" data-field="email" value="${lead?.email || ""}" /></div>
+              <div><label>Şehir</label><input class="input" data-field="city" value="${lead?.city || ""}" /></div>
+              <div><label>Ülke</label><input class="input" data-field="country" value="${lead?.country || "Türkiye"}" /></div>
+              <div><label>Kaynak</label>
+                <select class="input" data-field="source">
+                  ${["Instagram","Facebook","LinkedIn","Web","Fuar","Referans"].map(opt => `<option ${opt===lead?.source?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+              <div><label>Durum</label>
+                <select class="input" data-field="status">
+                  ${["Yeni","Temas Edildi","Nitelikli","Elendi"].map(opt => `<option ${opt===lead?.status?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+              <div><label>Segment</label>
+                <select class="input" data-field="segment">
+                  ${["Konut","Ticari","EPC","Bayi"].map(opt => `<option ${opt===lead?.segment?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+              <div><label>İlgi alanı</label>
+                <select class="input" data-field="interest">
+                  ${["Panel","EPC","Depolama","EV Şarj"].map(opt => `<option ${opt===lead?.interest?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+            </div>
+            <div class="hint" id="modalValidation" style="margin-top:10px;"></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn secondary" data-action="modal-close">İptal</button>
+            <button class="btn primary" data-action="modal-save" data-entity="lead" data-mode="${mode}" data-id="${lead?.id || ""}">Kaydet</button>
+          </div>
+        `;
+      }
+
+      if (type === "account") {
+        const account = mode === "edit" ? getAccount(entityId) : null;
+        body = `
+          <div class="modal-header">
+            <div>
+              <h2>${modeLabel} Müşteri</h2>
+              <p class="muted">Müşteri bilgilerini girin.</p>
+            </div>
+            <button class="btn secondary" data-action="modal-close">Kapat</button>
+          </div>
+          <div style="margin-top:16px;">
+            <div class="grid cols-2">
+              <div><label>Şirket adı</label><input class="input" data-field="companyName" value="${account?.companyName || ""}" /></div>
+              <div><label>Tip</label>
+                <select class="input" data-field="type">
+                  ${["Son kullanıcı","EPC","Bayi"].map(opt => `<option ${opt===account?.type?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+              <div><label>Vergi no</label><input class="input" data-field="taxNo" value="${account?.taxNo || ""}" /></div>
+              <div><label>Şehir</label><input class="input" data-field="city" value="${account?.city || ""}" /></div>
+              <div><label>Ülke</label><input class="input" data-field="country" value="${account?.country || "Türkiye"}" /></div>
+            </div>
+            <div class="hint" id="modalValidation" style="margin-top:10px;"></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn secondary" data-action="modal-close">İptal</button>
+            <button class="btn primary" data-action="modal-save" data-entity="account" data-mode="${mode}" data-id="${account?.id || ""}">Kaydet</button>
+          </div>
+        `;
+      }
+
+      if (type === "opportunity") {
+        const opp = mode === "edit" ? getOpportunity(entityId) : null;
+        const leadOptions = state.data.leads.map(lead => `<option value="${lead.id}" ${lead.id===opp?.leadId?"selected":""}>${lead.companyName}</option>`).join("");
+        const accountOptions = state.data.accounts.map(account => `<option value="${account.id}" ${account.id===opp?.accountId?"selected":""}>${account.companyName}</option>`).join("");
+        const epcOptions = state.data.accounts.filter(a => a.type === "EPC").map(account => `<option value="${account.id}" ${account.id===opp?.sourceEpcAccountId?"selected":""}>${account.companyName}</option>`).join("");
+        body = `
+          <div class="modal-header">
+            <div>
+              <h2>${modeLabel} Fırsat</h2>
+              <p class="muted">Müşteri veya lead seçimi zorunludur.</p>
+            </div>
+            <button class="btn secondary" data-action="modal-close">Kapat</button>
+          </div>
+          <div style="margin-top:16px;">
+            <div class="grid cols-2">
+              <div><label>Başlık</label><input class="input" data-field="title" value="${opp?.title || ""}" /></div>
+              <div><label>Sorumlu</label><input class="input" data-field="owner" value="${opp?.owner || state.role}" /></div>
+              <div><label>Bağlı Lead (opsiyonel)</label>
+                <select class="input" data-field="leadId">
+                  <option value="">Seçiniz</option>
+                  ${leadOptions}
+                </select>
+              </div>
+              <div><label>Müşteri (opsiyonel)</label>
+                <select class="input" data-field="accountId">
+                  <option value="">Seçiniz</option>
+                  ${accountOptions}
+                </select>
+              </div>
+              <div><label>Kaynak EPC (opsiyonel)</label>
+                <select class="input" data-field="sourceEpcAccountId">
+                  <option value="">Seçiniz</option>
+                  ${epcOptions}
+                </select>
+              </div>
+              <div><label>Olasılık</label><input class="input" data-field="probability" type="number" value="${opp?.probability ?? 30}" /></div>
+              <div><label>Panel adedi</label><input class="input" data-field="expectedPanelsQty" type="number" value="${opp?.expectedPanelsQty ?? 0}" /></div>
+              <div><label>Panel modeli</label><input class="input" data-field="panelModel" value="${opp?.panelModel || ""}" /></div>
+              <div><label>Panel watt</label><input class="input" data-field="panelWattage" type="number" value="${opp?.panelWattage ?? state.settings.defaultPanelWattage}" /></div>
+              <div><label>Hedef fiyat / W</label><input class="input" data-field="targetPricePerWatt" type="number" value="${opp?.targetPricePerWatt ?? 0.19}" /></div>
+            </div>
+            <div class="hint" id="modalValidation" style="margin-top:10px;"></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn secondary" data-action="modal-close">İptal</button>
+            <button class="btn primary" data-action="modal-save" data-entity="opportunity" data-mode="${mode}" data-id="${opp?.id || ""}">Kaydet</button>
+          </div>
+        `;
+      }
+
+      if (type === "quote") {
+        const quote = mode === "edit" ? getQuote(entityId) : null;
+        const oppOptions = state.data.opportunities.map(opp => `<option value="${opp.id}" ${opp.id===quote?.opportunityId?"selected":""}>${opp.title}</option>`).join("");
+        body = `
+          <div class="modal-header">
+            <div>
+              <h2>${modeLabel} Teklif</h2>
+              <p class="muted">Teklif bir fırsata bağlı olmalıdır.</p>
+            </div>
+            <button class="btn secondary" data-action="modal-close">Kapat</button>
+          </div>
+          <div style="margin-top:16px;">
+            <div class="grid cols-2">
+              <div style="grid-column: span 2;">
+                <label>Fırsat</label>
+                <select class="input" data-field="opportunityId">
+                  <option value="">Seçiniz</option>
+                  ${oppOptions}
+                </select>
+                <div class="button-row" style="margin-top:8px;">
+                  <button class="btn subtle" data-action="inline-create-opp">+ Fırsat oluştur</button>
                 </div>
-              `;
-            }).join("")}
+              </div>
+              <div><label>Ödeme</label>
+                <select class="input" data-field="paymentTerms">
+                  ${["LC90","Kredi Kartı","Nakit","Vade"].map(opt => `<option ${opt===quote?.paymentTerms?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+              <div><label>Teslimat</label>
+                <select class="input" data-field="deliveryTerms">
+                  ${["Exworks","FOB","CIF","CIP"].map(opt => `<option ${opt===quote?.deliveryTerms?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+              <div><label>Durum</label>
+                <select class="input" data-field="status">
+                  ${["Taslak","Gönderildi","Kabul","Red"].map(opt => `<option ${opt===quote?.status?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+              <div><label>İndirim (USD)</label><input class="input" data-field="discountUSD" type="number" value="${quote?.totals?.discountUSD ?? 0}" /></div>
+              <div><label>Sevkiyat (USD)</label><input class="input" data-field="shippingUSD" type="number" value="${quote?.totals?.shippingUSD ?? 0}" /></div>
+            </div>
+            <div style="margin-top:16px;">
+              <h2>Kalemler</h2>
+              <table class="table" id="quoteItemsTable">
+                <thead>
+                  <tr><th>Tip</th><th>Açıklama</th><th>Adet</th><th>Birim</th><th>Fiyat</th><th></th></tr>
+                </thead>
+                <tbody>
+                  ${(quote?.items || [{ type: "Panel", description: "", qty: 1, unit: "Adet", unitPriceUSD: 0 }]).map((item, idx) => `
+                    <tr data-idx="${idx}">
+                      <td>
+                        <select class="input" data-item="type">
+                          ${["Panel","İnverter","Konstrüksiyon","Kablo","İşçilik","Diğer"].map(opt => `<option ${opt===item.type?"selected":""}>${opt}</option>`).join("")}
+                        </select>
+                      </td>
+                      <td><input class="input" data-item="description" value="${item.description}" /></td>
+                      <td><input class="input" data-item="qty" type="number" value="${item.qty}" /></td>
+                      <td><input class="input" data-item="unit" value="${item.unit}" /></td>
+                      <td><input class="input" data-item="unitPriceUSD" type="number" value="${item.unitPriceUSD}" /></td>
+                      <td><button class="btn secondary" data-action="remove-quote-item">Sil</button></td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+              <div class="button-row" style="margin-top:8px;">
+                <button class="btn secondary" data-action="add-quote-item">Kalem ekle</button>
+              </div>
+            </div>
+            <div class="hint" id="modalValidation" style="margin-top:10px;"></div>
           </div>
-          <div class="hint" id="modalValidation" style="margin-top:10px;"></div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn secondary" id="modalCancel">İptal</button>
-          <button class="btn primary" id="modalSave">${confirmText}</button>
-        </div>
-      `;
+          <div class="modal-footer">
+            <button class="btn secondary" data-action="modal-close">İptal</button>
+            <button class="btn primary" data-action="modal-save" data-entity="quote" data-mode="${mode}" data-id="${quote?.id || ""}">Kaydet</button>
+          </div>
+        `;
+      }
+
+      if (type === "convertLead") {
+        const lead = getLead(entityId);
+        const accountOptions = state.data.accounts.map(account => `<option value="${account.id}">${account.companyName}</option>`).join("");
+        body = `
+          <div class="modal-header">
+            <div>
+              <h2>Müşteriye Dönüştür</h2>
+              <p class="muted">Lead'i müşteri hesabına bağlayın.</p>
+            </div>
+            <button class="btn secondary" data-action="modal-close">Kapat</button>
+          </div>
+          <div style="margin-top:16px;">
+            <label>Seçenek</label>
+            <select class="input" data-field="convertMode">
+              <option value="new">Yeni müşteri oluştur</option>
+              <option value="existing">Mevcut müşteriyle eşleştir</option>
+            </select>
+            <div style="margin-top:12px;">
+              <label>Mevcut müşteri</label>
+              <select class="input" data-field="existingAccountId">
+                <option value="">Seçiniz</option>
+                ${accountOptions}
+              </select>
+            </div>
+            <div style="margin-top:12px;">
+              <label><input type="checkbox" data-field="createOpp" /> Bu lead’den fırsat oluştur</label>
+            </div>
+            <div class="hint" id="modalValidation" style="margin-top:10px;"></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn secondary" data-action="modal-close">İptal</button>
+            <button class="btn primary" data-action="modal-save" data-entity="convertLead" data-mode="create" data-id="${lead?.id || ""}">Dönüştür</button>
+          </div>
+        `;
+      }
+
+      modalContent.innerHTML = body;
       modalBackdrop.classList.add("active");
-      const closeModal = () => modalBackdrop.classList.remove("active");
-      document.getElementById("modalClose").addEventListener("click", closeModal);
-      document.getElementById("modalCancel").addEventListener("click", closeModal);
-      document.getElementById("modalSave").addEventListener("click", () => {
-        const values = {};
-        fields.forEach(field => {
-          const el = modalContent.querySelector(`[data-field="${field.name}"]`);
-          values[field.name] = field.type === "number" ? Number(el.value) : el.value;
-        });
-        if (fields.some(f => f.required && !values[f.name])) {
-          document.getElementById("modalValidation").textContent = "Lütfen gerekli alanları doldurun.";
-          return;
+    };
+
+    const closeModal = () => {
+      modalBackdrop.classList.remove("active");
+      state.modal = { type: null, mode: null, context: null };
+    };
+
+    const collectModalFields = () => {
+      const values = {};
+      modalContent.querySelectorAll("[data-field]").forEach(el => {
+        const name = el.dataset.field;
+        if (el.type === "checkbox") {
+          values[name] = el.checked;
+        } else {
+          values[name] = el.value;
         }
-        onSave(values);
-        closeModal();
       });
+      return values;
     };
 
-    const openConfirm = ({ title, subtitle, onConfirm }) => {
-      modalContent.innerHTML = `
-        <div class="modal-header">
-          <div>
-            <h2>${title}</h2>
-            <p class="muted">${subtitle || ""}</p>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn secondary" id="modalCancel">Vazgeç</button>
-          <button class="btn primary" id="modalConfirm">Onayla</button>
-        </div>
-      `;
-      modalBackdrop.classList.add("active");
-      document.getElementById("modalCancel").addEventListener("click", () => modalBackdrop.classList.remove("active"));
-      document.getElementById("modalConfirm").addEventListener("click", () => {
-        onConfirm();
-        modalBackdrop.classList.remove("active");
-      });
-    };
-
-    const updateQuoteTotals = (quote) => {
-      const subtotal = quote.items.reduce((sum, item) => sum + (Number(item.qty || 0) * Number(item.unitPriceUSD || 0)), 0);
-      const discount = Number(quote.totals.discountUSD || 0);
-      const shipping = Number(quote.totals.shippingUSD || 0);
-      quote.totals.subtotalUSD = subtotal;
-      quote.totals.grandTotalUSD = Math.max(0, subtotal - discount + shipping);
+    const computeQuoteTotals = (items, discountUSD, shippingUSD) => {
+      const subtotalUSD = items.reduce((sum, item) => sum + (Number(item.qty || 0) * Number(item.unitPriceUSD || 0)), 0);
+      const grandTotalUSD = Math.max(0, subtotalUSD - Number(discountUSD || 0) + Number(shippingUSD || 0));
+      return { subtotalUSD, discountUSD: Number(discountUSD || 0), shippingUSD: Number(shippingUSD || 0), grandTotalUSD };
     };
 
     const renderRoleToggle = () => {
       const container = document.getElementById("roleToggle");
       container.innerHTML = roles.map(role => `<button class="${state.role === role ? "active" : ""}" data-role="${role}">${role}</button>`).join("");
-      container.querySelectorAll("button").forEach(btn => {
-        btn.addEventListener("click", () => {
-          state.role = btn.dataset.role;
-          localStorage.setItem(ROLE_KEY, state.role);
-          renderApp();
-        });
-      });
     };
 
     const renderTabs = () => {
       const nav = document.getElementById("navTabs");
       nav.innerHTML = tabs.map(tab => `<button class="${state.activeTab === tab ? "active" : ""}" data-tab="${tab}">${tab}</button>`).join("");
-      nav.querySelectorAll("button").forEach(btn => {
-        btn.addEventListener("click", () => {
-          state.activeTab = btn.dataset.tab;
-          state.selected = { type: null, id: null };
-          state.detailTab = "Özet";
-          renderApp();
-        });
-      });
     };
 
     const renderDashboard = () => {
-      const app = document.getElementById("app");
-      const now = new Date();
-      const monthLeads = state.data.leads.filter(lead => new Date(lead.createdAt).getMonth() === now.getMonth());
+      const month = new Date().getMonth();
+      const monthLeads = state.data.leads.filter(lead => new Date(lead.createdAt).getMonth() === month);
       const pipelineValue = state.data.opportunities.reduce((sum, opp) => sum + computeOpportunityValue(opp), 0);
       const quotesByStatus = state.data.quotes.reduce((acc, quote) => {
         acc[quote.status] = (acc[quote.status] || 0) + 1;
         return acc;
       }, {});
-      const closedOpps = state.data.opportunities.filter(opp => opp.closedAt);
-      const avgCycle = closedOpps.length ? Math.round(closedOpps.reduce((sum, opp) => sum + daysBetween(opp.createdAt, opp.closedAt), 0) / closedOpps.length) : 0;
-      const weekTasks = state.data.tasks.filter(task => new Date(task.dueDate) <= new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7));
-      const hottest = [...state.data.opportunities]
-        .sort((a, b) => (computeOpportunityValue(b) * (b.probability || 0)) - (computeOpportunityValue(a) * (a.probability || 0)))
-        .slice(0, 5);
-      const focusItems = [
-        ...state.data.tasks.filter(task => task.status === "Açık" && new Date(task.dueDate) < now).map(task => `Geciken görev: ${task.title}`),
-        ...state.data.leads.filter(lead => lead.lastTouchAt && daysBetween(lead.lastTouchAt, now) > 7).map(lead => `7 gündür temas yok: ${lead.companyName}`),
-        ...state.data.opportunities.filter(opp => daysBetween(opp.stageUpdatedAt, now) > 14).map(opp => `Aşamada takıldı: ${opp.title}`)
-      ].slice(0, 5);
-
-      app.innerHTML = `
-        <div class="page-header">
+      return `
+        <div class="page-title">
           <div>
             <h1>Ana Panel</h1>
-            <p class="muted">Bugün şu ${Math.max(1, focusItems.length)} adım satış hızını artırır.</p>
+            <p class="muted">Bugün satış akışını netleştirmek için hazırlanmış özet.</p>
           </div>
           <div class="button-row">
-            <button class="btn secondary" id="seedData">Demo verisi yükle</button>
+            <button class="btn secondary" data-action="seed-demo">Demo verisi yükle</button>
           </div>
         </div>
-        <section class="grid cols-4">
-          <div class="card">
-            <h3>Bu ay yeni lead</h3>
-            <p style="font-size:22px; font-weight:600;">${monthLeads.length}</p>
-          </div>
-          <div class="card">
-            <h3>Pipeline toplam değeri</h3>
-            <p style="font-size:22px; font-weight:600;">${formatUSD(pipelineValue)}</p>
-          </div>
-          <div class="card">
-            <h3>Teklifler</h3>
-            <p style="font-size:14px;">${quotesByStatus.Taslak || 0} Taslak · ${quotesByStatus.Gönderildi || 0} Gönderildi · ${quotesByStatus.Kabul || 0} Kabul</p>
-          </div>
-          <div class="card">
-            <h3>Ortalama satış döngüsü</h3>
-            <p style="font-size:22px; font-weight:600;">${avgCycle ? avgCycle + " gün" : "—"}</p>
-          </div>
-          <div class="card">
-            <h3>Bu hafta vadesi gelen görevler</h3>
-            <p style="font-size:22px; font-weight:600;">${weekTasks.length}</p>
-          </div>
-          <div class="card">
-            <h3>En sıcak fırsatlar</h3>
-            <p style="font-size:22px; font-weight:600;">${hottest.length}</p>
-          </div>
+        <section class="grid cols-3">
+          <div class="card kpi"><h3>Bu ay yeni lead</h3><span>${monthLeads.length}</span></div>
+          <div class="card kpi"><h3>Pipeline toplam değeri</h3><span>${formatUSD(pipelineValue)}</span></div>
+          <div class="card kpi"><h3>Teklifler</h3><span>${quotesByStatus.Taslak || 0} Taslak · ${quotesByStatus.Gönderildi || 0} Gönderildi · ${quotesByStatus.Kabul || 0} Kabul</span></div>
         </section>
-        <section class="grid cols-2">
-          <div class="card">
-            <h3>Bugün odak</h3>
-            <div class="list">
-              ${focusItems.length ? focusItems.map(item => `<div class="list-item"><span>${item}</span></div>`).join("") : `<div class="empty">Bugün için kritik aksiyon görünmüyor.</div>`}
-            </div>
-          </div>
-          <div class="card">
-            <h3>En sıcak fırsatlar</h3>
-            <div class="list">
-              ${hottest.map(opp => `
-                <div class="list-item">
-                  <div>
-                    <strong>${opp.title}</strong>
-                    <div class="muted">${opp.owner} · ${opp.stage}</div>
-                  </div>
-                  <div>${formatUSD(computeOpportunityValue(opp))}</div>
-                </div>
-              `).join("") || `<div class="empty">Henüz fırsat yok.</div>`}
-            </div>
-          </div>
-        </section>
-      `;
-      document.getElementById("seedData").addEventListener("click", () => {
-        seedDemoData();
-        showToast("Demo verisi yüklendi");
-        renderApp();
-      });
-    };
-
-    const renderPipeline = () => {
-      const app = document.getElementById("app");
-      const stages = ["Lead", "Nitelikli", "Teklif", "Revize", "LC-Ödeme", "Üretim", "Hazır", "Sevk", "Tamamlandı", "Kaybedildi"];
-      const filters = { owner: "", segment: "", city: "", source: "" };
-      app.innerHTML = `
-        <div class="page-header">
-          <div>
-            <h1>Pipeline</h1>
-            <p class="muted">Fırsatlarınızı aşama bazında görün.</p>
-          </div>
-          <div class="button-row">
-            <button class="btn primary" id="newOpp" ${can("editOpportunity") ? "" : "disabled"}>Yeni Fırsat</button>
-          </div>
-        </div>
-        <div class="card">
-          <div class="form-grid">
-            <div>
-              <label>Sorumlu</label>
-              <select id="filterOwner" class="input">
-                <option value="">Tümü</option>
-                ${[...new Set(state.data.opportunities.map(o => o.owner))].map(owner => `<option value="${owner}">${owner}</option>`).join("")}
-              </select>
-            </div>
-            <div>
-              <label>Segment</label>
-              <select id="filterSegment" class="input">
-                <option value="">Tümü</option>
-                ${[...new Set(state.data.leads.map(l => l.segment))].map(segment => `<option value="${segment}">${segment}</option>`).join("")}
-              </select>
-            </div>
-            <div>
-              <label>Şehir</label>
-              <select id="filterCity" class="input">
-                <option value="">Tümü</option>
-                ${[...new Set(state.data.leads.map(l => l.city))].map(city => `<option value="${city}">${city}</option>`).join("")}
-              </select>
-            </div>
-            <div>
-              <label>Kaynak</label>
-              <select id="filterSource" class="input">
-                <option value="">Tümü</option>
-                ${[...new Set(state.data.leads.map(l => l.source))].map(source => `<option value="${source}">${source}</option>`).join("")}
-              </select>
-            </div>
-          </div>
-        </div>
-        <section class="kanban" id="kanban"></section>
-      `;
-
-      const renderKanban = () => {
-        const container = document.getElementById("kanban");
-        const filtered = state.data.opportunities.filter(opp => {
-          const lead = state.data.leads.find(l => l.id === opp.leadId) || {};
-          return (!filters.owner || opp.owner === filters.owner)
-            && (!filters.segment || lead.segment === filters.segment)
-            && (!filters.city || lead.city === filters.city)
-            && (!filters.source || lead.source === filters.source);
-        });
-        container.innerHTML = stages.map(stage => {
-          const stageOpps = filtered.filter(opp => opp.stage === stage);
-          return `
-            <div class="kanban-column">
-              <h3 class="muted" style="font-size:13px;">${stage} (${stageOpps.length})</h3>
-              ${stageOpps.map(opp => `
-                <div class="kanban-card">
-                  <strong>${opp.title}</strong>
-                  <span class="muted">${opp.owner} · ${daysBetween(opp.stageUpdatedAt, nowISO())} gün</span>
-                  <span>${opp.expectedPanelsQty} panel · ${formatUSD(computeOpportunityValue(opp))}</span>
-                  <div class="button-row">
-                    <button class="btn secondary" data-detail="opportunity-${opp.id}">Detay</button>
-                  </div>
-                </div>
-              `).join("") || `<div class="empty">Boş</div>`}
-            </div>
-          `;
-        }).join("");
-        container.querySelectorAll("[data-detail]").forEach(btn => {
-          btn.addEventListener("click", () => {
-            const id = btn.dataset.detail.split("-")[1];
-            state.selected = { type: "opportunity", id };
-            state.activeTab = "Pipeline";
-            renderApp();
-          });
-        });
-      };
-
-      renderKanban();
-      ["filterOwner", "filterSegment", "filterCity", "filterSource"].forEach(id => {
-        document.getElementById(id).addEventListener("change", (event) => {
-          filters[id.replace("filter", "").toLowerCase()] = event.target.value;
-          renderKanban();
-        });
-      });
-
-      document.getElementById("newOpp").addEventListener("click", () => openOpportunityModal());
-    };
-
-    const renderListLayout = (title, subtitle, actionsHtml, filtersHtml, listHtml, detailHtml) => {
-      const app = document.getElementById("app");
-      app.innerHTML = `
-        <div class="page-header">
-          <div>
-            <h1>${title}</h1>
-            <p class="muted">${subtitle}</p>
-          </div>
-          <div class="button-row">${actionsHtml}</div>
-        </div>
-        <div class="card">
-          <div class="search-row">${filtersHtml}</div>
-        </div>
-        <div class="grid cols-2">
-          <div class="card">${listHtml}</div>
-          <div class="card">${detailHtml}</div>
-        </div>
-      `;
-    };
-
-    const renderDetailTabs = () => `
-      <div class="detail-tabs">
-        ${["Özet", "Notlar", "Zaman Çizgisi", "Bağlantılar"].map(tab => `
-          <button class="${state.detailTab === tab ? "active" : ""}" data-detail-tab="${tab}">${tab}</button>
-        `).join("")}
-      </div>
-    `;
-
-    const renderLeadDetail = (lead) => {
-      if (!lead) return `<div class="empty">Bir lead seçin.</div>`;
-      const notes = lead.notes || [];
-      const timeline = lead.timeline || [];
-      const relatedOpps = state.data.opportunities.filter(opp => opp.leadId === lead.id);
-      return `
-        <h3>${lead.companyName}</h3>
-        <p class="muted">${lead.contactName} · ${lead.city}</p>
-        ${renderDetailTabs()}
-        ${state.detailTab === "Özet" ? `
-          <div class="list">
-            <div class="list-item"><span>Durum</span><strong>${lead.status}</strong></div>
-            <div class="list-item"><span>Kaynak</span><strong>${lead.source}</strong></div>
-            <div class="list-item"><span>Sorumlu</span><strong>${lead.owner}</strong></div>
-            <div class="list-item"><span>Müşteri</span><strong>${lead.accountId ? "Oluşturuldu" : "Henüz yok"}</strong></div>
-          </div>
-          <div class="button-row" style="margin-top:16px;">
-            <button class="btn primary" id="leadCreateOpp">Fırsat oluştur</button>
-            <button class="btn secondary" id="leadConvert" ${lead.accountId ? "disabled" : ""}>Müşteriye dönüştür</button>
-            <button class="btn secondary" id="leadEdit">Düzenle</button>
-          </div>
-        ` : ""}
-        ${state.detailTab === "Notlar" ? `
-          <textarea class="input" id="leadNoteInput" placeholder="Not ekleyin"></textarea>
-          <div class="button-row" style="margin-top:10px;">
-            <button class="btn primary" id="addLeadNote">Not ekle</button>
-          </div>
-          <div class="timeline" style="margin-top:12px;">
-            ${notes.map(note => `<div class="timeline-item">${note}</div>`).join("") || `<div class="empty">Not yok.</div>`}
-          </div>
-        ` : ""}
-        ${state.detailTab === "Zaman Çizgisi" ? `
-          <textarea class="input" id="leadTimelineInput" placeholder="Zaman çizgisine not ekleyin"></textarea>
-          <div class="button-row" style="margin-top:10px;">
-            <button class="btn primary" id="addLeadTimeline">Ekle</button>
-          </div>
-          <div class="timeline" style="margin-top:12px;">
-            ${timeline.map(entry => `<div class="timeline-item">${entry}</div>`).join("") || `<div class="empty">Henüz kayıt yok.</div>`}
-          </div>
-        ` : ""}
-        ${state.detailTab === "Bağlantılar" ? `
-          <div class="list">
-            ${relatedOpps.map(opp => `<div class="list-item"><span>${opp.title}</span><span class="badge">${opp.stage}</span></div>`).join("") || `<div class="empty">Bağlı fırsat yok.</div>`}
-          </div>
-        ` : ""}
       `;
     };
 
     const renderLeads = () => {
-      const search = state.leadSearch || "";
-      const status = state.leadStatus || "";
-      const source = state.leadSource || "";
-      const filtered = state.data.leads.filter(lead => {
-        const match = `${lead.companyName} ${lead.contactName} ${lead.city}`.toLowerCase().includes(search.toLowerCase());
-        return match && (!status || lead.status === status) && (!source || lead.source === source);
-      });
-      const listHtml = `
-        <div class="list">
-          ${filtered.map(lead => `
-            <div class="list-item">
-              <div>
-                <strong>${lead.companyName || "Adsız Lead"}</strong>
-                <div class="muted">${lead.contactName || "Kişi yok"} · ${lead.city || "-"}</div>
-              </div>
-              <div class="button-row">
-                <button class="btn secondary" data-detail="lead-${lead.id}">Detay</button>
-                <button class="btn secondary" data-edit="lead-${lead.id}">Düzenle</button>
-                <button class="btn secondary" data-delete="lead-${lead.id}">Sil</button>
-              </div>
-            </div>
-          `).join("") || `<div class="empty">Henüz lead yok.</div>`}
+      const selectedLead = getLead(state.selected.id);
+      const listItems = state.data.leads.map(lead => `
+        <div class="list-item">
+          <div>
+            <strong>${lead.companyName || "Adsız Lead"}</strong>
+            <div class="muted">${lead.contactName || "Kişi yok"} · ${lead.city || "-"}</div>
+          </div>
+          <div class="button-row">
+            <button class="btn secondary" data-action="detail" data-entity="lead" data-id="${lead.id}">Detay</button>
+            <button class="btn secondary" data-action="edit" data-entity="lead" data-id="${lead.id}">Düzenle</button>
+            <button class="btn secondary" data-action="delete" data-entity="lead" data-id="${lead.id}">Sil</button>
+          </div>
+        </div>
+      `).join("") || `<div class="empty">Henüz lead yok.</div>`;
+
+      const detail = selectedLead ? `
+        <h2>${selectedLead.companyName}</h2>
+        <p class="muted">${selectedLead.contactName} · ${selectedLead.phone || "Telefon yok"}</p>
+        ${renderDetailTabs()}
+        ${state.detailTab === "Özet" ? `
+          <div class="list">
+            <div class="list-item"><span>Durum</span><span class="badge">${selectedLead.status}</span></div>
+            <div class="list-item"><span>Kaynak</span><span>${selectedLead.source}</span></div>
+            <div class="list-item"><span>Müşteri</span><span>${selectedLead.accountId ? "Bağlı" : "Yok"}</span></div>
+          </div>
+          <div class="button-row" style="margin-top:12px;">
+            <button class="btn primary" data-action="convert" data-entity="lead" data-id="${selectedLead.id}">Müşteriye Dönüştür</button>
+            <button class="btn secondary" data-action="edit" data-entity="lead" data-id="${selectedLead.id}">Düzenle</button>
+          </div>
+        ` : ""}
+        ${state.detailTab === "Zaman Çizgisi" ? renderTimeline(selectedLead.timeline) : ""}
+      ` : `<div class="empty">Detay için bir lead seçin.</div>`;
+
+      return `
+        <div class="page-title">
+          <div>
+            <h1>Lead’ler</h1>
+            <p class="muted">Lead → Müşteri dönüşümü buradan yönetilir.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" data-action="create" data-entity="lead">Yeni Lead</button>
+          </div>
+        </div>
+        <div class="grid cols-2">
+          <div class="card" id="leadList">${listItems}</div>
+          <div class="card">${detail}</div>
         </div>
       `;
-      const detailHtml = renderLeadDetail(state.data.leads.find(lead => lead.id === state.selected.id));
-      renderListLayout(
-        "Lead’ler",
-        "Yeni fırsatlar için tek ekran.",
-        `<button class="btn primary" id="newLead" ${can("editLead") ? "" : "disabled"}>Yeni Lead</button>`,
-        `
-          <input class="input" id="leadSearch" placeholder="Arama" value="${search}" />
-          <select class="input" id="leadStatus">
-            <option value="">Durum: Tümü</option>
-            ${["Yeni", "Temas Edildi", "Nitelikli", "Elendi"].map(opt => `<option ${opt === status ? "selected" : ""}>${opt}</option>`).join("")}
-          </select>
-          <select class="input" id="leadSource">
-            <option value="">Kaynak: Tümü</option>
-            ${["Instagram", "Facebook", "LinkedIn", "Web", "Fuar", "Referans"].map(opt => `<option ${opt === source ? "selected" : ""}>${opt}</option>`).join("")}
-          </select>
-        `,
-        listHtml,
-        detailHtml
-      );
-
-      document.getElementById("newLead").addEventListener("click", () => openLeadModal());
-      document.getElementById("leadSearch").addEventListener("input", (e) => { state.leadSearch = e.target.value; renderLeads(); });
-      document.getElementById("leadStatus").addEventListener("change", (e) => { state.leadStatus = e.target.value; renderLeads(); });
-      document.getElementById("leadSource").addEventListener("change", (e) => { state.leadSource = e.target.value; renderLeads(); });
-      document.querySelectorAll("[data-detail]").forEach(btn => btn.addEventListener("click", () => {
-        state.selected = { type: "lead", id: btn.dataset.detail.split("-")[1] };
-        renderLeads();
-      }));
-      document.querySelectorAll("[data-edit]").forEach(btn => btn.addEventListener("click", () => openLeadModal(btn.dataset.edit.split("-")[1])));
-      document.querySelectorAll("[data-delete]").forEach(btn => btn.addEventListener("click", () => confirmDelete("lead", btn.dataset.delete.split("-")[1])));
-      document.querySelectorAll("[data-detail-tab]").forEach(btn => btn.addEventListener("click", () => { state.detailTab = btn.dataset.detailTab; renderLeads(); }));
-      const lead = state.data.leads.find(l => l.id === state.selected.id);
-      if (lead) {
-        document.getElementById("leadEdit")?.addEventListener("click", () => openLeadModal(lead.id));
-        document.getElementById("leadCreateOpp")?.addEventListener("click", () => openOpportunityModal(null, lead));
-        document.getElementById("leadConvert")?.addEventListener("click", () => convertLeadToAccount(lead));
-        document.getElementById("addLeadNote")?.addEventListener("click", () => {
-          const note = document.getElementById("leadNoteInput").value.trim();
-          if (!note) return;
-          lead.notes.push(note);
-          lead.updatedAt = nowISO();
-          saveData();
-          showToast("Not eklendi");
-          renderLeads();
-        });
-        document.getElementById("addLeadTimeline")?.addEventListener("click", () => {
-          const entry = document.getElementById("leadTimelineInput").value.trim();
-          if (!entry) return;
-          lead.timeline.unshift(`${new Date().toLocaleDateString("tr-TR")} · ${entry}`);
-          lead.updatedAt = nowISO();
-          saveData();
-          showToast("Zaman çizgisine eklendi");
-          renderLeads();
-        });
-      }
     };
 
     const renderAccounts = () => {
-      const search = state.accountSearch || "";
-      const filtered = state.data.accounts.filter(account => `${account.companyName} ${account.city}`.toLowerCase().includes(search.toLowerCase()));
-      const listHtml = `
-        <div class="list">
-          ${filtered.map(account => `
-            <div class="list-item">
-              <div>
-                <strong>${account.companyName || "Adsız Müşteri"}</strong>
-                <div class="muted">${account.city || "-"} · ${account.type}</div>
-              </div>
-              <div class="button-row">
-                <button class="btn secondary" data-detail="account-${account.id}">Detay</button>
-                <button class="btn secondary" data-edit="account-${account.id}">Düzenle</button>
-                <button class="btn secondary" data-delete="account-${account.id}">Sil</button>
-              </div>
-            </div>
-          `).join("") || `<div class="empty">Müşteri yok.</div>`}
+      const selectedAccount = getAccount(state.selected.id);
+      const listItems = state.data.accounts.map(account => `
+        <div class="list-item">
+          <div>
+            <strong>${account.companyName}</strong>
+            <div class="muted">${account.city || "-"} · ${account.type}</div>
+          </div>
+          <div class="button-row">
+            <button class="btn secondary" data-action="detail" data-entity="account" data-id="${account.id}">Detay</button>
+            <button class="btn secondary" data-action="edit" data-entity="account" data-id="${account.id}">Düzenle</button>
+            <button class="btn secondary" data-action="delete" data-entity="account" data-id="${account.id}">Sil</button>
+          </div>
         </div>
-      `;
-      const account = state.data.accounts.find(item => item.id === state.selected.id);
-      const detailHtml = account ? `
-        <h3>${account.companyName}</h3>
-        <p class="muted">${account.city} · ${account.type}</p>
+      `).join("") || `<div class="empty">Müşteri yok.</div>`;
+
+      const detail = selectedAccount ? `
+        <h2>${selectedAccount.companyName}</h2>
+        <p class="muted">${selectedAccount.city || "-"} · ${selectedAccount.type}</p>
         ${renderDetailTabs()}
         ${state.detailTab === "Özet" ? `
           <div class="list">
-            <div class="list-item"><span>Vergi No</span><strong>${account.taxNo || "-"}</strong></div>
-            <div class="list-item"><span>Kontak sayısı</span><strong>${account.contacts.length}</strong></div>
-          </div>
-          <div class="button-row" style="margin-top:16px;">
-            <button class="btn secondary" id="accountEdit">Düzenle</button>
+            <div class="list-item"><span>Vergi No</span><span>${selectedAccount.taxNo || "-"}</span></div>
+            <div class="list-item"><span>Kontak sayısı</span><span>${selectedAccount.contacts.length}</span></div>
           </div>
         ` : ""}
-        ${state.detailTab === "Notlar" ? `
-          <textarea class="input" id="accountNoteInput" placeholder="Not ekleyin"></textarea>
-          <div class="button-row" style="margin-top:10px;">
-            <button class="btn primary" id="addAccountNote">Not ekle</button>
-          </div>
-          <div class="timeline" style="margin-top:12px;">
-            ${(account.accountNotes || []).map(note => `<div class="timeline-item">${note}</div>`).join("") || `<div class="empty">Not yok.</div>`}
-          </div>
-        ` : ""}
-        ${state.detailTab === "Zaman Çizgisi" ? `
-          <textarea class="input" id="accountTimelineInput" placeholder="Zaman çizgisine not ekleyin"></textarea>
-          <div class="button-row" style="margin-top:10px;">
-            <button class="btn primary" id="addAccountTimeline">Ekle</button>
-          </div>
-          <div class="timeline" style="margin-top:12px;">
-            ${(account.timeline || []).map(entry => `<div class="timeline-item">${entry}</div>`).join("") || `<div class="empty">Henüz kayıt yok.</div>`}
-          </div>
-        ` : ""}
-        ${state.detailTab === "Bağlantılar" ? `
-          <div class="list">
-            ${state.data.opportunities.filter(opp => opp.accountId === account.id).map(opp => `<div class="list-item"><span>${opp.title}</span><span class="badge">${opp.stage}</span></div>`).join("") || `<div class="empty">Bağlı fırsat yok.</div>`}
-          </div>
-        ` : ""}
-      ` : `<div class="empty">Bir müşteri seçin.</div>`;
+        ${state.detailTab === "Zaman Çizgisi" ? renderTimeline(selectedAccount.timeline) : ""}
+      ` : `<div class="empty">Detay için müşteri seçin.</div>`;
 
-      renderListLayout(
-        "Müşteriler",
-        "Hesaplar, kontaklar ve notlar.",
-        `<div class="hint">Müşteriler yalnızca lead dönüşümü ile oluşur.</div>`,
-        `<input class="input" id="accountSearch" placeholder="Arama" value="${search}" />`,
-        listHtml,
-        detailHtml
-      );
-
-      document.getElementById("accountSearch").addEventListener("input", (e) => { state.accountSearch = e.target.value; renderAccounts(); });
-      document.querySelectorAll("[data-detail]").forEach(btn => btn.addEventListener("click", () => { state.selected = { type: "account", id: btn.dataset.detail.split("-")[1] }; renderAccounts(); }));
-      document.querySelectorAll("[data-edit]").forEach(btn => btn.addEventListener("click", () => openAccountModal(btn.dataset.edit.split("-")[1])));
-      document.querySelectorAll("[data-delete]").forEach(btn => btn.addEventListener("click", () => confirmDelete("account", btn.dataset.delete.split("-")[1])));
-      document.querySelectorAll("[data-detail-tab]").forEach(btn => btn.addEventListener("click", () => { state.detailTab = btn.dataset.detailTab; renderAccounts(); }));
-      if (account) {
-        document.getElementById("accountEdit")?.addEventListener("click", () => openAccountModal(account.id));
-        document.getElementById("addAccountNote")?.addEventListener("click", () => {
-          const note = document.getElementById("accountNoteInput").value.trim();
-          if (!note) return;
-          account.accountNotes.push(note);
-          account.updatedAt = nowISO();
-          saveData();
-          showToast("Not eklendi");
-          renderAccounts();
-        });
-        document.getElementById("addAccountTimeline")?.addEventListener("click", () => {
-          const entry = document.getElementById("accountTimelineInput").value.trim();
-          if (!entry) return;
-          account.timeline.unshift(`${new Date().toLocaleDateString("tr-TR")} · ${entry}`);
-          account.updatedAt = nowISO();
-          saveData();
-          showToast("Zaman çizgisine eklendi");
-          renderAccounts();
-        });
-      }
-    };
-
-    const renderOpportunityDetail = (opp) => {
-      if (!opp) return `<div class="empty">Bir fırsat seçin.</div>`;
-      const lead = state.data.leads.find(l => l.id === opp.leadId) || {};
-      const quotes = state.data.quotes.filter(q => q.opportunityId === opp.id);
-      const stageLocked = state.role === "TEKNİK OFİS";
       return `
-        <h3>${opp.title}</h3>
-        <p class="muted">${lead.companyName || "-"} · ${opp.owner}</p>
-        ${renderDetailTabs()}
-        ${state.detailTab === "Özet" ? `
-          <div class="list">
-            <div class="list-item"><span>Aşama</span><strong>${opp.stage}</strong></div>
-            <div class="list-item"><span>Beklenen değer</span><strong>${formatUSD(computeOpportunityValue(opp))}</strong></div>
-            <div class="list-item"><span>Panel adedi</span><strong>${opp.expectedPanelsQty}</strong></div>
+        <div class="page-title">
+          <div>
+            <h1>Müşteriler</h1>
+            <p class="muted">Lead dönüşümleri ile oluşan hesaplar.</p>
           </div>
-          <div style="margin-top:12px;">
-            <label>Aşama güncelle</label>
-            <select class="input" id="oppStage" ${stageLocked ? "disabled" : ""}>
-              ${["Lead", "Nitelikli", "Teklif", "Revize", "LC-Ödeme", "Üretim", "Hazır", "Sevk", "Tamamlandı", "Kaybedildi"].map(stage => `<option ${stage === opp.stage ? "selected" : ""}>${stage}</option>`).join("")}
-            </select>
-            ${stageLocked ? `<div class="hint">Yönetici onayı gerekir.</div>` : ""}
+          <div class="button-row">
+            <button class="btn primary" data-action="create" data-entity="account">Yeni Müşteri</button>
           </div>
-          <div class="button-row" style="margin-top:16px;">
-            <button class="btn primary" id="createQuote" ${can("createQuote") ? "" : "disabled"}>Teklif oluştur</button>
-            <button class="btn secondary" id="oppEdit">Düzenle</button>
-          </div>
-        ` : ""}
-        ${state.detailTab === "Notlar" ? `
-          <textarea class="input" id="oppNoteInput" placeholder="Not ekleyin"></textarea>
-          <div class="button-row" style="margin-top:10px;">
-            <button class="btn primary" id="addOppNote">Not ekle</button>
-          </div>
-          <div class="timeline" style="margin-top:12px;">
-            ${(opp.notes || []).map(note => `<div class="timeline-item">${note}</div>`).join("") || `<div class="empty">Not yok.</div>`}
-          </div>
-        ` : ""}
-        ${state.detailTab === "Zaman Çizgisi" ? `
-          <textarea class="input" id="oppTimelineInput" placeholder="Zaman çizgisine not ekleyin"></textarea>
-          <div class="button-row" style="margin-top:10px;">
-            <button class="btn primary" id="addOppTimeline">Ekle</button>
-          </div>
-          <div class="timeline" style="margin-top:12px;">
-            ${(opp.timeline || []).map(entry => `<div class="timeline-item">${entry}</div>`).join("") || `<div class="empty">Henüz kayıt yok.</div>`}
-          </div>
-        ` : ""}
-        ${state.detailTab === "Bağlantılar" ? `
-          <div class="list">
-            ${quotes.map(quote => `<div class="list-item"><span>${quote.quoteNo}</span><span class="badge">${quote.status}</span></div>`).join("") || `<div class="empty">Bağlı teklif yok.</div>`}
-          </div>
-        ` : ""}
+        </div>
+        <div class="grid cols-2">
+          <div class="card" id="accountList">${listItems}</div>
+          <div class="card">${detail}</div>
+        </div>
       `;
     };
 
     const renderOpportunities = () => {
-      const search = state.oppSearch || "";
-      const filtered = state.data.opportunities.filter(opp => opp.title.toLowerCase().includes(search.toLowerCase()));
-      const listHtml = `
-        <div class="list">
-          ${filtered.map(opp => `
-            <div class="list-item">
-              <div>
-                <strong>${opp.title || "Adsız fırsat"}</strong>
-                <div class="muted">${opp.stage} · ${formatUSD(computeOpportunityValue(opp))}</div>
-              </div>
-              <div class="button-row">
-                <button class="btn secondary" data-detail="opportunity-${opp.id}">Detay</button>
-                <button class="btn secondary" data-edit="opportunity-${opp.id}">Düzenle</button>
-                <button class="btn secondary" data-delete="opportunity-${opp.id}">Sil</button>
-              </div>
-            </div>
-          `).join("") || `<div class="empty">Fırsat yok.</div>`}
-        </div>
-      `;
-      const detailHtml = renderOpportunityDetail(state.data.opportunities.find(item => item.id === state.selected.id));
-      renderListLayout(
-        "Pipeline",
-        "Fırsat listesini yönetin.",
-        `<button class="btn primary" id="newOpp" ${can("editOpportunity") ? "" : "disabled"}>Yeni Fırsat</button>`,
-        `<input class="input" id="oppSearch" placeholder="Arama" value="${search}" />`,
-        listHtml,
-        detailHtml
-      );
-
-      document.getElementById("newOpp").addEventListener("click", () => openOpportunityModal());
-      document.getElementById("oppSearch").addEventListener("input", (e) => { state.oppSearch = e.target.value; renderOpportunities(); });
-      document.querySelectorAll("[data-detail]").forEach(btn => btn.addEventListener("click", () => { state.selected = { type: "opportunity", id: btn.dataset.detail.split("-")[1] }; renderOpportunities(); }));
-      document.querySelectorAll("[data-edit]").forEach(btn => btn.addEventListener("click", () => openOpportunityModal(btn.dataset.edit.split("-")[1])));
-      document.querySelectorAll("[data-delete]").forEach(btn => btn.addEventListener("click", () => confirmDelete("opportunity", btn.dataset.delete.split("-")[1])));
-      document.querySelectorAll("[data-detail-tab]").forEach(btn => btn.addEventListener("click", () => { state.detailTab = btn.dataset.detailTab; renderOpportunities(); }));
-      const opp = state.data.opportunities.find(item => item.id === state.selected.id);
-      if (opp) {
-        document.getElementById("oppEdit")?.addEventListener("click", () => openOpportunityModal(opp.id));
-        document.getElementById("createQuote")?.addEventListener("click", () => openQuoteModal(null, opp));
-        document.getElementById("oppStage")?.addEventListener("change", (e) => {
-          if (state.role === "TEKNİK OFİS" && ["LC-Ödeme", "Üretim", "Hazır", "Sevk", "Tamamlandı"].includes(e.target.value)) {
-            showToast("Yönetici onayı gerekir");
-            renderOpportunities();
-            return;
-          }
-          opp.stage = e.target.value;
-          opp.stageUpdatedAt = nowISO();
-          opp.updatedAt = nowISO();
-          addTimeline("opportunities", opp.id, `Aşama güncellendi: ${opp.stage}`);
-          saveData();
-          showToast("Aşama güncellendi");
-          renderOpportunities();
-        });
-        document.getElementById("addOppNote")?.addEventListener("click", () => {
-          const note = document.getElementById("oppNoteInput").value.trim();
-          if (!note) return;
-          opp.notes = opp.notes || [];
-          opp.notes.push(note);
-          opp.updatedAt = nowISO();
-          saveData();
-          showToast("Not eklendi");
-          renderOpportunities();
-        });
-        document.getElementById("addOppTimeline")?.addEventListener("click", () => {
-          const entry = document.getElementById("oppTimelineInput").value.trim();
-          if (!entry) return;
-          addTimeline("opportunities", opp.id, entry);
-          opp.updatedAt = nowISO();
-          saveData();
-          showToast("Zaman çizgisine eklendi");
-          renderOpportunities();
-        });
-      }
-    };
-
-    const renderQuotes = () => {
-      const search = state.quoteSearch || "";
-      const filtered = state.data.quotes.filter(quote => quote.quoteNo.toLowerCase().includes(search.toLowerCase()));
-      const listHtml = `
-        <div class="list">
-          ${filtered.map(quote => `
-            <div class="list-item">
-              <div>
-                <strong>${quote.quoteNo}</strong>
-                <div class="muted">${quote.status} · ${formatUSD(quote.totals.grandTotalUSD)}</div>
-              </div>
-              <div class="button-row">
-                <button class="btn secondary" data-detail="quote-${quote.id}">Detay</button>
-                <button class="btn secondary" data-edit="quote-${quote.id}">Düzenle</button>
-                <button class="btn secondary" data-delete="quote-${quote.id}">Sil</button>
-              </div>
-            </div>
-          `).join("") || `<div class="empty">Teklif yok.</div>`}
-        </div>
-      `;
-      const quote = state.data.quotes.find(item => item.id === state.selected.id);
-      const detailHtml = quote ? `
-        <h3>${quote.quoteNo}</h3>
-        <p class="muted">${quote.status} · ${formatUSD(quote.totals.grandTotalUSD)}</p>
-        ${renderDetailTabs()}
-        ${state.detailTab === "Özet" ? `
-          <div class="list">
-            <div class="list-item"><span>Ödeme</span><strong>${quote.paymentTerms}</strong></div>
-            <div class="list-item"><span>Teslimat</span><strong>${quote.deliveryTerms || "-"}</strong></div>
-          </div>
-          <div class="button-row" style="margin-top:16px;">
-            <button class="btn secondary" id="quoteEdit">Düzenle</button>
-            ${quote.status === "Kabul" && can("createOrder") ? `<button class="btn primary" id="convertOrder">Siparişe çevir</button>` : ""}
-            <button class="btn secondary" id="quotePreview">Yazdırılabilir Görünüm</button>
-          </div>
-        ` : ""}
-        ${state.detailTab === "Notlar" ? `
-          <textarea class="input" id="quoteNoteInput" placeholder="Not ekleyin"></textarea>
-          <div class="button-row" style="margin-top:10px;">
-            <button class="btn primary" id="addQuoteNote">Not ekle</button>
-          </div>
-          <div class="timeline" style="margin-top:12px;">
-            ${(quote.notes || []).map(note => `<div class="timeline-item">${note}</div>`).join("") || `<div class="empty">Not yok.</div>`}
-          </div>
-        ` : ""}
-        ${state.detailTab === "Zaman Çizgisi" ? `
-          <textarea class="input" id="quoteTimelineInput" placeholder="Zaman çizgisine not ekleyin"></textarea>
-          <div class="button-row" style="margin-top:10px;">
-            <button class="btn primary" id="addQuoteTimeline">Ekle</button>
-          </div>
-          <div class="timeline" style="margin-top:12px;">
-            ${(quote.timeline || []).map(entry => `<div class="timeline-item">${entry}</div>`).join("") || `<div class="empty">Henüz kayıt yok.</div>`}
-          </div>
-        ` : ""}
-        ${state.detailTab === "Bağlantılar" ? `
-          <div class="list">
-            ${state.data.opportunities.filter(opp => opp.id === quote.opportunityId).map(opp => `<div class="list-item"><span>${opp.title}</span><span class="badge">${opp.stage}</span></div>`).join("") || `<div class="empty">Bağlı fırsat yok.</div>`}
-          </div>
-        ` : ""}
-      ` : `<div class="empty">Bir teklif seçin.</div>`;
-
-      renderListLayout(
-        "Teklifler",
-        "Fırsattan teklif oluşturun ve yönetin.",
-        `<button class="btn primary" id="newQuote" ${can("createQuote") ? "" : "disabled"}>Yeni Teklif</button>`,
-        `<input class="input" id="quoteSearch" placeholder="Arama" value="${search}" />`,
-        listHtml,
-        detailHtml
-      );
-
-      document.getElementById("newQuote").addEventListener("click", () => openQuoteModal());
-      document.getElementById("quoteSearch").addEventListener("input", (e) => { state.quoteSearch = e.target.value; renderQuotes(); });
-      document.querySelectorAll("[data-detail]").forEach(btn => btn.addEventListener("click", () => { state.selected = { type: "quote", id: btn.dataset.detail.split("-")[1] }; renderQuotes(); }));
-      document.querySelectorAll("[data-edit]").forEach(btn => btn.addEventListener("click", () => openQuoteModal(btn.dataset.edit.split("-")[1])));
-      document.querySelectorAll("[data-delete]").forEach(btn => btn.addEventListener("click", () => confirmDelete("quote", btn.dataset.delete.split("-")[1])));
-      document.querySelectorAll("[data-detail-tab]").forEach(btn => btn.addEventListener("click", () => { state.detailTab = btn.dataset.detailTab; renderQuotes(); }));
-
-      if (quote) {
-        document.getElementById("quoteEdit")?.addEventListener("click", () => openQuoteModal(quote.id));
-        document.getElementById("quotePreview")?.addEventListener("click", () => openQuotePreview(quote));
-        document.getElementById("convertOrder")?.addEventListener("click", () => {
-          if (!can("createOrder")) return;
-          openOrderModal(null, quote);
-        });
-        document.getElementById("addQuoteNote")?.addEventListener("click", () => {
-          const note = document.getElementById("quoteNoteInput").value.trim();
-          if (!note) return;
-          quote.notes = quote.notes || [];
-          quote.notes.push(note);
-          quote.updatedAt = nowISO();
-          saveData();
-          showToast("Not eklendi");
-          renderQuotes();
-        });
-        document.getElementById("addQuoteTimeline")?.addEventListener("click", () => {
-          const entry = document.getElementById("quoteTimelineInput").value.trim();
-          if (!entry) return;
-          addTimeline("quotes", quote.id, entry);
-          quote.updatedAt = nowISO();
-          saveData();
-          showToast("Zaman çizgisine eklendi");
-          renderQuotes();
-        });
-      }
-    };
-
-    const renderOrders = () => {
-      const search = state.orderSearch || "";
-      const filtered = state.data.orders.filter(order => order.orderNo.toLowerCase().includes(search.toLowerCase()));
-      const listHtml = `
-        <div class="list">
-          ${filtered.map(order => `
-            <div class="list-item">
-              <div>
-                <strong>${order.orderNo}</strong>
-                <div class="muted">${order.status} · ${order.warehouse}</div>
-              </div>
-              <div class="button-row">
-                <button class="btn secondary" data-detail="order-${order.id}">Detay</button>
-                <button class="btn secondary" data-edit="order-${order.id}">Düzenle</button>
-                <button class="btn secondary" data-delete="order-${order.id}">Sil</button>
-              </div>
-            </div>
-          `).join("") || `<div class="empty">Sipariş yok.</div>`}
-        </div>
-      `;
-      const order = state.data.orders.find(item => item.id === state.selected.id);
-      const detailHtml = order ? `
-        <h3>${order.orderNo}</h3>
-        <p class="muted">${order.status} · ${order.warehouse}</p>
-        ${renderDetailTabs()}
-        ${state.detailTab === "Özet" ? `
-          <div class="list">
-            <div class="list-item"><span>Vaat edilen sevk</span><strong>${order.promisedShipDate || "-"}</strong></div>
-            <div class="list-item"><span>Depo</span><strong>${order.warehouse}</strong></div>
-          </div>
-          <div class="button-row" style="margin-top:16px;">
-            <button class="btn secondary" id="orderEdit">Düzenle</button>
-          </div>
-        ` : ""}
-        ${state.detailTab === "Notlar" ? `
-          <textarea class="input" id="orderNoteInput" placeholder="Lojistik notu ekleyin">${order.logisticsNotes || ""}</textarea>
-          <div class="button-row" style="margin-top:10px;">
-            <button class="btn primary" id="saveOrderNote">Kaydet</button>
-          </div>
-        ` : ""}
-        ${state.detailTab === "Zaman Çizgisi" ? `
-          <textarea class="input" id="orderTimelineInput" placeholder="Zaman çizgisine not ekleyin"></textarea>
-          <div class="button-row" style="margin-top:10px;">
-            <button class="btn primary" id="addOrderTimeline">Ekle</button>
-          </div>
-          <div class="timeline" style="margin-top:12px;">
-            ${(order.timeline || []).map(entry => `<div class="timeline-item">${entry}</div>`).join("") || `<div class="empty">Henüz kayıt yok.</div>`}
-          </div>
-        ` : ""}
-        ${state.detailTab === "Bağlantılar" ? `
-          <div class="list">
-            ${state.data.opportunities.filter(opp => opp.id === order.opportunityId).map(opp => `<div class="list-item"><span>${opp.title}</span><span class="badge">${opp.stage}</span></div>`).join("") || `<div class="empty">Bağlı fırsat yok.</div>`}
-          </div>
-        ` : ""}
-      ` : `<div class="empty">Bir sipariş seçin.</div>`;
-
-      const hasOpportunities = state.data.opportunities.length > 0;
-      renderListLayout(
-        "Siparişler",
-        "Sipariş durumlarını tek ekrandan yönetin.",
-        `<button class="btn primary" id="newOrder" ${can("createOrder") && hasOpportunities ? "" : "disabled"}>Yeni Sipariş</button>`,
-        `<input class="input" id="orderSearch" placeholder="Arama" value="${search}" />`,
-        listHtml,
-        detailHtml
-      );
-
-      document.getElementById("newOrder").addEventListener("click", () => openOrderModal());
-      document.getElementById("orderSearch").addEventListener("input", (e) => { state.orderSearch = e.target.value; renderOrders(); });
-      document.querySelectorAll("[data-detail]").forEach(btn => btn.addEventListener("click", () => { state.selected = { type: "order", id: btn.dataset.detail.split("-")[1] }; renderOrders(); }));
-      document.querySelectorAll("[data-edit]").forEach(btn => btn.addEventListener("click", () => openOrderModal(btn.dataset.edit.split("-")[1])));
-      document.querySelectorAll("[data-delete]").forEach(btn => btn.addEventListener("click", () => confirmDelete("order", btn.dataset.delete.split("-")[1])));
-      document.querySelectorAll("[data-detail-tab]").forEach(btn => btn.addEventListener("click", () => { state.detailTab = btn.dataset.detailTab; renderOrders(); }));
-      if (order) {
-        document.getElementById("orderEdit")?.addEventListener("click", () => openOrderModal(order.id));
-        document.getElementById("saveOrderNote")?.addEventListener("click", () => {
-          order.logisticsNotes = document.getElementById("orderNoteInput").value;
-          order.updatedAt = nowISO();
-          saveData();
-          showToast("Not kaydedildi");
-          renderOrders();
-        });
-        document.getElementById("addOrderTimeline")?.addEventListener("click", () => {
-          const entry = document.getElementById("orderTimelineInput").value.trim();
-          if (!entry) return;
-          addTimeline("orders", order.id, entry);
-          order.updatedAt = nowISO();
-          saveData();
-          showToast("Zaman çizgisine eklendi");
-          renderOrders();
-        });
-      }
-    };
-
-    const renderTasks = () => {
-      const filter = state.taskFilter || "bugun";
-      const now = new Date();
-      const filtered = state.data.tasks.filter(task => {
-        const due = new Date(task.dueDate);
-        if (filter === "bugun") return due.toDateString() === now.toDateString();
-        if (filter === "hafta") return due <= new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7);
-        if (filter === "gecikmis") return due < now && task.status === "Açık";
-        return true;
-      });
-      const listHtml = `
-        <div class="list">
-          ${filtered.map(task => `
-            <div class="list-item">
-              <div>
-                <strong>${task.title}</strong>
-                <div class="muted">${task.owner} · ${task.dueDate}</div>
-              </div>
-              <div class="button-row">
-                <button class="btn secondary" data-detail="task-${task.id}">Detay</button>
-                <button class="btn secondary" data-edit="task-${task.id}">Düzenle</button>
-                <button class="btn secondary" data-delete="task-${task.id}">Sil</button>
-              </div>
-            </div>
-          `).join("") || `<div class="empty">Görev yok.</div>`}
-        </div>
-      `;
-      const task = state.data.tasks.find(item => item.id === state.selected.id);
-      const detailHtml = task ? `
-        <h3>${task.title}</h3>
-        <p class="muted">${task.priority} · ${task.status}</p>
-        ${renderDetailTabs()}
-        ${state.detailTab === "Özet" ? `
-          <div class="list">
-            <div class="list-item"><span>Vade</span><strong>${task.dueDate}</strong></div>
-            <div class="list-item"><span>Sorumlu</span><strong>${task.owner}</strong></div>
-          </div>
-          <div class="button-row" style="margin-top:16px;">
-            <button class="btn secondary" id="taskEdit">Düzenle</button>
-            <button class="btn secondary" data-action="call">Arandı</button>
-            <button class="btn secondary" data-action="quote">Teklif gönderildi</button>
-            <button class="btn secondary" data-action="meeting">Toplantı yapıldı</button>
-          </div>
-        ` : ""}
-        ${state.detailTab === "Notlar" ? `
-          <div class="empty">Görev notları burada saklanır.</div>
-        ` : ""}
-        ${state.detailTab === "Zaman Çizgisi" ? `
-          <div class="timeline">
-            ${(task.timeline || []).map(entry => `<div class="timeline-item">${entry}</div>`).join("") || `<div class="empty">Henüz kayıt yok.</div>`}
-          </div>
-        ` : ""}
-        ${state.detailTab === "Bağlantılar" ? `
-          <div class="empty">Bağlı kayıt yok.</div>
-        ` : ""}
-      ` : `<div class="empty">Bir görev seçin.</div>`;
-
-      renderListLayout(
-        "Görevler",
-        "Satış ritmini korumak için odak listesi.",
-        `<button class="btn primary" id="newTask" ${can("editTask") ? "" : "disabled"}>Yeni Görev</button>`,
-        `
-          <select class="input" id="taskFilter">
-            <option value="bugun" ${filter === "bugun" ? "selected" : ""}>Bugün</option>
-            <option value="hafta" ${filter === "hafta" ? "selected" : ""}>Bu hafta</option>
-            <option value="gecikmis" ${filter === "gecikmis" ? "selected" : ""}>Gecikmiş</option>
-            <option value="tum" ${filter === "tum" ? "selected" : ""}>Tümü</option>
-          </select>
-        `,
-        listHtml,
-        detailHtml
-      );
-
-      document.getElementById("newTask").addEventListener("click", () => openTaskModal());
-      document.getElementById("taskFilter").addEventListener("change", (e) => { state.taskFilter = e.target.value; renderTasks(); });
-      document.querySelectorAll("[data-detail]").forEach(btn => btn.addEventListener("click", () => { state.selected = { type: "task", id: btn.dataset.detail.split("-")[1] }; renderTasks(); }));
-      document.querySelectorAll("[data-edit]").forEach(btn => btn.addEventListener("click", () => openTaskModal(btn.dataset.edit.split("-")[1])));
-      document.querySelectorAll("[data-delete]").forEach(btn => btn.addEventListener("click", () => confirmDelete("task", btn.dataset.delete.split("-")[1])));
-      document.querySelectorAll("[data-detail-tab]").forEach(btn => btn.addEventListener("click", () => { state.detailTab = btn.dataset.detailTab; renderTasks(); }));
-      if (task) {
-        document.getElementById("taskEdit")?.addEventListener("click", () => openTaskModal(task.id));
-        document.querySelectorAll("[data-action]").forEach(btn => {
-          btn.addEventListener("click", () => {
-            const actionText = btn.dataset.action === "call" ? "Arama tamamlandı" : btn.dataset.action === "quote" ? "Teklif gönderildi" : "Toplantı yapıldı";
-            task.status = "Bitti";
-            task.timeline = task.timeline || [];
-            task.timeline.unshift(`${new Date().toLocaleDateString("tr-TR")} · ${actionText}`);
-            task.updatedAt = nowISO();
-            saveData();
-            showToast("Görev kapatıldı");
-            renderTasks();
-          });
-        });
-      }
-    };
-
-    const renderPartners = () => {
-      const search = state.partnerSearch || "";
-      const filtered = state.data.partners.filter(partner => partner.companyName.toLowerCase().includes(search.toLowerCase()));
-      const listHtml = `
-        <div class="list">
-          ${filtered.map(partner => `
-            <div class="list-item">
-              <div>
-                <strong>${partner.companyName || "Adsız Partner"}</strong>
-                <div class="muted">Hedef ${partner.yearlyTarget} panel</div>
-              </div>
-              <div class="button-row">
-                <button class="btn secondary" data-detail="partner-${partner.id}">Detay</button>
-                <button class="btn secondary" data-edit="partner-${partner.id}">Düzenle</button>
-                <button class="btn secondary" data-delete="partner-${partner.id}">Sil</button>
-              </div>
-            </div>
-          `).join("") || `<div class="empty">Partner yok.</div>`}
-        </div>
-      `;
-      const partner = state.data.partners.find(item => item.id === state.selected.id);
-      const partnerPurchases = partner ? state.data.purchases.filter(p => p.partnerId === partner.id) : [];
-      const partnerShipments = partner ? state.data.shipments.filter(s => s.partnerId === partner.id) : [];
-      const engine = partner ? partnerBonusEngine(partnerPurchases, partnerShipments) : null;
-      const detailHtml = partner ? `
-        <h3>${partner.companyName}</h3>
-        <p class="muted">Güncel kademe: ${engine.currentTier.threshold}+ (${engine.currentTier.price}$/W)</p>
-        ${renderDetailTabs()}
-        ${state.detailTab === "Özet" ? `
-          <div class="progress-bar">
-            <div class="progress-fill" style="width:${Math.min(100, (engine.totalPanels / partner.yearlyTarget) * 100)}%"></div>
-            <div class="progress-marker" style="left:0%"></div>
-            <div class="progress-marker" style="left:40%"></div>
-            <div class="progress-marker" style="left:70%"></div>
-            <div class="progress-marker" style="left:100%"></div>
-          </div>
-          <p class="muted" style="margin-top:8px;">Bir sonraki seviye için kalan panel: ${engine.remainingToNext || "-"}</p>
-          <div class="list" style="margin-top:12px;">
-            <div class="list-item"><span>Toplam alım</span><strong>${engine.totalPanels} panel</strong></div>
-            <div class="list-item"><span>Bu yıl kazanılan bonus</span><strong>${engine.earnedBonusPanels.toFixed(1)}</strong></div>
-            <div class="list-item"><span>Son alımda kazanılan bonus</span><strong>${engine.lastPurchaseBonus.toFixed(1)}</strong></div>
-            <div class="list-item"><span>Sevk edilen bonus</span><strong>${engine.shippedPanels}</strong></div>
-            <div class="list-item"><span>Kalan bonus</span><strong>${engine.remainingPanels.toFixed(1)}</strong></div>
-          </div>
-          <div class="button-row" style="margin-top:16px;">
-            <button class="btn secondary" id="partnerEdit">Düzenle</button>
-            <button class="btn primary" id="addPurchase">Alım ekle</button>
-            <button class="btn secondary" id="addShipment" ${can("manageShipments") ? "" : "disabled"}>Bonus sevki</button>
-          </div>
-        ` : ""}
-        ${state.detailTab === "Notlar" ? `
-          <textarea class="input" id="partnerNoteInput" placeholder="Not ekleyin"></textarea>
-          <div class="button-row" style="margin-top:10px;">
-            <button class="btn primary" id="addPartnerNote">Not ekle</button>
-          </div>
-          <div class="timeline" style="margin-top:12px;">
-            ${(partner.notes || []).map(note => `<div class="timeline-item">${note}</div>`).join("") || `<div class="empty">Not yok.</div>`}
-          </div>
-        ` : ""}
-        ${state.detailTab === "Zaman Çizgisi" ? `
-          <textarea class="input" id="partnerTimelineInput" placeholder="Zaman çizgisine not ekleyin"></textarea>
-          <div class="button-row" style="margin-top:10px;">
-            <button class="btn primary" id="addPartnerTimeline">Ekle</button>
-          </div>
-          <div class="timeline" style="margin-top:12px;">
-            ${(partner.timeline || []).map(entry => `<div class="timeline-item">${entry}</div>`).join("") || `<div class="empty">Henüz kayıt yok.</div>`}
-          </div>
-        ` : ""}
-        ${state.detailTab === "Bağlantılar" ? `
-          <h3 style="margin-top:10px;">Alımlar</h3>
-          <div class="list">
-            ${partnerPurchases.map(p => `<div class="list-item"><span>${p.date} · ${p.qtyPanels} panel</span><span class="badge">${p.panelWattage}W</span></div>`).join("") || `<div class="empty">Alım yok.</div>`}
-          </div>
-          <h3 style="margin-top:16px;">Sevkler</h3>
-          <div class="list">
-            ${partnerShipments.map(s => `<div class="list-item"><span>${s.date} · ${s.qtyPanels} panel</span><span class="badge">Bonus</span></div>`).join("") || `<div class="empty">Sevk yok.</div>`}
-          </div>
-        ` : ""}
-      ` : `<div class="empty">Bir partner seçin.</div>`;
-
-      renderListLayout(
-        "Partner Programı",
-        "Bayi performansı ve bonus takibi.",
-        `<button class="btn primary" id="newPartner" ${can("editPartner") ? "" : "disabled"}>Yeni Partner</button>`,
-        `<input class="input" id="partnerSearch" placeholder="Arama" value="${search}" />`,
-        listHtml,
-        detailHtml
-      );
-
-      document.getElementById("newPartner").addEventListener("click", () => openPartnerModal());
-      document.getElementById("partnerSearch").addEventListener("input", (e) => { state.partnerSearch = e.target.value; renderPartners(); });
-      document.querySelectorAll("[data-detail]").forEach(btn => btn.addEventListener("click", () => { state.selected = { type: "partner", id: btn.dataset.detail.split("-")[1] }; renderPartners(); }));
-      document.querySelectorAll("[data-edit]").forEach(btn => btn.addEventListener("click", () => openPartnerModal(btn.dataset.edit.split("-")[1])));
-      document.querySelectorAll("[data-delete]").forEach(btn => btn.addEventListener("click", () => confirmDelete("partner", btn.dataset.delete.split("-")[1])));
-      document.querySelectorAll("[data-detail-tab]").forEach(btn => btn.addEventListener("click", () => { state.detailTab = btn.dataset.detailTab; renderPartners(); }));
-
-      if (partner) {
-        document.getElementById("partnerEdit")?.addEventListener("click", () => openPartnerModal(partner.id));
-        document.getElementById("addPurchase")?.addEventListener("click", () => openPurchaseModal(partner.id));
-        document.getElementById("addShipment")?.addEventListener("click", () => {
-          if (!can("manageShipments")) {
-            showToast("Yönetici onayı gerekir");
-            return;
-          }
-          openShipmentModal(partner.id);
-        });
-        document.getElementById("addPartnerNote")?.addEventListener("click", () => {
-          const note = document.getElementById("partnerNoteInput").value.trim();
-          if (!note) return;
-          partner.notes = partner.notes || [];
-          partner.notes.push(note);
-          partner.updatedAt = nowISO();
-          saveData();
-          showToast("Not eklendi");
-          renderPartners();
-        });
-        document.getElementById("addPartnerTimeline")?.addEventListener("click", () => {
-          const entry = document.getElementById("partnerTimelineInput").value.trim();
-          if (!entry) return;
-          addTimeline("partners", partner.id, entry);
-          partner.updatedAt = nowISO();
-          saveData();
-          showToast("Zaman çizgisine eklendi");
-          renderPartners();
-        });
-      }
-    };
-
-    const renderSettings = () => {
-      const app = document.getElementById("app");
-      app.innerHTML = `
-        <div class="page-header">
+      const selectedOpp = getOpportunity(state.selected.id);
+      const listItems = state.data.opportunities.map(opp => `
+        <div class="list-item">
           <div>
-            <h1>Ayarlar / Veri</h1>
-            <p class="muted">Verinizi yönetin ve dışa aktarın.</p>
+            <strong>${opp.title}</strong>
+            <div class="muted">${opp.stage} · ${formatUSD(computeOpportunityValue(opp))}</div>
+          </div>
+          <div class="button-row">
+            <button class="btn secondary" data-action="detail" data-entity="opportunity" data-id="${opp.id}">Detay</button>
+            <button class="btn secondary" data-action="edit" data-entity="opportunity" data-id="${opp.id}">Düzenle</button>
+            <button class="btn secondary" data-action="delete" data-entity="opportunity" data-id="${opp.id}">Sil</button>
+          </div>
+        </div>
+      `).join("") || `<div class="empty">Fırsat yok.</div>`;
+
+      const lead = selectedOpp?.leadId ? getLead(selectedOpp.leadId) : null;
+      const account = selectedOpp?.accountId ? getAccount(selectedOpp.accountId) : null;
+      const epc = selectedOpp?.sourceEpcAccountId ? getAccount(selectedOpp.sourceEpcAccountId) : null;
+      const detail = selectedOpp ? `
+        <h2>${selectedOpp.title}</h2>
+        <p class="muted">${selectedOpp.stage} · ${selectedOpp.owner}</p>
+        ${renderDetailTabs()}
+        ${state.detailTab === "Özet" ? `
+          <div class="list">
+            <div class="list-item"><span>Lead</span><span>${lead?.companyName || "-"}</span></div>
+            <div class="list-item"><span>Müşteri</span><span>${account?.companyName || "-"}</span></div>
+            <div class="list-item"><span>Kaynak EPC</span><span>${epc?.companyName || "-"}</span></div>
+          </div>
+        ` : ""}
+        ${state.detailTab === "Zaman Çizgisi" ? renderTimeline(selectedOpp.timeline || []) : ""}
+      ` : `<div class="empty">Detay için fırsat seçin.</div>`;
+
+      return `
+        <div class="page-title">
+          <div>
+            <h1>Pipeline</h1>
+            <p class="muted">Fırsatlarınızı müşteri ve kaynakla bağlayın.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" data-action="create" data-entity="opportunity">Yeni Fırsat</button>
           </div>
         </div>
         <div class="grid cols-2">
-          <div class="card">
-            <h3>Veri İşlemleri</h3>
-            <div class="button-row" style="margin-top:12px;">
-              <button class="btn primary" id="exportData">JSON dışa aktar</button>
-              <button class="btn secondary" id="importData">JSON içe aktar</button>
-              <button class="btn secondary" id="resetData">Tüm veriyi sıfırla</button>
-              <button class="btn secondary" id="seedDataSettings">Demo verisi yükle</button>
-            </div>
-            <textarea class="input" id="importArea" placeholder="İçe aktarılacak JSON burada"></textarea>
-          </div>
-          <div class="card">
-            <h3>Temel Ayarlar</h3>
-            <div class="form-grid">
-              <div>
-                <label>Para birimi</label>
-                <select class="input" id="currency">
-                  <option value="USD">USD</option>
-                </select>
-              </div>
-              <div>
-                <label>Varsayılan panel watt</label>
-                <input class="input" id="panelWatt" type="number" value="${state.settings.defaultPanelWattage}" />
-              </div>
-              <div>
-                <label>Varsayılan depo</label>
-                <select class="input" id="warehouse">
-                  <option ${state.settings.defaultWarehouse === "Antalya" ? "selected" : ""}>Antalya</option>
-                  <option ${state.settings.defaultWarehouse === "Tivat" ? "selected" : ""}>Tivat</option>
-                  <option ${state.settings.defaultWarehouse === "Other" ? "selected" : ""}>Other</option>
-                </select>
-              </div>
-            </div>
-            <div class="button-row" style="margin-top:12px;">
-              <button class="btn primary" id="saveSettings">Ayarları kaydet</button>
-            </div>
-          </div>
+          <div class="card" id="oppList">${listItems}</div>
+          <div class="card">${detail}</div>
         </div>
       `;
-      document.getElementById("exportData").addEventListener("click", () => {
-        const blob = new Blob([JSON.stringify(state.data, null, 2)], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "alb-crm-data.json";
-        a.click();
-        URL.revokeObjectURL(url);
-      });
-      document.getElementById("importData").addEventListener("click", () => {
-        try {
-          const parsed = JSON.parse(document.getElementById("importArea").value);
-          state.data = { ...emptyData(), ...parsed };
-          normalizeData();
-          saveData();
-          showToast("Veri içe aktarıldı");
-          renderApp();
-        } catch (error) {
-          showToast("JSON formatını kontrol edin");
-        }
-      });
-      document.getElementById("resetData").addEventListener("click", () => {
-        state.data = emptyData();
-        saveData();
-        showToast("Veriler sıfırlandı");
-        renderApp();
-      });
-      document.getElementById("seedDataSettings").addEventListener("click", () => {
-        seedDemoData();
-        showToast("Demo verisi yüklendi");
-        renderApp();
-      });
-      document.getElementById("saveSettings").addEventListener("click", () => {
-        state.settings.defaultPanelWattage = Number(document.getElementById("panelWatt").value || 550);
-        state.settings.defaultWarehouse = document.getElementById("warehouse").value;
-        saveData();
-        showToast("Ayarlar kaydedildi");
-      });
     };
 
-    const openLeadModal = (id) => {
-      const lead = id ? state.data.leads.find(item => item.id === id) : null;
-      openModal({
-        title: id ? "Lead düzenle" : "Yeni lead",
-        subtitle: "Zorunlu alanlar minimaldir.",
-        fields: [
-          { label: "Şirket adı", name: "companyName", value: lead?.companyName, required: true },
-          { label: "İlgili kişi", name: "contactName", value: lead?.contactName },
-          { label: "Telefon", name: "phone", value: lead?.phone },
-          { label: "E-posta", name: "email", value: lead?.email, type: "email" },
-          { label: "Şehir", name: "city", value: lead?.city },
-          { label: "Ülke", name: "country", value: lead?.country || "Türkiye" },
-          { label: "Kaynak", name: "source", type: "select", value: lead?.source || "Web", options: ["Instagram", "Facebook", "LinkedIn", "Web", "Fuar", "Referans"] },
-          { label: "Durum", name: "status", type: "select", value: lead?.status || "Yeni", options: ["Yeni", "Temas Edildi", "Nitelikli", "Elendi"] },
-          { label: "Segment", name: "segment", type: "select", value: lead?.segment || "Konut", options: ["Konut", "Ticari", "EPC", "Bayi"] },
-          { label: "İlgi alanı", name: "interest", type: "select", value: lead?.interest || "Panel", options: ["Panel", "EPC", "Depolama", "EV Şarj"] },
-          { label: "Sorumlu", name: "owner", value: lead?.owner || state.role },
-          { label: "Not", name: "note", type: "textarea", value: "", hint: "İsteğe bağlı kısa not." }
-        ],
-        onSave: (values) => {
-          if (lead) {
-            Object.assign(lead, values, { updatedAt: nowISO() });
-            if (values.note) lead.notes.push(values.note);
-            addTimeline("leads", lead.id, "Lead güncellendi");
-          } else {
-            const newLead = {
-              id: generateId("lead"),
-              createdAt: nowISO(),
-              updatedAt: nowISO(),
-              notes: [],
-              tags: [],
-              lastTouchAt: nowISO(),
-              nextActionAt: nowISO(),
-              timeline: []
-            };
-            Object.assign(newLead, values);
-            if (values.note) newLead.notes.push(values.note);
-            addTimeline("leads", newLead.id, "Lead oluşturuldu");
-            state.data.leads.unshift(newLead);
-          }
-          saveData();
-          showToast("Lead kaydedildi");
-          renderLeads();
-        }
-      });
-    };
-
-    const convertLeadToAccount = (lead) => {
-      if (!lead || lead.accountId) {
-        showToast("Bu lead zaten müşteriye dönüştürüldü");
-        return;
-      }
-      openConfirm({
-        title: "Müşteriye dönüştür",
-        subtitle: "Lead üzerinden müşteri hesabı oluşturulacak.",
-        onConfirm: () => {
-          const accountId = generateId("account");
-          const account = {
-            id: accountId,
-            createdAt: nowISO(),
-            updatedAt: nowISO(),
-            companyName: lead.companyName,
-            taxNo: "",
-            city: lead.city,
-            country: lead.country || "Türkiye",
-            type: lead.segment === "Bayi" ? "Bayi" : lead.segment === "EPC" ? "EPC" : "Son kullanıcı",
-            contacts: lead.contactName ? [{ name: lead.contactName, role: "İlgili kişi", phone: lead.phone, email: lead.email }] : [],
-            accountNotes: [],
-            timeline: []
-          };
-          state.data.accounts.unshift(account);
-          lead.accountId = accountId;
-          lead.status = "Nitelikli";
-          lead.updatedAt = nowISO();
-          addTimeline("accounts", accountId, "Lead’den müşteri oluşturuldu");
-          addTimeline("leads", lead.id, "Müşteriye dönüştürüldü");
-          saveData();
-          showToast("Müşteri oluşturuldu");
-          renderLeads();
-        }
-      });
-    };
-
-    const openAccountModal = (id) => {
-      const account = id ? state.data.accounts.find(item => item.id === id) : null;
-      openModal({
-        title: id ? "Müşteri düzenle" : "Yeni müşteri",
-        subtitle: "Temel hesap bilgileri.",
-        fields: [
-          { label: "Şirket adı", name: "companyName", value: account?.companyName, required: true },
-          { label: "Vergi no", name: "taxNo", value: account?.taxNo },
-          { label: "Şehir", name: "city", value: account?.city },
-          { label: "Ülke", name: "country", value: account?.country || "Türkiye" },
-          { label: "Tip", name: "type", type: "select", value: account?.type || "Son kullanıcı", options: ["Son kullanıcı", "EPC", "Bayi"] },
-          { label: "Kontak notu", name: "contactNote", type: "textarea", value: "" }
-        ],
-        onSave: (values) => {
-          if (account) {
-            Object.assign(account, values, { updatedAt: nowISO() });
-            if (values.contactNote) account.accountNotes.push(values.contactNote);
-            addTimeline("accounts", account.id, "Hesap güncellendi");
-          } else {
-            const newAccount = {
-              id: generateId("account"),
-              createdAt: nowISO(),
-              updatedAt: nowISO(),
-              contacts: [],
-              accountNotes: [],
-              timeline: []
-            };
-            Object.assign(newAccount, values);
-            if (values.contactNote) newAccount.accountNotes.push(values.contactNote);
-            addTimeline("accounts", newAccount.id, "Hesap oluşturuldu");
-            state.data.accounts.unshift(newAccount);
-          }
-          saveData();
-          showToast("Müşteri kaydedildi");
-          renderAccounts();
-        }
-      });
-    };
-
-    const openOpportunityModal = (id, lead = null) => {
-      const opp = id ? state.data.opportunities.find(item => item.id === id) : null;
-      const targetLocked = fieldLock("opportunity", "targetPricePerWatt");
-      openModal({
-        title: id ? "Fırsat düzenle" : "Yeni fırsat",
-        subtitle: "Satış ve teknik ekip ortak kullanır.",
-        fields: [
-          { label: "Başlık", name: "title", value: opp?.title || (lead ? `${lead.companyName} fırsatı` : ""), required: true },
-          { label: "Panel adedi", name: "expectedPanelsQty", type: "number", value: opp?.expectedPanelsQty || 0 },
-          { label: "Panel modeli", name: "panelModel", value: opp?.panelModel || "" },
-          { label: "Panel watt", name: "panelWattage", type: "number", value: opp?.panelWattage || state.settings.defaultPanelWattage },
-          { label: "Hedef fiyat / W", name: "targetPricePerWatt", type: "number", value: opp?.targetPricePerWatt || 0.19, disabled: targetLocked, hint: targetLocked ? "Yönetici onayı gerekir." : "" },
-          { label: "Kapanış tarihi", name: "expectedCloseDate", type: "date", value: opp?.expectedCloseDate || shortDate(nowISO()) },
-          { label: "Olasılık", name: "probability", type: "number", value: opp?.probability || 30 },
-          { label: "Rakip", name: "competitor", value: opp?.competitor || "" },
-          { label: "Sorumlu", name: "owner", value: opp?.owner || state.role }
-        ],
-        onSave: (values) => {
-          if (opp) {
-            Object.assign(opp, values, { updatedAt: nowISO() });
-            addTimeline("opportunities", opp.id, "Fırsat güncellendi");
-          } else {
-            const newOpp = {
-              id: generateId("opportunity"),
-              createdAt: nowISO(),
-              updatedAt: nowISO(),
-              leadId: lead?.id || "",
-              accountId: lead?.accountId || "",
-              stage: "Lead",
-              stageUpdatedAt: nowISO(),
-              timeline: [],
-              notes: []
-            };
-            Object.assign(newOpp, values);
-            addTimeline("opportunities", newOpp.id, "Fırsat oluşturuldu");
-            state.data.opportunities.unshift(newOpp);
-          }
-          saveData();
-          showToast("Fırsat kaydedildi");
-          renderApp();
-        }
-      });
-    };
-
-    const openQuoteModal = (id, opportunity = null) => {
-      const quote = id ? state.data.quotes.find(item => item.id === id) : null;
-      const opp = opportunity || (quote ? state.data.opportunities.find(item => item.id === quote.opportunityId) : null);
-      const tempQuote = quote ? JSON.parse(JSON.stringify(quote)) : {
-        id: generateId("quote"),
-        opportunityId: opp?.id || "",
-        quoteNo: generateQuoteNo(),
-        items: [{ type: "Panel", description: "Alb Mono", qty: 0, unit: "Adet", unitPriceUSD: 0 }],
-        totals: { subtotalUSD: 0, discountUSD: 0, shippingUSD: 0, grandTotalUSD: 0 },
-        paymentTerms: "LC90",
-        deliveryTerms: "FOB",
-        status: "Taslak",
-        timeline: []
-      };
-
-      const renderQuoteModal = () => {
-        updateQuoteTotals(tempQuote);
-        modalContent.innerHTML = `
-          <div class="modal-header">
-            <div>
-              <h2>${quote ? "Teklif düzenle" : "Yeni teklif"}</h2>
-              <p class="muted">${tempQuote.quoteNo} · ${opp?.title || "Fırsat seçilmedi"}</p>
-            </div>
-            <button class="btn secondary" id="modalClose">Kapat</button>
-          </div>
-          <div style="margin-top:16px;">
-            <div class="form-grid">
-              <div>
-                <label>Ödeme</label>
-                <select class="input" id="quotePayment">
-                  ${["LC90", "Kredi Kartı", "Nakit", "Vade"].map(opt => `<option ${opt === tempQuote.paymentTerms ? "selected" : ""}>${opt}</option>`).join("")}
-                </select>
-              </div>
-              <div>
-                <label>Teslimat</label>
-                <select class="input" id="quoteDelivery">
-                  ${["Exworks", "FOB", "CIF", "CIP"].map(opt => `<option ${opt === tempQuote.deliveryTerms ? "selected" : ""}>${opt}</option>`).join("")}
-                </select>
-              </div>
-              <div>
-                <label>Durum</label>
-                <select class="input" id="quoteStatus" ${fieldLock("quote", "status") ? "disabled" : ""}>
-                  ${["Taslak", "Gönderildi", "Kabul", "Red"].map(opt => `<option ${opt === tempQuote.status ? "selected" : ""}>${opt}</option>`).join("")}
-                </select>
-                ${fieldLock("quote", "status") ? `<div class="hint">Yönetici onayı gerekir.</div>` : ""}
-              </div>
-              <div>
-                <label>İndirim (USD)</label>
-                <input class="input" type="number" id="quoteDiscount" value="${tempQuote.totals.discountUSD}" ${fieldLock("quote", "discountUSD") ? "disabled" : ""} />
-                ${fieldLock("quote", "discountUSD") ? `<div class="hint">Yönetici onayı gerekir.</div>` : ""}
-              </div>
-              <div>
-                <label>Sevkiyat (USD)</label>
-                <input class="input" type="number" id="quoteShipping" value="${tempQuote.totals.shippingUSD}" />
-              </div>
-            </div>
-            <div style="margin-top:16px;">
-              <h3>Kalemler</h3>
-              <table class="table">
-                <thead>
-                  <tr>
-                    <th>Tip</th>
-                    <th>Açıklama</th>
-                    <th>Adet</th>
-                    <th>Birim</th>
-                    <th>Birim fiyat</th>
-                    <th></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${tempQuote.items.map((item, index) => `
-                    <tr>
-                      <td>
-                        <select class="input" data-item-field="type" data-index="${index}">
-                          ${["Panel", "İnverter", "Konstrüksiyon", "Kablo", "İşçilik", "Diğer"].map(opt => `<option ${opt === item.type ? "selected" : ""}>${opt}</option>`).join("")}
-                        </select>
-                      </td>
-                      <td><input class="input" data-item-field="description" data-index="${index}" value="${item.description}" /></td>
-                      <td><input class="input" type="number" data-item-field="qty" data-index="${index}" value="${item.qty}" /></td>
-                      <td><input class="input" data-item-field="unit" data-index="${index}" value="${item.unit}" /></td>
-                      <td>
-                        <input class="input" type="number" data-item-field="unitPriceUSD" data-index="${index}" value="${item.unitPriceUSD}" ${fieldLock("quoteItem", "unitPriceUSD") ? "disabled" : ""} />
-                        ${fieldLock("quoteItem", "unitPriceUSD") ? `<div class="hint">Fiyat için satış onayı gerekir.</div>` : ""}
-                      </td>
-                      <td><button class="btn secondary" data-remove-item="${index}">Sil</button></td>
-                    </tr>
-                  `).join("")}
-                </tbody>
-              </table>
-              <div class="button-row" style="margin-top:10px;">
-                <button class="btn secondary" id="addQuoteItem">Kalem ekle</button>
-              </div>
-            </div>
-            <div class="list" style="margin-top:16px;">
-              <div class="list-item"><span>Ara toplam</span><strong>${formatUSD(tempQuote.totals.subtotalUSD)}</strong></div>
-              <div class="list-item"><span>Genel toplam</span><strong>${formatUSD(tempQuote.totals.grandTotalUSD)}</strong></div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button class="btn secondary" id="modalCancel">İptal</button>
-            <button class="btn primary" id="modalSave">Kaydet</button>
-          </div>
-        `;
-
-        document.getElementById("modalClose").addEventListener("click", () => modalBackdrop.classList.remove("active"));
-        document.getElementById("modalCancel").addEventListener("click", () => modalBackdrop.classList.remove("active"));
-        document.getElementById("addQuoteItem").addEventListener("click", () => {
-          tempQuote.items.push({ type: "Diğer", description: "", qty: 1, unit: "Adet", unitPriceUSD: 0 });
-          renderQuoteModal();
-        });
-        document.querySelectorAll("[data-remove-item]").forEach(btn => btn.addEventListener("click", () => {
-          tempQuote.items.splice(Number(btn.dataset.removeItem), 1);
-          renderQuoteModal();
-        }));
-        document.querySelectorAll("[data-item-field]").forEach(input => {
-          input.addEventListener("input", () => {
-            const idx = Number(input.dataset.index);
-            const field = input.dataset.itemField;
-            tempQuote.items[idx][field] = field === "qty" || field === "unitPriceUSD" ? Number(input.value) : input.value;
-            renderQuoteModal();
-          });
-        });
-        document.getElementById("quotePayment").addEventListener("change", (e) => { tempQuote.paymentTerms = e.target.value; });
-        document.getElementById("quoteDelivery").addEventListener("change", (e) => { tempQuote.deliveryTerms = e.target.value; });
-        document.getElementById("quoteStatus").addEventListener("change", (e) => {
-          if (!can("markQuoteAccepted") && e.target.value === "Kabul") {
-            showToast("Yönetici onayı gerekir");
-            renderQuoteModal();
-            return;
-          }
-          tempQuote.status = e.target.value;
-        });
-        document.getElementById("quoteDiscount").addEventListener("input", (e) => { tempQuote.totals.discountUSD = Number(e.target.value); renderQuoteModal(); });
-        document.getElementById("quoteShipping").addEventListener("input", (e) => { tempQuote.totals.shippingUSD = Number(e.target.value); renderQuoteModal(); });
-        document.getElementById("modalSave").addEventListener("click", () => {
-          updateQuoteTotals(tempQuote);
-          if (!tempQuote.items.length) {
-            showToast("En az bir kalem ekleyin");
-            return;
-          }
-          if (quote) {
-            Object.assign(quote, tempQuote, { updatedAt: nowISO() });
-            addTimeline("quotes", quote.id, "Teklif güncellendi");
-          } else {
-            tempQuote.createdAt = nowISO();
-            tempQuote.updatedAt = nowISO();
-            addTimeline("quotes", tempQuote.id, "Teklif oluşturuldu");
-            state.data.quotes.unshift(tempQuote);
-          }
-          saveData();
-          showToast("Teklif kaydedildi");
-          modalBackdrop.classList.remove("active");
-          renderQuotes();
-        });
-      };
-
-      modalBackdrop.classList.add("active");
-      renderQuoteModal();
-    };
-
-    const openQuotePreview = (quote) => {
-      modalContent.innerHTML = `
-        <div class="modal-header">
+    const renderQuotes = () => {
+      const selectedQuote = getQuote(state.selected.id);
+      const listItems = state.data.quotes.map(quote => `
+        <div class="list-item">
           <div>
-            <h2>Yazdırılabilir Teklif</h2>
-            <p class="muted">${quote.quoteNo}</p>
+            <strong>${quote.quoteNo}</strong>
+            <div class="muted">${quote.status}</div>
           </div>
-          <button class="btn secondary" id="modalClose">Kapat</button>
+          <div class="button-row">
+            <button class="btn secondary" data-action="detail" data-entity="quote" data-id="${quote.id}">Detay</button>
+            <button class="btn secondary" data-action="edit" data-entity="quote" data-id="${quote.id}">Düzenle</button>
+            <button class="btn secondary" data-action="delete" data-entity="quote" data-id="${quote.id}">Sil</button>
+          </div>
         </div>
-        <div style="margin-top:16px;">
+      `).join("") || `<div class="empty">Teklif yok.</div>`;
+
+      const opp = selectedQuote?.opportunityId ? getOpportunity(selectedQuote.opportunityId) : null;
+      const lead = opp?.leadId ? getLead(opp.leadId) : null;
+      const account = opp?.accountId ? getAccount(opp.accountId) : null;
+      const detail = selectedQuote ? `
+        <h2>${selectedQuote.quoteNo}</h2>
+        <p class="muted">${selectedQuote.status} · ${opp?.title || "-"}</p>
+        ${renderDetailTabs()}
+        ${state.detailTab === "Özet" ? `
           <div class="list">
-            ${quote.items.map(item => `
-              <div class="list-item">
-                <span>${item.description}</span>
-                <strong>${item.qty} ${item.unit} · ${formatUSD(item.unitPriceUSD)}</strong>
-              </div>
-            `).join("")}
+            <div class="list-item"><span>Müşteri/Lead</span><span>${account?.companyName || lead?.companyName || "-"}</span></div>
+            <div class="list-item"><span>Toplam</span><span>${formatUSD(selectedQuote.totals.grandTotalUSD)}</span></div>
           </div>
-          <div class="list" style="margin-top:16px;">
-            <div class="list-item"><span>Ara toplam</span><strong>${formatUSD(quote.totals.subtotalUSD)}</strong></div>
-            <div class="list-item"><span>Toplam</span><strong>${formatUSD(quote.totals.grandTotalUSD)}</strong></div>
+        ` : ""}
+        ${state.detailTab === "Zaman Çizgisi" ? renderTimeline(selectedQuote.timeline || []) : ""}
+      ` : `<div class="empty">Detay için teklif seçin.</div>`;
+
+      return `
+        <div class="page-title">
+          <div>
+            <h1>Teklifler</h1>
+            <p class="muted">Teklifler fırsatlara bağlıdır.</p>
           </div>
+          <div class="button-row">
+            <button class="btn primary" data-action="create" data-entity="quote">Yeni Teklif</button>
+          </div>
+        </div>
+        <div class="grid cols-2">
+          <div class="card" id="quoteList">${listItems}</div>
+          <div class="card">${detail}</div>
         </div>
       `;
-      modalBackdrop.classList.add("active");
-      document.getElementById("modalClose").addEventListener("click", () => modalBackdrop.classList.remove("active"));
     };
 
-    const openOrderModal = (id, quote = null) => {
-      const order = id ? state.data.orders.find(item => item.id === id) : null;
-      if (!can("createOrder")) {
-        showToast("Yönetici onayı gerekir");
-        return;
-      }
-      const opportunities = state.data.opportunities;
-      if (!opportunities.length) {
-        showToast("Önce fırsat oluşturun");
-        return;
-      }
-      const selectedOppId = order?.opportunityId || quote?.opportunityId || "";
-      const selectedOppLabel = opportunities.find(opp => opp.id === selectedOppId);
-      const selectedOppValue = selectedOppLabel ? `${selectedOppLabel.id} · ${selectedOppLabel.title}` : "";
-      openModal({
-        title: id ? "Sipariş düzenle" : "Yeni sipariş",
-        subtitle: "Sipariş bilgileri",
-        fields: [
-          { label: "Fırsat", name: "opportunityId", type: "select", value: selectedOppValue, options: opportunities.map(opp => `${opp.id} · ${opp.title}`) },
-          { label: "Durum", name: "status", type: "select", value: order?.status || "Alındı", options: ["Alındı", "Üretimde", "Hazır", "Sevk", "İptal", "Tamam"] },
-          { label: "Vaat edilen sevk", name: "promisedShipDate", type: "date", value: order?.promisedShipDate || shortDate(nowISO()) },
-          { label: "Depo", name: "warehouse", type: "select", value: order?.warehouse || state.settings.defaultWarehouse, options: ["Antalya", "Tivat", "Other"] },
-          { label: "Lojistik notu", name: "logisticsNotes", type: "textarea", value: order?.logisticsNotes || "" }
-        ],
-        onSave: (values) => {
-          const oppId = values.opportunityId?.split(" · ")[0] || "";
-          if (!oppId) {
-            showToast("Sipariş için fırsat seçin");
-            return;
-          }
-          if (order) {
-            Object.assign(order, values, { opportunityId: oppId, updatedAt: nowISO() });
-            addTimeline("orders", order.id, "Sipariş güncellendi");
-          } else {
-            const newOrder = {
-              id: generateId("order"),
-              createdAt: nowISO(),
-              updatedAt: nowISO(),
-              opportunityId: oppId,
-              orderNo: generateOrderNo(),
-              timeline: []
-            };
-            Object.assign(newOrder, values, { opportunityId: oppId });
-            addTimeline("orders", newOrder.id, "Sipariş oluşturuldu");
-            state.data.orders.unshift(newOrder);
-          }
-          saveData();
-          showToast("Sipariş kaydedildi");
-          renderOrders();
-        }
-      });
-    };
+    const renderOrders = () => `
+      <div class="page-title">
+        <div>
+          <h1>Siparişler</h1>
+          <p class="muted">Kabul edilen tekliflerden oluşan sipariş akışı.</p>
+        </div>
+        <div class="button-row">
+          <button class="btn secondary" disabled>Sipariş oluştur</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty">Henüz sipariş yok. Teklifler ekranından siparişe dönüştürme eklenecek.</div>
+      </div>
+    `;
 
-    const openTaskModal = (id) => {
-      const task = id ? state.data.tasks.find(item => item.id === id) : null;
-      openModal({
-        title: id ? "Görev düzenle" : "Yeni görev",
-        subtitle: "Satış takibini kolaylaştırın.",
-        fields: [
-          { label: "Başlık", name: "title", value: task?.title, required: true },
-          { label: "Vade", name: "dueDate", type: "date", value: task?.dueDate || shortDate(nowISO()) },
-          { label: "Öncelik", name: "priority", type: "select", value: task?.priority || "Orta", options: ["Düşük", "Orta", "Yüksek"] },
-          { label: "Durum", name: "status", type: "select", value: task?.status || "Açık", options: ["Açık", "Bitti"] },
-          { label: "Sorumlu", name: "owner", value: task?.owner || state.role }
-        ],
-        onSave: (values) => {
-          if (task) {
-            Object.assign(task, values, { updatedAt: nowISO() });
-            task.timeline = task.timeline || [];
-            task.timeline.unshift(`${new Date().toLocaleDateString("tr-TR")} · Görev güncellendi`);
-          } else {
-            const newTask = {
-              id: generateId("task"),
-              createdAt: nowISO(),
-              updatedAt: nowISO(),
-              timeline: []
-            };
-            Object.assign(newTask, values);
-            newTask.timeline.unshift(`${new Date().toLocaleDateString("tr-TR")} · Görev oluşturuldu`);
-            state.data.tasks.unshift(newTask);
-          }
-          saveData();
-          showToast("Görev kaydedildi");
-          renderTasks();
-        }
-      });
-    };
+    const renderTasks = () => `
+      <div class="page-title">
+        <div>
+          <h1>Görevler</h1>
+          <p class="muted">Takip ve koordinasyon işleri burada planlanacak.</p>
+        </div>
+        <div class="button-row">
+          <button class="btn secondary" disabled>Yeni görev</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty">Görev listesi yakında burada görünecek.</div>
+      </div>
+    `;
 
-    const openPartnerModal = (id) => {
-      const partner = id ? state.data.partners.find(item => item.id === id) : null;
-      openModal({
-        title: id ? "Partner düzenle" : "Yeni partner",
-        subtitle: "Bayi hedefleri ve temel bilgiler.",
-        fields: [
-          { label: "Şirket adı", name: "companyName", value: partner?.companyName, required: true },
-          { label: "Yıllık hedef (panel)", name: "yearlyTarget", type: "number", value: partner?.yearlyTarget || 1000 }
-        ],
-        onSave: (values) => {
-          if (partner) {
-            Object.assign(partner, values, { updatedAt: nowISO() });
-            addTimeline("partners", partner.id, "Partner güncellendi");
-          } else {
-            const newPartner = {
-              id: generateId("partner"),
-              createdAt: nowISO(),
-              updatedAt: nowISO(),
-              timeline: []
-            };
-            Object.assign(newPartner, values);
-            addTimeline("partners", newPartner.id, "Partner oluşturuldu");
-            state.data.partners.unshift(newPartner);
-          }
-          saveData();
-          showToast("Partner kaydedildi");
-          renderPartners();
-        }
-      });
-    };
+    const renderPartners = () => `
+      <div class="page-title">
+        <div>
+          <h1>Partner Programı</h1>
+          <p class="muted">Bayi ve EPC partnerlerini yönetin.</p>
+        </div>
+        <div class="button-row">
+          <button class="btn secondary" disabled>Yeni partner</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty">Henüz partner kaydı yok. İlerleyen sürümde aktif hale getirilecek.</div>
+      </div>
+    `;
 
-    const openPurchaseModal = (partnerId) => {
-      openModal({
-        title: "Alım ekle",
-        subtitle: "Panel alım kaydı oluşturun.",
-        fields: [
-          { label: "Tarih", name: "date", type: "date", value: shortDate(nowISO()), required: true },
-          { label: "Panel adedi", name: "qtyPanels", type: "number", value: 0, required: true },
-          { label: "Panel watt", name: "panelWattage", type: "number", value: state.settings.defaultPanelWattage }
-        ],
-        onSave: (values) => {
-          state.data.purchases.unshift({
-            id: generateId("purchase"),
-            createdAt: nowISO(),
-            updatedAt: nowISO(),
-            partnerId,
-            ...values
-          });
-          addTimeline("partners", partnerId, `Alım eklendi: ${values.qtyPanels} panel`);
-          saveData();
-          showToast("Alım kaydedildi");
-          renderPartners();
-        }
-      });
-    };
+    const renderSettings = () => `
+      <div class="page-title">
+        <div>
+          <h1>Ayarlar / Veri</h1>
+          <p class="muted">Temel varsayılanlar ve çalışma parametreleri.</p>
+        </div>
+        <div class="button-row">
+          <button class="btn primary" data-action="save-settings">Kaydet</button>
+        </div>
+      </div>
+      <div class="card" id="settingsForm">
+        <div class="grid cols-2">
+          <div>
+            <label>Varsayılan para birimi</label>
+            <select class="input" data-setting="currency">
+              ${["USD", "EUR", "TRY"].map(opt => `<option value="${opt}" ${state.settings.currency === opt ? "selected" : ""}>${opt}</option>`).join("")}
+            </select>
+          </div>
+          <div>
+            <label>Varsayılan panel gücü (W)</label>
+            <input class="input" data-setting="defaultPanelWattage" type="number" min="0" value="${state.settings.defaultPanelWattage}" />
+          </div>
+          <div>
+            <label>Varsayılan depo</label>
+            <input class="input" data-setting="defaultWarehouse" value="${state.settings.defaultWarehouse}" />
+          </div>
+        </div>
+        <p class="hint">Değişiklikler yeni kayıtlar için uygulanır.</p>
+      </div>
+    `;
 
-    const openShipmentModal = (partnerId) => {
-      openModal({
-        title: "Bonus sevki",
-        subtitle: "Bonus panel sevkini kaydedin.",
-        fields: [
-          { label: "Tarih", name: "date", type: "date", value: shortDate(nowISO()), required: true },
-          { label: "Panel adedi", name: "qtyPanels", type: "number", value: 0, required: true }
-        ],
-        onSave: (values) => {
-          state.data.shipments.unshift({
-            id: generateId("shipment"),
-            createdAt: nowISO(),
-            updatedAt: nowISO(),
-            partnerId,
-            ...values
-          });
-          addTimeline("partners", partnerId, `Bonus sevk: ${values.qtyPanels} panel`);
-          saveData();
-          showToast("Sevk kaydedildi");
-          renderPartners();
-        }
-      });
-    };
+    const renderDetailTabs = () => `
+      <div class="detail-tabs">
+        ${["Özet","Zaman Çizgisi"].map(tab => `<button class="${state.detailTab===tab?"active":""}" data-action="detail-tab" data-tab="${tab}">${tab}</button>`).join("")}
+      </div>
+    `;
 
-    const confirmDelete = (collection, id) => {
-      openConfirm({
-        title: "Silme onayı",
-        subtitle: "Bu kayıt geri alınamaz.",
-        onConfirm: () => {
-          state.data[collection + "s"] = state.data[collection + "s"].filter(item => item.id !== id);
-          saveData();
-          showToast("Kayıt silindi");
-          renderApp();
-        }
-      });
-    };
-
-    // Demo data generator with required minimum dataset
-    const seedDemoData = () => {
-      state.data = emptyData();
-      const sources = ["Instagram", "LinkedIn", "Web", "Fuar", "Referans", "Facebook"];
-      const segments = ["Konut", "Ticari", "EPC", "Bayi"];
-      const cities = ["İstanbul", "Ankara", "İzmir", "Antalya", "Bursa", "Adana"];
-      for (let i = 0; i < 12; i++) {
-        state.data.leads.push({
-          id: generateId("lead"),
-          createdAt: nowISO(),
-          updatedAt: nowISO(),
-          source: sources[i % sources.length],
-          status: ["Yeni", "Temas Edildi", "Nitelikli", "Elendi"][i % 4],
-          companyName: `Lead Şirket ${i + 1}`,
-          contactName: `Kişi ${i + 1}`,
-          phone: "+90 5xx xxx xx xx",
-          email: `lead${i + 1}@example.com`,
-          city: cities[i % cities.length],
-          country: "Türkiye",
-          segment: segments[i % segments.length],
-          interest: ["Panel", "EPC", "Depolama", "EV Şarj"][i % 4],
-          notes: [],
-          tags: ["Sıcak"],
-          owner: i % 2 === 0 ? "SATIŞ" : "TEKNİK OFİS",
-          lastTouchAt: nowISO(),
-          nextActionAt: nowISO(),
-          timeline: ["Demo lead oluşturuldu"]
-        });
-      }
-      for (let i = 0; i < 6; i++) {
-        state.data.opportunities.push({
-          id: generateId("opportunity"),
-          createdAt: nowISO(),
-          updatedAt: nowISO(),
-          leadId: state.data.leads[i].id,
-          accountId: "",
-          title: `Fırsat ${i + 1}`,
-          stage: ["Lead", "Nitelikli", "Teklif", "Revize", "Üretim", "Sevk"][i],
-          expectedPanelsQty: 400 + i * 60,
-          panelModel: "Alb Mono",
-          panelWattage: 550,
-          targetPricePerWatt: 0.19 - i * 0.002,
-          expectedCloseDate: shortDate(nowISO()),
-          probability: 30 + i * 10,
-          competitor: "",
-          owner: i % 2 === 0 ? "SATIŞ" : "YÖNETİCİ",
-          stageUpdatedAt: nowISO(),
-          timeline: []
-        });
-      }
-      for (let i = 0; i < 4; i++) {
-        const quote = {
-          id: generateId("quote"),
-          createdAt: nowISO(),
-          updatedAt: nowISO(),
-          opportunityId: state.data.opportunities[i].id,
-          quoteNo: generateQuoteNo(),
-          items: [
-            { type: "Panel", description: `Alb Mono ${550}W`, qty: 500 + i * 50, unit: "Adet", unitPriceUSD: 90 - i }
-          ],
-          totals: { subtotalUSD: 45000 + i * 2000, discountUSD: 0, shippingUSD: 1500, grandTotalUSD: 46500 + i * 2000 },
-          paymentTerms: ["LC90", "Kredi Kartı", "Nakit", "Vade"][i % 4],
-          deliveryTerms: ["FOB", "CIF", "CIP", "Exworks"][i % 4],
-          status: ["Taslak", "Gönderildi", "Kabul", "Red"][i % 4],
-          pdfPreviewMode: true,
-          timeline: []
-        };
-        state.data.quotes.push(quote);
-      }
-      for (let i = 0; i < 2; i++) {
-        state.data.orders.push({
-          id: generateId("order"),
-          createdAt: nowISO(),
-          updatedAt: nowISO(),
-          opportunityId: state.data.opportunities[i].id,
-          orderNo: generateOrderNo(),
-          status: ["Alındı", "Üretimde"][i],
-          promisedShipDate: shortDate(nowISO()),
-          warehouse: i === 0 ? "Antalya" : "Tivat",
-          logisticsNotes: "",
-          timeline: []
-        });
-      }
-      for (let i = 0; i < 8; i++) {
-        state.data.tasks.push({
-          id: generateId("task"),
-          createdAt: nowISO(),
-          updatedAt: nowISO(),
-          title: `Görev ${i + 1}`,
-          relatedTo: "opportunity",
-          dueDate: shortDate(nowISO()),
-          priority: ["Düşük", "Orta", "Yüksek"][i % 3],
-          status: "Açık",
-          owner: i % 2 === 0 ? "SATIŞ" : "TEKNİK OFİS"
-        });
-      }
-      const partnerNames = ["Ege Solar", "Balkan EPC", "Atlas Enerji"];
-      partnerNames.forEach((name, idx) => {
-        const partnerId = generateId("partner");
-        state.data.partners.push({
-          id: partnerId,
-          createdAt: nowISO(),
-          updatedAt: nowISO(),
-          accountId: "",
-          companyName: name,
-          yearlyTarget: 1000,
-          timeline: []
-        });
-        const purchaseSets = [
-          [200, 250],
-          [500, 320],
-          [700, 420, 180]
-        ];
-        purchaseSets[idx].forEach((qty) => {
-          state.data.purchases.push({
-            id: generateId("purchase"),
-            createdAt: nowISO(),
-            updatedAt: nowISO(),
-            partnerId,
-            date: shortDate(nowISO()),
-            qtyPanels: qty,
-            panelWattage: 550 + idx * 10
-          });
-        });
-        state.data.shipments.push({
-          id: generateId("shipment"),
-          createdAt: nowISO(),
-          updatedAt: nowISO(),
-          partnerId,
-          date: shortDate(nowISO()),
-          qtyPanels: 40 + idx * 10
-        });
-      });
-      state.data.accounts.push({
-        id: generateId("account"),
-        createdAt: nowISO(),
-        updatedAt: nowISO(),
-        companyName: "Alb Enerji Demo",
-        taxNo: "1234567890",
-        city: "İstanbul",
-        country: "Türkiye",
-        type: "EPC",
-        contacts: [{ name: "Ayşe Demir", role: "Satınalma", phone: "+90 5xx", email: "ayse@example.com" }],
-        accountNotes: ["Demo hesap notu"],
-        timeline: []
-      });
-      saveData();
-    };
+    const renderTimeline = (items = []) => `
+      <div class="timeline">
+        ${items.length ? items.map(item => `<div class="timeline-item">${item}</div>`).join("") : `<div class="empty">Henüz kayıt yok.</div>`}
+      </div>
+    `;
 
     const renderApp = () => {
       renderRoleToggle();
       renderTabs();
-      if (state.activeTab === "Ana Panel") return renderDashboard();
-      if (state.activeTab === "Pipeline") return renderOpportunities();
-      if (state.activeTab === "Lead’ler") return renderLeads();
-      if (state.activeTab === "Müşteriler") return renderAccounts();
-      if (state.activeTab === "Teklifler") return renderQuotes();
-      if (state.activeTab === "Siparişler") return renderOrders();
-      if (state.activeTab === "Görevler") return renderTasks();
-      if (state.activeTab === "Partner Programı") return renderPartners();
-      if (state.activeTab === "Ayarlar / Veri") return renderSettings();
+      const app = document.getElementById("app");
+      if (state.activeTab === "Ana Panel") app.innerHTML = renderDashboard();
+      if (state.activeTab === "Lead’ler") app.innerHTML = renderLeads();
+      if (state.activeTab === "Müşteriler") app.innerHTML = renderAccounts();
+      if (state.activeTab === "Pipeline") app.innerHTML = renderOpportunities();
+      if (state.activeTab === "Teklifler") app.innerHTML = renderQuotes();
+      if (state.activeTab === "Siparişler") app.innerHTML = renderOrders();
+      if (state.activeTab === "Görevler") app.innerHTML = renderTasks();
+      if (state.activeTab === "Partner Programı") app.innerHTML = renderPartners();
+      if (state.activeTab === "Ayarlar / Veri") app.innerHTML = renderSettings();
+    };
+
+    document.addEventListener("click", (event) => {
+      const target = event.target.closest("[data-action]");
+      if (!target) return;
+      const action = target.dataset.action;
+      const entity = target.dataset.entity;
+      const id = target.dataset.id;
+
+      if (action === "seed-demo") {
+        seedDemoData();
+        showToast("Demo verisi yüklendi");
+        renderApp();
+      }
+
+      if (action === "create") {
+        openModal({ type: entity, mode: "create", context: null });
+      }
+
+      if (action === "edit") {
+        openModal({ type: entity, mode: "edit", entityId: id });
+      }
+
+      if (action === "detail") {
+        state.selected = { entity, id };
+        state.detailTab = "Özet";
+        renderApp();
+      }
+
+      if (action === "delete") {
+        if (!confirm("Bu kayıt silinsin mi?")) return;
+        state.data[entity + "s"] = state.data[entity + "s"].filter(item => item.id !== id);
+        saveData();
+        showToast("Kayıt silindi");
+        renderApp();
+      }
+
+      if (action === "convert") {
+        openModal({ type: "convertLead", mode: "create", entityId: id });
+      }
+
+      if (action === "detail-tab") {
+        state.detailTab = target.dataset.tab;
+        renderApp();
+      }
+
+      if (action === "save-settings") {
+        const settingsForm = document.getElementById("settingsForm");
+        if (!settingsForm) return;
+        const updates = {};
+        settingsForm.querySelectorAll("[data-setting]").forEach(el => {
+          const key = el.dataset.setting;
+          if (el.type === "number") {
+            updates[key] = Number(el.value || 0);
+          } else {
+            updates[key] = el.value;
+          }
+        });
+        state.settings = { ...state.settings, ...updates };
+        saveData();
+        showToast("Ayarlar kaydedildi");
+        renderApp();
+      }
+
+      if (action === "modal-close") {
+        closeModal();
+      }
+
+      if (action === "add-quote-item") {
+        const tbody = modalContent.querySelector("#quoteItemsTable tbody");
+        const idx = tbody.children.length;
+        tbody.insertAdjacentHTML("beforeend", `
+          <tr data-idx="${idx}">
+            <td>
+              <select class="input" data-item="type">
+                ${["Panel","İnverter","Konstrüksiyon","Kablo","İşçilik","Diğer"].map(opt => `<option>${opt}</option>`).join("")}
+              </select>
+            </td>
+            <td><input class="input" data-item="description" value="" /></td>
+            <td><input class="input" data-item="qty" type="number" value="1" /></td>
+            <td><input class="input" data-item="unit" value="Adet" /></td>
+            <td><input class="input" data-item="unitPriceUSD" type="number" value="0" /></td>
+            <td><button class="btn secondary" data-action="remove-quote-item">Sil</button></td>
+          </tr>
+        `);
+      }
+
+      if (action === "remove-quote-item") {
+        const row = target.closest("tr");
+        if (row) row.remove();
+      }
+
+      if (action === "inline-create-opp") {
+        closeModal();
+        openModal({ type: "opportunity", mode: "create", context: { returnTo: "quote" } });
+      }
+
+      if (action === "modal-save") {
+        const mode = target.dataset.mode;
+        const saveEntity = target.dataset.entity;
+        const values = collectModalFields();
+
+        if (saveEntity === "lead") {
+          if (!values.companyName) {
+            document.getElementById("modalValidation").textContent = "Şirket adı zorunludur.";
+            return;
+          }
+          if (mode === "create") {
+            const lead = { id: generateId("lead"), createdAt: nowISO(), updatedAt: nowISO(), timeline: [], tags: [], accountId: null, lastTouchAt: nowISO(), nextActionAt: nowISO(), ...values };
+            state.data.leads.unshift(lead);
+            addTimeline("leads", lead.id, "Lead oluşturuldu");
+          } else {
+            const lead = getLead(target.dataset.id);
+            Object.assign(lead, values, { updatedAt: nowISO() });
+            addTimeline("leads", lead.id, "Lead güncellendi");
+          }
+        }
+
+        if (saveEntity === "account") {
+          if (!values.companyName) {
+            document.getElementById("modalValidation").textContent = "Şirket adı zorunludur.";
+            return;
+          }
+          if (mode === "create") {
+            const account = { id: generateId("account"), createdAt: nowISO(), updatedAt: nowISO(), contacts: [], notes: [], timeline: [], ...values };
+            state.data.accounts.unshift(account);
+            addTimeline("accounts", account.id, "Müşteri oluşturuldu");
+          } else {
+            const account = getAccount(target.dataset.id);
+            Object.assign(account, values, { updatedAt: nowISO() });
+            addTimeline("accounts", account.id, "Müşteri güncellendi");
+          }
+        }
+
+        if (saveEntity === "opportunity") {
+          if (!values.title) {
+            document.getElementById("modalValidation").textContent = "Başlık zorunludur.";
+            return;
+          }
+          if (!values.leadId && !values.accountId) {
+            document.getElementById("modalValidation").textContent = "Lead veya müşteri seçmelisiniz.";
+            return;
+          }
+          if (mode === "create") {
+            const opp = {
+              id: generateId("opportunity"),
+              createdAt: nowISO(),
+              updatedAt: nowISO(),
+              stage: "Lead",
+              stageUpdatedAt: nowISO(),
+              ...values
+            };
+            state.data.opportunities.unshift(opp);
+            addTimeline("opportunities", opp.id, "Fırsat oluşturuldu");
+            if (state.modal.context?.returnTo === "quote") {
+              closeModal();
+              openModal({ type: "quote", mode: "create", context: { preselectOppId: opp.id } });
+              return;
+            }
+          } else {
+            const opp = getOpportunity(target.dataset.id);
+            Object.assign(opp, values, { updatedAt: nowISO() });
+            addTimeline("opportunities", opp.id, "Fırsat güncellendi");
+          }
+        }
+
+        if (saveEntity === "quote") {
+          if (!values.opportunityId) {
+            document.getElementById("modalValidation").textContent = "Fırsat seçiniz.";
+            return;
+          }
+          const rows = [...modalContent.querySelectorAll("#quoteItemsTable tbody tr")];
+          const items = rows.map(row => ({
+            type: row.querySelector('[data-item="type"]').value,
+            description: row.querySelector('[data-item="description"]').value,
+            qty: Number(row.querySelector('[data-item="qty"]').value || 0),
+            unit: row.querySelector('[data-item="unit"]').value,
+            unitPriceUSD: Number(row.querySelector('[data-item="unitPriceUSD"]').value || 0)
+          }));
+          const totals = computeQuoteTotals(items, values.discountUSD, values.shippingUSD);
+          if (mode === "create") {
+            const quote = {
+              id: generateId("quote"),
+              createdAt: nowISO(),
+              updatedAt: nowISO(),
+              quoteNo: generateQuoteNo(),
+              status: values.status || "Taslak",
+              opportunityId: values.opportunityId,
+              paymentTerms: values.paymentTerms || "LC90",
+              deliveryTerms: values.deliveryTerms || "FOB",
+              items,
+              totals,
+              timeline: []
+            };
+            state.data.quotes.unshift(quote);
+            addTimeline("quotes", quote.id, "Teklif oluşturuldu");
+          } else {
+            const quote = getQuote(target.dataset.id);
+            Object.assign(quote, values, { items, totals, updatedAt: nowISO() });
+            addTimeline("quotes", quote.id, "Teklif güncellendi");
+          }
+        }
+
+        if (saveEntity === "convertLead") {
+          const lead = getLead(target.dataset.id);
+          if (!lead) return;
+          if (values.convertMode === "existing") {
+            if (!values.existingAccountId) {
+              document.getElementById("modalValidation").textContent = "Mevcut müşteri seçiniz.";
+              return;
+            }
+            lead.accountId = values.existingAccountId;
+          } else {
+            const account = {
+              id: generateId("account"),
+              createdAt: nowISO(),
+              updatedAt: nowISO(),
+              type: lead.segment === "Bayi" ? "Bayi" : lead.segment === "EPC" ? "EPC" : "Son kullanıcı",
+              companyName: lead.companyName,
+              taxNo: "",
+              city: lead.city,
+              country: lead.country || "Türkiye",
+              contacts: lead.contactName ? [{ name: lead.contactName, role: "İlgili kişi", phone: lead.phone, email: lead.email }] : [],
+              notes: [],
+              timeline: []
+            };
+            state.data.accounts.unshift(account);
+            lead.accountId = account.id;
+            addTimeline("accounts", account.id, "Lead’den müşteri oluşturuldu");
+          }
+          lead.status = "Nitelikli";
+          lead.updatedAt = nowISO();
+          addTimeline("leads", lead.id, "Müşteriye dönüştürüldü");
+
+          if (values.createOpp) {
+            closeModal();
+            openModal({ type: "opportunity", mode: "create", context: null });
+            return;
+          }
+        }
+
+        saveData();
+        closeModal();
+        showToast("Kaydedildi");
+        renderApp();
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeModal();
+    });
+
+    const seedDemoData = () => {
+      state.data = emptyData();
+      for (let i = 0; i < 5; i++) {
+        state.data.leads.push({
+          id: generateId("lead"),
+          createdAt: nowISO(),
+          updatedAt: nowISO(),
+          status: "Yeni",
+          source: "Web",
+          companyName: `Lead ${i + 1}`,
+          contactName: `Kişi ${i + 1}`,
+          phone: "+90 5xx xxx xx xx",
+          email: `lead${i + 1}@example.com`,
+          city: "İstanbul",
+          country: "Türkiye",
+          segment: "Konut",
+          interest: "Panel",
+          owner: "SATIŞ",
+          tags: ["Yeni"],
+          timeline: ["Lead oluşturuldu"],
+          accountId: null,
+          lastTouchAt: nowISO(),
+          nextActionAt: nowISO()
+        });
+      }
+      saveData();
     };
 
     loadData();
