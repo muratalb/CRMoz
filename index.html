@@ -985,6 +985,29 @@
         acc[quote.status] = (acc[quote.status] || 0) + 1;
         return acc;
       }, {});
+      const isAdmin = state.role === "YÖNETİCİ";
+      const totalLeads = state.data.leads.length;
+      const convertedLeads = state.data.leads.filter(lead => lead.accountId).length;
+      const conversionRate = totalLeads ? Math.round((convertedLeads / totalLeads) * 100) : 0;
+      const totalOpps = state.data.opportunities.length;
+      const acceptedQuotes = state.data.quotes.filter(quote => quote.status === "Kabul");
+      const acceptanceRate = state.data.quotes.length ? Math.round((acceptedQuotes.length / state.data.quotes.length) * 100) : 0;
+      const totalOrders = state.data.orders.length;
+      const openOrders = state.data.orders.filter(order => order.status !== "Tamamlandı").length;
+      const backlogValue = acceptedQuotes
+        .filter(quote => !state.data.orders.some(order => order.quoteId === quote.id))
+        .reduce((sum, quote) => sum + Number(quote.totals?.grandTotalUSD || 0), 0);
+      const panelItems = acceptedQuotes.flatMap(quote => quote.items || []).filter(item => item.type === "Panel");
+      const totalPanelsSold = panelItems.reduce((sum, item) => sum + Number(item.qty || 0), 0);
+      const avgPricePerWatt = panelItems.length
+        ? (panelItems.reduce((sum, item) => sum + Number(item.pricePerWatt || 0), 0) / panelItems.length).toFixed(3)
+        : "0.000";
+      const avgDealSize = acceptedQuotes.length
+        ? Math.round(acceptedQuotes.reduce((sum, quote) => sum + Number(quote.totals?.grandTotalUSD || 0), 0) / acceptedQuotes.length)
+        : 0;
+      const avgCycleDays = state.data.opportunities.length
+        ? Math.round(state.data.opportunities.reduce((sum, opp) => sum + daysBetween(opp.createdAt, opp.stageUpdatedAt || nowISO()), 0) / state.data.opportunities.length)
+        : 0;
       return `
         <div class="page-title">
           <div>
@@ -1000,6 +1023,19 @@
           <div class="card kpi"><h3>Pipeline toplam değeri</h3><span>${formatUSD(pipelineValue)}</span></div>
           <div class="card kpi"><h3>Teklifler</h3><span>${quotesByStatus.Taslak || 0} Taslak · ${quotesByStatus.Gönderildi || 0} Gönderildi · ${quotesByStatus.Kabul || 0} Kabul</span></div>
         </section>
+        ${isAdmin ? `
+          <section class="grid cols-4">
+            <div class="card kpi"><h3>Lead → Müşteri dönüşüm</h3><span>%${conversionRate}</span></div>
+            <div class="card kpi"><h3>Teklif kabul oranı</h3><span>%${acceptanceRate}</span></div>
+            <div class="card kpi"><h3>Ortalama teklif büyüklüğü</h3><span>${formatUSD(avgDealSize)}</span></div>
+            <div class="card kpi"><h3>Ortalama satış döngüsü</h3><span>${avgCycleDays} gün</span></div>
+            <div class="card kpi"><h3>Toplam fırsat</h3><span>${totalOpps}</span></div>
+            <div class="card kpi"><h3>Toplam sipariş</h3><span>${totalOrders} · ${openOrders} açık</span></div>
+            <div class="card kpi"><h3>Backlog (kabul bekleyen)</h3><span>${formatUSD(backlogValue)}</span></div>
+            <div class="card kpi"><h3>Satılan panel adedi</h3><span>${totalPanelsSold}</span></div>
+            <div class="card kpi"><h3>Ortalama $/W</h3><span>${avgPricePerWatt}</span></div>
+          </section>
+        ` : ""}
       `;
     };
 
