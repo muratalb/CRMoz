@@ -709,6 +709,9 @@
               <div class="button-row" style="margin-top:8px;">
                 <button class="btn secondary" data-action="add-quote-item">Kalem ekle</button>
               </div>
+              <div class="hint" style="margin-top:8px;">
+                Panel kalemi için zorunlu: panel seçimi, adet ve $/W. Panel dışı kalemlerde açıklama, adet ve birim fiyat girilmelidir.
+              </div>
               ${state.settings.panelCatalog.length ? "" : `<div class="hint" style="margin-top:8px;">Panel kataloğu boş. Ayarlar / Veri bölümünden panel ekleyin.</div>`}
             </div>
             <div class="hint" id="modalValidation" style="margin-top:10px;"></div>
@@ -1829,6 +1832,8 @@
             const panelId = row.querySelector('[data-item="panelId"]')?.value || "";
             const panelWattage = Number(row.querySelector('[data-item="panelWattage"]').value || 0);
             const pricePerWatt = Number(row.querySelector('[data-item="pricePerWatt"]').value || 0);
+            const qty = Number(row.querySelector('[data-item="qty"]').value || 0);
+            const unit = row.querySelector('[data-item="unit"]').value;
             const unitPriceUSD = type === "Panel" ? panelWattage * pricePerWatt : Number(row.querySelector('[data-item="unitPriceUSD"]').value || 0);
             const description = type === "Panel" ? (getPanel(panelId)?.model || "") : row.querySelector('[data-item="description"]').value;
             return {
@@ -1837,13 +1842,17 @@
               panelWattage,
               pricePerWatt,
               description,
-              qty: Number(row.querySelector('[data-item="qty"]').value || 0),
-              unit: row.querySelector('[data-item="unit"]').value,
+              qty,
+              unit,
               unitPriceUSD
             };
           });
           if (items.some(item => item.type === "Panel" && !item.panelId)) {
-            document.getElementById("modalValidation").textContent = "Panel seçimi yapılmalı.";
+            document.getElementById("modalValidation").textContent = "Panel kalemi için panel seçimi zorunludur.";
+            return;
+          }
+          if (items.some(item => item.type !== "Panel" && (!item.description || !item.unitPriceUSD))) {
+            document.getElementById("modalValidation").textContent = "Panel dışı kalemlerde açıklama ve birim fiyat zorunludur.";
             return;
           }
           const totals = computeQuoteTotals(items, values.discountUSD, values.shippingUSD);
