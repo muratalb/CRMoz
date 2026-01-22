@@ -1483,15 +1483,25 @@
       renderRoleToggle();
       renderTabs();
       const app = document.getElementById("app");
-      if (state.activeTab === "Ana Panel") app.innerHTML = renderDashboard();
-      if (state.activeTab === "Lead’ler") app.innerHTML = renderLeads();
-      if (state.activeTab === "Müşteriler") app.innerHTML = renderAccounts();
-      if (state.activeTab === "Pipeline") app.innerHTML = renderOpportunities();
-      if (state.activeTab === "Teklifler") app.innerHTML = renderQuotes();
-      if (state.activeTab === "Siparişler") app.innerHTML = renderOrders();
-      if (state.activeTab === "Görevler") app.innerHTML = renderTasks();
-      if (state.activeTab === "Partner Programı") app.innerHTML = renderPartners();
-      if (state.activeTab === "Ayarlar / Veri") app.innerHTML = renderSettings();
+      const fallbackView = `
+        <div class="card">
+          <h2>Ana Panel</h2>
+          <p class="muted">Veriler yüklenemedi. Lütfen Ayarlar / Veri bölümünden demo verisi yükleyin veya tüm veriyi sıfırlayın.</p>
+        </div>
+      `;
+      const viewMap = {
+        "Ana Panel": renderDashboard,
+        "Lead’ler": renderLeads,
+        "Müşteriler": renderAccounts,
+        "Pipeline": renderOpportunities,
+        "Teklifler": renderQuotes,
+        "Siparişler": renderOrders,
+        "Görevler": renderTasks,
+        "Partner Programı": renderPartners,
+        "Ayarlar / Veri": renderSettings
+      };
+      const renderFn = viewMap[state.activeTab] || renderDashboard;
+      app.innerHTML = renderFn() || fallbackView;
     };
 
     document.addEventListener("click", (event) => {
