@@ -322,6 +322,12 @@
 
     const ensureDefaults = () => {
       const d = state.data;
+      d.leads = Array.isArray(d.leads) ? d.leads : [];
+      d.accounts = Array.isArray(d.accounts) ? d.accounts : [];
+      d.opportunities = Array.isArray(d.opportunities) ? d.opportunities : [];
+      d.quotes = Array.isArray(d.quotes) ? d.quotes : [];
+      d.orders = Array.isArray(d.orders) ? d.orders : [];
+      d.tasks = Array.isArray(d.tasks) ? d.tasks : [];
       state.settings.panelCatalog = state.settings.panelCatalog || [];
       d.leads = d.leads.map(lead => ({
         id: lead.id || generateId("lead"),
@@ -978,24 +984,28 @@
     };
 
     const renderDashboard = () => {
+      const leads = Array.isArray(state.data.leads) ? state.data.leads : [];
+      const opportunities = Array.isArray(state.data.opportunities) ? state.data.opportunities : [];
+      const quotes = Array.isArray(state.data.quotes) ? state.data.quotes : [];
+      const orders = Array.isArray(state.data.orders) ? state.data.orders : [];
       const month = new Date().getMonth();
-      const monthLeads = state.data.leads.filter(lead => new Date(lead.createdAt).getMonth() === month);
-      const pipelineValue = state.data.opportunities.reduce((sum, opp) => sum + computeOpportunityValue(opp), 0);
-      const quotesByStatus = state.data.quotes.reduce((acc, quote) => {
+      const monthLeads = leads.filter(lead => new Date(lead.createdAt).getMonth() === month);
+      const pipelineValue = opportunities.reduce((sum, opp) => sum + computeOpportunityValue(opp), 0);
+      const quotesByStatus = quotes.reduce((acc, quote) => {
         acc[quote.status] = (acc[quote.status] || 0) + 1;
         return acc;
       }, {});
       const isAdmin = state.role === "YÖNETİCİ";
-      const totalLeads = state.data.leads.length;
-      const convertedLeads = state.data.leads.filter(lead => lead.accountId).length;
+      const totalLeads = leads.length;
+      const convertedLeads = leads.filter(lead => lead.accountId).length;
       const conversionRate = totalLeads ? Math.round((convertedLeads / totalLeads) * 100) : 0;
-      const totalOpps = state.data.opportunities.length;
-      const acceptedQuotes = state.data.quotes.filter(quote => quote.status === "Kabul");
-      const acceptanceRate = state.data.quotes.length ? Math.round((acceptedQuotes.length / state.data.quotes.length) * 100) : 0;
-      const totalOrders = state.data.orders.length;
-      const openOrders = state.data.orders.filter(order => order.status !== "Tamamlandı").length;
+      const totalOpps = opportunities.length;
+      const acceptedQuotes = quotes.filter(quote => quote.status === "Kabul");
+      const acceptanceRate = quotes.length ? Math.round((acceptedQuotes.length / quotes.length) * 100) : 0;
+      const totalOrders = orders.length;
+      const openOrders = orders.filter(order => order.status !== "Tamamlandı").length;
       const backlogValue = acceptedQuotes
-        .filter(quote => !state.data.orders.some(order => order.quoteId === quote.id))
+        .filter(quote => !orders.some(order => order.quoteId === quote.id))
         .reduce((sum, quote) => sum + Number(quote.totals?.grandTotalUSD || 0), 0);
       const panelItems = acceptedQuotes.flatMap(quote => quote.items || []).filter(item => item.type === "Panel");
       const totalPanelsSold = panelItems.reduce((sum, item) => sum + Number(item.qty || 0), 0);
@@ -1005,8 +1015,8 @@
       const avgDealSize = acceptedQuotes.length
         ? Math.round(acceptedQuotes.reduce((sum, quote) => sum + Number(quote.totals?.grandTotalUSD || 0), 0) / acceptedQuotes.length)
         : 0;
-      const avgCycleDays = state.data.opportunities.length
-        ? Math.round(state.data.opportunities.reduce((sum, opp) => sum + daysBetween(opp.createdAt, opp.stageUpdatedAt || nowISO()), 0) / state.data.opportunities.length)
+      const avgCycleDays = opportunities.length
+        ? Math.round(opportunities.reduce((sum, opp) => sum + daysBetween(opp.createdAt, opp.stageUpdatedAt || nowISO()), 0) / opportunities.length)
         : 0;
       return `
         <div class="page-title">
