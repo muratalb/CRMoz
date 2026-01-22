@@ -276,6 +276,13 @@
       setTimeout(() => toast.classList.remove("show"), 2200);
     };
 
+    const setSettingsStatus = (message, isError = false) => {
+      const status = document.getElementById("settingsStatus");
+      if (!status) return;
+      status.textContent = message;
+      status.style.color = isError ? "#b91c1c" : "var(--muted)";
+    };
+
     const nowISO = () => new Date().toISOString();
     const shortDate = (value) => value ? new Date(value).toISOString().slice(0, 10) : "";
     const formatUSD = (value) => new Intl.NumberFormat("tr-TR", { style: "currency", currency: state.settings.currency, maximumFractionDigits: 0 }).format(value || 0);
@@ -388,6 +395,19 @@
     const saveData = () => {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state.data));
       localStorage.setItem(SETTINGS_KEY, JSON.stringify(state.settings));
+    };
+
+    const exportData = () => JSON.stringify({ data: state.data, settings: state.settings }, null, 2);
+
+    const importData = (payload) => {
+      const parsed = JSON.parse(payload);
+      if (!parsed || typeof parsed !== "object" || !parsed.data) {
+        throw new Error("Geçersiz veri seti.");
+      }
+      state.data = { ...emptyData(), ...parsed.data };
+      state.settings = parsed.settings ? { ...defaultSettings, ...parsed.settings } : { ...defaultSettings };
+      ensureDefaults();
+      saveData();
     };
 
     const addTimeline = (collection, id, message) => {
@@ -983,6 +1003,21 @@
         </div>
         <p class="hint">Değişiklikler yeni kayıtlar için uygulanır.</p>
       </div>
+      <div class="card">
+        <h2>Veri seti yönetimi</h2>
+        <p class="muted">Demo verisi yükleyin, mevcut veriyi temizleyin veya JSON olarak içe/dışa aktarın.</p>
+        <div class="button-row" style="margin: 12px 0;">
+          <button class="btn secondary" data-action="seed-demo">Demo verisi yükle</button>
+          <button class="btn secondary" data-action="clear-data">Tüm veriyi sil</button>
+          <button class="btn subtle" data-action="export-data">Veri setini dışa aktar</button>
+        </div>
+        <label>JSON veri seti</label>
+        <textarea class="input" data-setting="dataset" id="datasetPayload" placeholder="Buraya JSON veri setinizi yapıştırın veya dışa aktarılan veriyi görüntüleyin."></textarea>
+        <div class="button-row" style="margin-top: 10px;">
+          <button class="btn primary" data-action="import-data">Veri setini yükle</button>
+        </div>
+        <p class="hint" id="settingsStatus">Bu alan sadece demo amaçlıdır.</p>
+      </div>
     `;
 
     const renderDetailTabs = () => `
@@ -1039,7 +1074,44 @@
       if (action === "seed-demo") {
         seedDemoData();
         showToast("Demo verisi yüklendi");
+        setSettingsStatus("Demo verisi yüklendi.");
         renderApp();
+      }
+
+      if (action === "clear-data") {
+        if (!confirm("Tüm kayıtlar silinsin mi?")) return;
+        state.data = emptyData();
+        saveData();
+        showToast("Veriler temizlendi");
+        setSettingsStatus("Veriler temizlendi.");
+        renderApp();
+      }
+
+      if (action === "export-data") {
+        const dataset = exportData();
+        const textarea = document.getElementById("datasetPayload");
+        if (textarea) {
+          textarea.value = dataset;
+          textarea.focus();
+        }
+        setSettingsStatus("Veri seti dışa aktarıldı.");
+        showToast("Veri seti hazır");
+      }
+
+      if (action === "import-data") {
+        const textarea = document.getElementById("datasetPayload");
+        if (!textarea || !textarea.value.trim()) {
+          setSettingsStatus("JSON veri seti giriniz.", true);
+          return;
+        }
+        try {
+          importData(textarea.value.trim());
+          showToast("Veri seti yüklendi");
+          setSettingsStatus("Veri seti yüklendi.");
+          renderApp();
+        } catch (error) {
+          setSettingsStatus(error.message || "Veri seti yüklenemedi.", true);
+        }
       }
 
       if (action === "create") {
