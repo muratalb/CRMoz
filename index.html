@@ -241,7 +241,12 @@
     const roles = ["YÖNETİCİ", "SATIŞ", "TEKNİK OFİS"];
     const tabs = ["Ana Panel", "Lead’ler", "Müşteriler", "Pipeline", "Teklifler", "Siparişler", "Görevler", "Partner Programı", "Ayarlar / Veri"];
 
-    const defaultSettings = { currency: "USD", defaultPanelWattage: 550, defaultWarehouse: "Antalya" };
+    const defaultSettings = {
+      currency: "USD",
+      defaultPanelWattage: 550,
+      defaultWarehouse: "Antalya",
+      panelCatalog: []
+    };
 
     const emptyData = () => ({
       leads: [],
@@ -250,6 +255,7 @@
       quotes: [],
       orders: [],
       tasks: [],
+      users: [],
       partners: [],
       purchases: [],
       shipments: [],
@@ -316,6 +322,7 @@
 
     const ensureDefaults = () => {
       const d = state.data;
+      state.settings.panelCatalog = state.settings.panelCatalog || [];
       d.leads = d.leads.map(lead => ({
         id: lead.id || generateId("lead"),
         createdAt: lead.createdAt || nowISO(),
@@ -376,10 +383,59 @@
         opportunityId: quote.opportunityId || null,
         paymentTerms: quote.paymentTerms || "LC90",
         deliveryTerms: quote.deliveryTerms || "FOB",
-        items: quote.items || [],
+        items: (quote.items || []).map(item => ({
+          type: item.type || "Panel",
+          description: item.description || "",
+          qty: item.qty ?? 1,
+          unit: item.unit || "Adet",
+          unitPriceUSD: item.unitPriceUSD ?? 0,
+          panelId: item.panelId || "",
+          panelWattage: item.panelWattage ?? state.settings.defaultPanelWattage,
+          pricePerWatt: item.pricePerWatt ?? 0.19
+        })),
         totals: quote.totals || { subtotalUSD: 0, discountUSD: 0, shippingUSD: 0, grandTotalUSD: 0 },
         timeline: quote.timeline || []
       }));
+      d.orders = d.orders.map(order => ({
+        id: order.id || generateId("order"),
+        createdAt: order.createdAt || nowISO(),
+        updatedAt: order.updatedAt || nowISO(),
+        quoteId: order.quoteId || null,
+        opportunityId: order.opportunityId || null,
+        orderNo: order.orderNo || generateOrderNo(),
+        status: order.status || "Beklemede",
+        promisedShipDate: order.promisedShipDate || nowISO().slice(0, 10),
+        warehouse: order.warehouse || state.settings.defaultWarehouse,
+        carrier: order.carrier || "",
+        trackingNumber: order.trackingNumber || "",
+        logisticsNotes: order.logisticsNotes || "",
+        timeline: order.timeline || []
+      }));
+      d.tasks = d.tasks.map(task => ({
+        id: task.id || generateId("task"),
+        createdAt: task.createdAt || nowISO(),
+        updatedAt: task.updatedAt || nowISO(),
+        title: task.title || "",
+        dueDate: task.dueDate || nowISO().slice(0, 10),
+        priority: task.priority || "Orta",
+        status: task.status || "Açık",
+        assigneeId: task.assigneeId || null,
+        relatedType: task.relatedType || "",
+        relatedId: task.relatedId || "",
+        timeline: task.timeline || []
+      }));
+      d.users = (d.users || []).map(user => ({
+        id: user.id || `user-${Math.random().toString(36).slice(2, 8)}`,
+        name: user.name || "Kullanıcı",
+        role: user.role || "SATIŞ"
+      }));
+      if (!d.users.length) {
+        d.users = [
+          { id: "user-yonetici", name: "Yönetici", role: "YÖNETİCİ" },
+          { id: "user-satis", name: "Satış Temsilcisi", role: "SATIŞ" },
+          { id: "user-teknik", name: "Teknik Ofis", role: "TEKNİK OFİS" }
+        ];
+      }
     };
 
     const loadData = () => {
@@ -417,10 +473,16 @@
       item.timeline.unshift(`${new Date().toLocaleDateString("tr-TR")} · ${message}`);
     };
 
+    const getUser = (id) => state.data.users.find(user => user.id === id);
+    const getCurrentUser = () => state.data.users.find(user => user.role === state.role) || state.data.users[0];
+    const getUserLabel = (id) => getUser(id)?.name || "-";
+
     const getLead = (id) => state.data.leads.find(l => l.id === id);
     const getAccount = (id) => state.data.accounts.find(a => a.id === id);
     const getOpportunity = (id) => state.data.opportunities.find(o => o.id === id);
     const getQuote = (id) => state.data.quotes.find(q => q.id === id);
+    const getOrder = (id) => state.data.orders.find(o => o.id === id);
+    const getPanel = (id) => state.settings.panelCatalog.find(panel => panel.id === id);
 
     const openModal = ({ type, mode, entityId, context }) => {
       state.modal = { type, mode, context };
@@ -558,7 +620,10 @@
 
       if (type === "quote") {
         const quote = mode === "edit" ? getQuote(entityId) : null;
-        const oppOptions = state.data.opportunities.map(opp => `<option value="${opp.id}" ${opp.id===quote?.opportunityId?"selected":""}>${opp.title}</option>`).join("");
+        const preselectOppId = state.modal.context?.preselectOppId;
+        const selectedOppId = quote?.opportunityId || preselectOppId || "";
+        const oppOptions = state.data.opportunities.map(opp => `<option value="${opp.id}" ${opp.id===selectedOppId?"selected":""}>${opp.title}</option>`).join("");
+        const panelOptions = (itemPanelId) => state.settings.panelCatalog.map(panel => `<option value="${panel.id}" ${panel.id === itemPanelId ? "selected" : ""}>${panel.model} · ${panel.watt}W</option>`).join("");
         body = `
           <div class="modal-header">
             <div>
@@ -601,20 +666,28 @@
               <h2>Kalemler</h2>
               <table class="table" id="quoteItemsTable">
                 <thead>
-                  <tr><th>Tip</th><th>Açıklama</th><th>Adet</th><th>Birim</th><th>Fiyat</th><th></th></tr>
+                  <tr><th>Tip</th><th>Panel / Açıklama</th><th>Watt</th><th>Fiyat/W</th><th>Adet</th><th>Birim</th><th>Birim Fiyat</th><th></th></tr>
                 </thead>
                 <tbody>
-                  ${(quote?.items || [{ type: "Panel", description: "", qty: 1, unit: "Adet", unitPriceUSD: 0 }]).map((item, idx) => `
+                  ${(quote?.items || [{ type: "Panel", description: "", qty: 1, unit: "Adet", unitPriceUSD: 0, panelId: "", panelWattage: state.settings.defaultPanelWattage, pricePerWatt: 0.19 }]).map((item, idx) => `
                     <tr data-idx="${idx}">
                       <td>
                         <select class="input" data-item="type">
                           ${["Panel","İnverter","Konstrüksiyon","Kablo","İşçilik","Diğer"].map(opt => `<option ${opt===item.type?"selected":""}>${opt}</option>`).join("")}
                         </select>
                       </td>
-                      <td><input class="input" data-item="description" value="${item.description}" /></td>
+                      <td>
+                        <select class="input" data-item="panelId" style="${item.type === "Panel" ? "" : "display:none;"}">
+                          <option value="">Panel seçin</option>
+                          ${panelOptions(item.panelId)}
+                        </select>
+                        <input class="input" data-item="description" value="${item.description}" style="${item.type === "Panel" ? "display:none;" : ""}" />
+                      </td>
+                      <td><input class="input" data-item="panelWattage" type="number" value="${item.panelWattage ?? state.settings.defaultPanelWattage}" ${item.type === "Panel" ? "readonly" : "disabled"} /></td>
+                      <td><input class="input" data-item="pricePerWatt" type="number" value="${item.pricePerWatt ?? 0.19}" ${item.type === "Panel" ? "" : "disabled"} /></td>
                       <td><input class="input" data-item="qty" type="number" value="${item.qty}" /></td>
                       <td><input class="input" data-item="unit" value="${item.unit}" /></td>
-                      <td><input class="input" data-item="unitPriceUSD" type="number" value="${item.unitPriceUSD}" /></td>
+                      <td><input class="input" data-item="unitPriceUSD" type="number" value="${item.unitPriceUSD}" ${item.type === "Panel" ? "readonly" : ""} /></td>
                       <td><button class="btn secondary" data-action="remove-quote-item">Sil</button></td>
                     </tr>
                   `).join("")}
@@ -623,6 +696,7 @@
               <div class="button-row" style="margin-top:8px;">
                 <button class="btn secondary" data-action="add-quote-item">Kalem ekle</button>
               </div>
+              ${state.settings.panelCatalog.length ? "" : `<div class="hint" style="margin-top:8px;">Panel kataloğu boş. Ayarlar / Veri bölümünden panel ekleyin.</div>`}
             </div>
             <div class="hint" id="modalValidation" style="margin-top:10px;"></div>
           </div>
@@ -669,8 +743,126 @@
         `;
       }
 
+      if (type === "order") {
+        const order = mode === "edit" ? getOrder(entityId) : null;
+        const acceptedQuotes = state.data.quotes.filter(quote => quote.status === "Kabul");
+        const selectedQuoteId = state.modal.context?.quoteId || order?.quoteId || "";
+        if (!acceptedQuotes.length && mode === "create") {
+          body = `
+            <div class="modal-header">
+              <div>
+                <h2>Yeni Sipariş</h2>
+                <p class="muted">Sipariş için önce kabul edilmiş teklif gerekir.</p>
+              </div>
+              <button class="btn secondary" data-action="modal-close">Kapat</button>
+            </div>
+            <div style="margin-top:16px;">
+              <div class="empty">Kabul edilmiş teklif yok.</div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn secondary" data-action="modal-close">Tamam</button>
+            </div>
+          `;
+        } else {
+          body = `
+            <div class="modal-header">
+              <div>
+                <h2>${modeLabel} Sipariş</h2>
+                <p class="muted">Siparişler yalnızca kabul edilmiş tekliflere bağlanır.</p>
+              </div>
+              <button class="btn secondary" data-action="modal-close">Kapat</button>
+            </div>
+            <div style="margin-top:16px;">
+              <div class="grid cols-2">
+                <div style="grid-column: span 2;">
+                  <label>Teklif</label>
+                  <select class="input" data-field="quoteId">
+                    <option value="">Seçiniz</option>
+                    ${acceptedQuotes.map(quote => `<option value="${quote.id}" ${quote.id === selectedQuoteId ? "selected" : ""}>${quote.quoteNo}</option>`).join("")}
+                  </select>
+                </div>
+                <div><label>Durum</label>
+                  <select class="input" data-field="status">
+                    ${["Beklemede","Alındı","Üretimde","Hazır","Sevk","Tamamlandı"].map(opt => `<option ${opt===order?.status?"selected":""}>${opt}</option>`).join("")}
+                  </select>
+                </div>
+                <div><label>Vaat edilen sevk</label><input class="input" data-field="promisedShipDate" type="date" value="${order?.promisedShipDate || nowISO().slice(0, 10)}" /></div>
+                <div><label>Depo</label><input class="input" data-field="warehouse" value="${order?.warehouse || state.settings.defaultWarehouse}" /></div>
+                <div><label>Taşıyıcı</label><input class="input" data-field="carrier" value="${order?.carrier || ""}" /></div>
+                <div><label>Takip No</label><input class="input" data-field="trackingNumber" value="${order?.trackingNumber || ""}" /></div>
+                <div style="grid-column: span 2;"><label>Lojistik notu</label><textarea class="input" data-field="logisticsNotes">${order?.logisticsNotes || ""}</textarea></div>
+              </div>
+              <div class="hint" id="modalValidation" style="margin-top:10px;"></div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn secondary" data-action="modal-close">İptal</button>
+              <button class="btn primary" data-action="modal-save" data-entity="order" data-mode="${mode}" data-id="${order?.id || ""}">Kaydet</button>
+            </div>
+          `;
+        }
+      }
+
+      if (type === "task") {
+        const task = mode === "edit" ? state.data.tasks.find(t => t.id === entityId) : null;
+        const currentUser = getCurrentUser();
+        const canAssign = state.role === "YÖNETİCİ";
+        const relatedType = task?.relatedType || "";
+        body = `
+          <div class="modal-header">
+            <div>
+              <h2>${modeLabel} Görev</h2>
+              <p class="muted">Görevler satış akışını hızlandırmak için atanır.</p>
+            </div>
+            <button class="btn secondary" data-action="modal-close">Kapat</button>
+          </div>
+          <div style="margin-top:16px;">
+            <div class="grid cols-2">
+              <div><label>Başlık</label><input class="input" data-field="title" value="${task?.title || ""}" /></div>
+              <div><label>Atanan</label>
+                <select class="input" data-field="assigneeId" ${canAssign ? "" : "disabled"}>
+                  ${state.data.users.map(user => `<option value="${user.id}" ${(task?.assigneeId || currentUser?.id) === user.id ? "selected" : ""}>${user.name}</option>`).join("")}
+                </select>
+                ${canAssign ? "" : `<div class="hint">Görev ataması için yönetici onayı gerekir.</div>`}
+              </div>
+              <div><label>Vade</label><input class="input" data-field="dueDate" type="date" value="${task?.dueDate || nowISO().slice(0, 10)}" /></div>
+              <div><label>Öncelik</label>
+                <select class="input" data-field="priority">
+                  ${["Düşük","Orta","Yüksek"].map(opt => `<option ${opt===task?.priority?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+              <div><label>Durum</label>
+                <select class="input" data-field="status">
+                  ${["Açık","Bitti"].map(opt => `<option ${opt===task?.status?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+              <div><label>İlişki türü</label>
+                <select class="input" data-field="relatedType">
+                  <option value="">Genel</option>
+                  ${["Lead","Müşteri","Fırsat","Teklif","Sipariş"].map(opt => `<option value="${opt}" ${opt===relatedType?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+              <div style="grid-column: span 2;">
+                <label>İlgili kayıt</label>
+                <select class="input" data-field="relatedId">
+                  <option value="">Seçiniz</option>
+                  ${getRelatedOptions(relatedType)}
+                </select>
+              </div>
+            </div>
+            <div class="hint" id="modalValidation" style="margin-top:10px;"></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn secondary" data-action="modal-close">İptal</button>
+            <button class="btn primary" data-action="modal-save" data-entity="task" data-mode="${mode}" data-id="${task?.id || ""}">Kaydet</button>
+          </div>
+        `;
+      }
+
       modalContent.innerHTML = body;
       modalBackdrop.classList.add("active");
+      if (type === "quote") {
+        modalContent.querySelectorAll("#quoteItemsTable tr").forEach(row => updateQuoteRow(row));
+      }
     };
 
     const closeModal = () => {
@@ -695,6 +887,84 @@
       const subtotalUSD = items.reduce((sum, item) => sum + (Number(item.qty || 0) * Number(item.unitPriceUSD || 0)), 0);
       const grandTotalUSD = Math.max(0, subtotalUSD - Number(discountUSD || 0) + Number(shippingUSD || 0));
       return { subtotalUSD, discountUSD: Number(discountUSD || 0), shippingUSD: Number(shippingUSD || 0), grandTotalUSD };
+    };
+
+    const updateQuoteRow = (row) => {
+      if (!row) return;
+      const type = row.querySelector('[data-item="type"]')?.value;
+      const panelSelect = row.querySelector('[data-item="panelId"]');
+      const descriptionInput = row.querySelector('[data-item="description"]');
+      const wattInput = row.querySelector('[data-item="panelWattage"]');
+      const pricePerWattInput = row.querySelector('[data-item="pricePerWatt"]');
+      const unitPriceInput = row.querySelector('[data-item="unitPriceUSD"]');
+      if (type === "Panel") {
+        if (panelSelect) panelSelect.style.display = "";
+        if (descriptionInput) descriptionInput.style.display = "none";
+        if (wattInput) {
+          wattInput.disabled = false;
+          wattInput.readOnly = true;
+        }
+        if (pricePerWattInput) {
+          pricePerWattInput.disabled = false;
+        }
+        if (unitPriceInput) unitPriceInput.readOnly = true;
+        const panel = getPanel(panelSelect?.value);
+        if (panel) {
+          if (wattInput) wattInput.value = panel.watt;
+          if (descriptionInput) descriptionInput.value = panel.model;
+          if (pricePerWattInput && (!pricePerWattInput.value || Number(pricePerWattInput.value) === 0)) {
+            pricePerWattInput.value = panel.pricePerWatt ?? 0.19;
+          }
+        }
+        const watt = Number(wattInput?.value || 0);
+        const pricePerWatt = Number(pricePerWattInput?.value || 0);
+        if (unitPriceInput) unitPriceInput.value = (watt * pricePerWatt).toFixed(2);
+      } else {
+        if (panelSelect) panelSelect.style.display = "none";
+        if (descriptionInput) descriptionInput.style.display = "";
+        if (wattInput) {
+          wattInput.disabled = true;
+        }
+        if (pricePerWattInput) pricePerWattInput.disabled = true;
+        if (unitPriceInput) unitPriceInput.readOnly = false;
+      }
+    };
+
+    const getRelatedOptions = (typeValue) => {
+      if (typeValue === "Lead") return state.data.leads.map(item => `<option value="${item.id}">${item.companyName}</option>`).join("");
+      if (typeValue === "Müşteri") return state.data.accounts.map(item => `<option value="${item.id}">${item.companyName}</option>`).join("");
+      if (typeValue === "Fırsat") return state.data.opportunities.map(item => `<option value="${item.id}">${item.title}</option>`).join("");
+      if (typeValue === "Teklif") return state.data.quotes.map(item => `<option value="${item.id}">${item.quoteNo}</option>`).join("");
+      if (typeValue === "Sipariş") return state.data.orders.map(item => `<option value="${item.id}">${item.orderNo}</option>`).join("");
+      return "";
+    };
+
+    const getRelatedLabel = (typeValue, id) => {
+      if (typeValue === "Lead") return getLead(id)?.companyName || "-";
+      if (typeValue === "Müşteri") return getAccount(id)?.companyName || "-";
+      if (typeValue === "Fırsat") return getOpportunity(id)?.title || "-";
+      if (typeValue === "Teklif") return getQuote(id)?.quoteNo || "-";
+      if (typeValue === "Sipariş") return getOrder(id)?.orderNo || "-";
+      return "-";
+    };
+
+    const collectPanelCatalog = () => {
+      const rows = [...document.querySelectorAll("#panelCatalog tbody tr[data-panel-id]")];
+      return rows.map((row, index) => ({
+        id: row.dataset.panelId || `panel-${Date.now()}-${index}`,
+        model: row.querySelector('[data-panel-field="model"]').value.trim(),
+        watt: Number(row.querySelector('[data-panel-field="watt"]').value || 0),
+        pricePerWatt: Number(row.querySelector('[data-panel-field="pricePerWatt"]').value || 0.19)
+      })).filter(panel => panel.model && panel.watt > 0);
+    };
+
+    const collectUsers = () => {
+      const rows = [...document.querySelectorAll("#userList tbody tr[data-user-id]")];
+      return rows.map((row, index) => ({
+        id: row.dataset.userId || `user-${Date.now()}-${index}`,
+        name: row.querySelector('[data-user-field="name"]').value.trim(),
+        role: row.querySelector('[data-user-field="role"]').value
+      })).filter(user => user.name);
     };
 
     const renderRoleToggle = () => {
@@ -899,6 +1169,7 @@
       const opp = selectedQuote?.opportunityId ? getOpportunity(selectedQuote.opportunityId) : null;
       const lead = opp?.leadId ? getLead(opp.leadId) : null;
       const account = opp?.accountId ? getAccount(opp.accountId) : null;
+      const existingOrder = selectedQuote ? state.data.orders.find(order => order.quoteId === selectedQuote.id) : null;
       const detail = selectedQuote ? `
         <h2>${selectedQuote.quoteNo}</h2>
         <p class="muted">${selectedQuote.status} · ${opp?.title || "-"}</p>
@@ -907,7 +1178,13 @@
           <div class="list">
             <div class="list-item"><span>Müşteri/Lead</span><span>${account?.companyName || lead?.companyName || "-"}</span></div>
             <div class="list-item"><span>Toplam</span><span>${formatUSD(selectedQuote.totals.grandTotalUSD)}</span></div>
+            <div class="list-item"><span>Sipariş</span><span>${existingOrder ? existingOrder.orderNo : "Henüz yok"}</span></div>
           </div>
+          <div class="button-row" style="margin-top:12px;">
+            <button class="btn primary" data-action="convert-order" data-id="${selectedQuote.id}" ${selectedQuote.status === "Kabul" && state.role === "YÖNETİCİ" && !existingOrder ? "" : "disabled"}>Siparişe dönüştür</button>
+          </div>
+          ${selectedQuote.status !== "Kabul" ? `<div class="hint">Sipariş için teklif durumu "Kabul" olmalıdır.</div>` : ""}
+          ${state.role !== "YÖNETİCİ" ? `<div class="hint">Siparişe dönüşüm için yönetici onayı gerekir.</div>` : ""}
         ` : ""}
         ${state.detailTab === "Zaman Çizgisi" ? renderTimeline(selectedQuote.timeline || []) : ""}
       ` : `<div class="empty">Detay için teklif seçin.</div>`;
@@ -929,35 +1206,110 @@
       `;
     };
 
-    const renderOrders = () => `
-      <div class="page-title">
-        <div>
-          <h1>Siparişler</h1>
-          <p class="muted">Kabul edilen tekliflerden oluşan sipariş akışı.</p>
-        </div>
-        <div class="button-row">
-          <button class="btn secondary" disabled>Sipariş oluştur</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="empty">Henüz sipariş yok. Teklifler ekranından siparişe dönüştürme eklenecek.</div>
-      </div>
-    `;
+    const renderOrders = () => {
+      const selectedOrder = getOrder(state.selected.id);
+      const listItems = state.data.orders.map(order => {
+        const quote = order.quoteId ? getQuote(order.quoteId) : null;
+        return `
+          <div class="list-item">
+            <div>
+              <strong>${order.orderNo}</strong>
+              <div class="muted">${order.status} · ${quote?.quoteNo || "-"}</div>
+            </div>
+            <div class="button-row">
+              <button class="btn secondary" data-action="detail" data-entity="order" data-id="${order.id}">Detay</button>
+              <button class="btn secondary" data-action="edit" data-entity="order" data-id="${order.id}">Düzenle</button>
+              <button class="btn secondary" data-action="delete" data-entity="order" data-id="${order.id}">Sil</button>
+            </div>
+          </div>
+        `;
+      }).join("") || `<div class="empty">Henüz sipariş yok.</div>`;
 
-    const renderTasks = () => `
-      <div class="page-title">
-        <div>
-          <h1>Görevler</h1>
-          <p class="muted">Takip ve koordinasyon işleri burada planlanacak.</p>
+      const quote = selectedOrder?.quoteId ? getQuote(selectedOrder.quoteId) : null;
+      const opp = quote?.opportunityId ? getOpportunity(quote.opportunityId) : null;
+      const lead = opp?.leadId ? getLead(opp.leadId) : null;
+      const account = opp?.accountId ? getAccount(opp.accountId) : null;
+      const detail = selectedOrder ? `
+        <h2>${selectedOrder.orderNo}</h2>
+        <p class="muted">${selectedOrder.status} · ${quote?.quoteNo || "-"}</p>
+        ${renderDetailTabs()}
+        ${state.detailTab === "Özet" ? `
+          <div class="list">
+            <div class="list-item"><span>Müşteri/Lead</span><span>${account?.companyName || lead?.companyName || "-"}</span></div>
+            <div class="list-item"><span>Depo</span><span>${selectedOrder.warehouse}</span></div>
+            <div class="list-item"><span>Taşıyıcı</span><span>${selectedOrder.carrier || "-"}</span></div>
+            <div class="list-item"><span>Takip No</span><span>${selectedOrder.trackingNumber || "-"}</span></div>
+            <div class="list-item"><span>Vaat edilen sevk</span><span>${selectedOrder.promisedShipDate || "-"}</span></div>
+          </div>
+        ` : ""}
+        ${state.detailTab === "Zaman Çizgisi" ? renderTimeline(selectedOrder.timeline || []) : ""}
+      ` : `<div class="empty">Detay için sipariş seçin.</div>`;
+
+      const canCreateOrder = state.role === "YÖNETİCİ" && state.data.quotes.some(q => q.status === "Kabul");
+      return `
+        <div class="page-title">
+          <div>
+            <h1>Siparişler</h1>
+            <p class="muted">Siparişler yalnızca kabul edilmiş tekliflerden oluşur.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" data-action="create" data-entity="order" ${canCreateOrder ? "" : "disabled"}>Yeni Sipariş</button>
+          </div>
         </div>
-        <div class="button-row">
-          <button class="btn secondary" disabled>Yeni görev</button>
+        <div class="grid cols-2">
+          <div class="card">${listItems}</div>
+          <div class="card">${detail}</div>
         </div>
-      </div>
-      <div class="card">
-        <div class="empty">Görev listesi yakında burada görünecek.</div>
-      </div>
-    `;
+      `;
+    };
+
+    const renderTasks = () => {
+      const selectedTask = state.data.tasks.find(task => task.id === state.selected.id);
+      const listItems = state.data.tasks.map(task => `
+        <div class="list-item">
+          <div>
+            <strong>${task.title || "Görev"}</strong>
+            <div class="muted">${getUserLabel(task.assigneeId)} · ${task.dueDate || "-"}</div>
+            ${task.relatedType ? `<span class="badge">${task.relatedType}</span>` : ""}
+          </div>
+          <div class="button-row">
+            <button class="btn secondary" data-action="detail" data-entity="task" data-id="${task.id}">Detay</button>
+            <button class="btn secondary" data-action="edit" data-entity="task" data-id="${task.id}">Düzenle</button>
+            <button class="btn secondary" data-action="delete" data-entity="task" data-id="${task.id}">Sil</button>
+          </div>
+        </div>
+      `).join("") || `<div class="empty">Görev yok.</div>`;
+
+      const detail = selectedTask ? `
+        <h2>${selectedTask.title}</h2>
+        <p class="muted">${selectedTask.status} · ${selectedTask.priority}</p>
+        ${renderDetailTabs()}
+        ${state.detailTab === "Özet" ? `
+          <div class="list">
+            <div class="list-item"><span>Atanan</span><span>${getUserLabel(selectedTask.assigneeId)}</span></div>
+            <div class="list-item"><span>Vade</span><span>${selectedTask.dueDate || "-"}</span></div>
+            <div class="list-item"><span>İlişki</span><span>${selectedTask.relatedType || "Genel"} ${selectedTask.relatedId ? `· ${getRelatedLabel(selectedTask.relatedType, selectedTask.relatedId)}` : ""}</span></div>
+          </div>
+        ` : ""}
+        ${state.detailTab === "Zaman Çizgisi" ? renderTimeline(selectedTask.timeline || []) : ""}
+      ` : `<div class="empty">Detay için görev seçin.</div>`;
+
+      return `
+        <div class="page-title">
+          <div>
+            <h1>Görevler</h1>
+            <p class="muted">Yönetici, satış ekiplerine görev atayabilir.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" data-action="create" data-entity="task">Yeni Görev</button>
+          </div>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">${listItems}</div>
+          <div class="card">${detail}</div>
+        </div>
+      `;
+    };
 
     const renderPartners = () => `
       <div class="page-title">
@@ -1002,6 +1354,55 @@
           </div>
         </div>
         <p class="hint">Değişiklikler yeni kayıtlar için uygulanır.</p>
+      </div>
+      <div class="card" id="panelCatalog">
+        <h2>Panel Kataloğu</h2>
+        <p class="muted">Tekliflerde kullanılacak panel modellerini buradan yönetin.</p>
+        <table class="table">
+          <thead>
+            <tr><th>Model</th><th>Watt</th><th>Varsayılan $/W</th><th></th></tr>
+          </thead>
+          <tbody>
+            ${state.settings.panelCatalog.map(panel => `
+              <tr data-panel-id="${panel.id}">
+                <td><input class="input" data-panel-field="model" value="${panel.model}" /></td>
+                <td><input class="input" data-panel-field="watt" type="number" value="${panel.watt}" /></td>
+                <td><input class="input" data-panel-field="pricePerWatt" type="number" value="${panel.pricePerWatt ?? ""}" /></td>
+                <td><button class="btn secondary" data-action="remove-panel" data-id="${panel.id}">Sil</button></td>
+              </tr>
+            `).join("") || `<tr><td colspan="4" class="muted">Henüz panel eklenmedi.</td></tr>`}
+          </tbody>
+        </table>
+        <div class="button-row" style="margin-top: 12px;">
+          <button class="btn secondary" data-action="add-panel">Panel ekle</button>
+          <button class="btn primary" data-action="save-panels">Panel kataloğunu kaydet</button>
+        </div>
+      </div>
+      <div class="card" id="userList">
+        <h2>Kullanıcılar</h2>
+        <p class="muted">Görev atamalarında kullanılacak kullanıcıları yönetin.</p>
+        <table class="table">
+          <thead>
+            <tr><th>Ad Soyad</th><th>Rol</th><th></th></tr>
+          </thead>
+          <tbody>
+            ${state.data.users.map(user => `
+              <tr data-user-id="${user.id}">
+                <td><input class="input" data-user-field="name" value="${user.name}" /></td>
+                <td>
+                  <select class="input" data-user-field="role">
+                    ${roles.map(role => `<option value="${role}" ${user.role === role ? "selected" : ""}>${role}</option>`).join("")}
+                  </select>
+                </td>
+                <td><button class="btn secondary" data-action="remove-user" data-id="${user.id}">Sil</button></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+        <div class="button-row" style="margin-top: 12px;">
+          <button class="btn secondary" data-action="add-user">Kullanıcı ekle</button>
+          <button class="btn primary" data-action="save-users">Kullanıcıları kaydet</button>
+        </div>
       </div>
       <div class="card">
         <h2>Veri seti yönetimi</h2>
@@ -1115,6 +1516,10 @@
       }
 
       if (action === "create") {
+        if (entity === "order" && state.role !== "YÖNETİCİ") {
+          showToast("Sipariş oluşturmak için yönetici onayı gerekir");
+          return;
+        }
         openModal({ type: entity, mode: "create", context: null });
       }
 
@@ -1140,6 +1545,24 @@
         openModal({ type: "convertLead", mode: "create", entityId: id });
       }
 
+      if (action === "convert-order") {
+        const quote = getQuote(id);
+        if (state.role !== "YÖNETİCİ") {
+          showToast("Siparişe dönüşüm için yönetici onayı gerekir");
+          return;
+        }
+        if (!quote || quote.status !== "Kabul") {
+          showToast("Sipariş için teklif durumu Kabul olmalıdır");
+          return;
+        }
+        const existingOrder = state.data.orders.find(order => order.quoteId === quote.id);
+        if (existingOrder) {
+          showToast("Bu teklif için sipariş zaten oluşturuldu");
+          return;
+        }
+        openModal({ type: "order", mode: "create", context: { quoteId: quote.id } });
+      }
+
       if (action === "detail-tab") {
         state.detailTab = target.dataset.tab;
         renderApp();
@@ -1163,6 +1586,53 @@
         renderApp();
       }
 
+      if (action === "add-panel") {
+        state.settings.panelCatalog.push({
+          id: `panel-${Date.now()}`,
+          model: "Yeni Panel",
+          watt: state.settings.defaultPanelWattage,
+          pricePerWatt: 0.19
+        });
+        saveData();
+        renderApp();
+      }
+
+      if (action === "remove-panel") {
+        state.settings.panelCatalog = state.settings.panelCatalog.filter(panel => panel.id !== id);
+        saveData();
+        renderApp();
+      }
+
+      if (action === "save-panels") {
+        state.settings.panelCatalog = collectPanelCatalog();
+        saveData();
+        showToast("Panel kataloğu kaydedildi");
+        renderApp();
+      }
+
+      if (action === "add-user") {
+        state.data.users.push({
+          id: `user-${Date.now()}`,
+          name: "Yeni Kullanıcı",
+          role: "SATIŞ"
+        });
+        saveData();
+        renderApp();
+      }
+
+      if (action === "remove-user") {
+        state.data.users = state.data.users.filter(user => user.id !== id);
+        saveData();
+        renderApp();
+      }
+
+      if (action === "save-users") {
+        state.data.users = collectUsers();
+        saveData();
+        showToast("Kullanıcılar kaydedildi");
+        renderApp();
+      }
+
       if (action === "modal-close") {
         closeModal();
       }
@@ -1177,10 +1647,18 @@
                 ${["Panel","İnverter","Konstrüksiyon","Kablo","İşçilik","Diğer"].map(opt => `<option>${opt}</option>`).join("")}
               </select>
             </td>
-            <td><input class="input" data-item="description" value="" /></td>
+            <td>
+              <select class="input" data-item="panelId">
+                <option value="">Panel seçin</option>
+                ${state.settings.panelCatalog.map(panel => `<option value="${panel.id}">${panel.model} · ${panel.watt}W</option>`).join("")}
+              </select>
+              <input class="input" data-item="description" value="" style="display:none;" />
+            </td>
+            <td><input class="input" data-item="panelWattage" type="number" value="${state.settings.defaultPanelWattage}" readonly /></td>
+            <td><input class="input" data-item="pricePerWatt" type="number" value="0.19" /></td>
             <td><input class="input" data-item="qty" type="number" value="1" /></td>
             <td><input class="input" data-item="unit" value="Adet" /></td>
-            <td><input class="input" data-item="unitPriceUSD" type="number" value="0" /></td>
+            <td><input class="input" data-item="unitPriceUSD" type="number" value="0" readonly /></td>
             <td><button class="btn secondary" data-action="remove-quote-item">Sil</button></td>
           </tr>
         `);
@@ -1271,13 +1749,28 @@
             return;
           }
           const rows = [...modalContent.querySelectorAll("#quoteItemsTable tbody tr")];
-          const items = rows.map(row => ({
-            type: row.querySelector('[data-item="type"]').value,
-            description: row.querySelector('[data-item="description"]').value,
-            qty: Number(row.querySelector('[data-item="qty"]').value || 0),
-            unit: row.querySelector('[data-item="unit"]').value,
-            unitPriceUSD: Number(row.querySelector('[data-item="unitPriceUSD"]').value || 0)
-          }));
+          const items = rows.map(row => {
+            const type = row.querySelector('[data-item="type"]').value;
+            const panelId = row.querySelector('[data-item="panelId"]')?.value || "";
+            const panelWattage = Number(row.querySelector('[data-item="panelWattage"]').value || 0);
+            const pricePerWatt = Number(row.querySelector('[data-item="pricePerWatt"]').value || 0);
+            const unitPriceUSD = type === "Panel" ? panelWattage * pricePerWatt : Number(row.querySelector('[data-item="unitPriceUSD"]').value || 0);
+            const description = type === "Panel" ? (getPanel(panelId)?.model || "") : row.querySelector('[data-item="description"]').value;
+            return {
+              type,
+              panelId,
+              panelWattage,
+              pricePerWatt,
+              description,
+              qty: Number(row.querySelector('[data-item="qty"]').value || 0),
+              unit: row.querySelector('[data-item="unit"]').value,
+              unitPriceUSD
+            };
+          });
+          if (items.some(item => item.type === "Panel" && !item.panelId)) {
+            document.getElementById("modalValidation").textContent = "Panel seçimi yapılmalı.";
+            return;
+          }
           const totals = computeQuoteTotals(items, values.discountUSD, values.shippingUSD);
           if (mode === "create") {
             const quote = {
@@ -1299,6 +1792,75 @@
             const quote = getQuote(target.dataset.id);
             Object.assign(quote, values, { items, totals, updatedAt: nowISO() });
             addTimeline("quotes", quote.id, "Teklif güncellendi");
+          }
+        }
+
+        if (saveEntity === "order") {
+          if (!values.quoteId) {
+            document.getElementById("modalValidation").textContent = "Teklif seçiniz.";
+            return;
+          }
+          const quote = getQuote(values.quoteId);
+          if (!quote || quote.status !== "Kabul") {
+            document.getElementById("modalValidation").textContent = "Sipariş için teklif durumu Kabul olmalıdır.";
+            return;
+          }
+          const oppId = quote.opportunityId;
+          if (mode === "create") {
+            const order = {
+              id: generateId("order"),
+              createdAt: nowISO(),
+              updatedAt: nowISO(),
+              quoteId: values.quoteId,
+              opportunityId: oppId,
+              orderNo: generateOrderNo(),
+              status: values.status || "Beklemede",
+              promisedShipDate: values.promisedShipDate,
+              warehouse: values.warehouse,
+              carrier: values.carrier,
+              trackingNumber: values.trackingNumber,
+              logisticsNotes: values.logisticsNotes || "",
+              timeline: []
+            };
+            state.data.orders.unshift(order);
+            addTimeline("orders", order.id, "Sipariş oluşturuldu");
+          } else {
+            const order = getOrder(target.dataset.id);
+            Object.assign(order, values, { opportunityId: oppId, updatedAt: nowISO() });
+            addTimeline("orders", order.id, "Sipariş güncellendi");
+          }
+        }
+
+        if (saveEntity === "task") {
+          if (!values.title) {
+            document.getElementById("modalValidation").textContent = "Başlık zorunludur.";
+            return;
+          }
+          const currentUser = getCurrentUser();
+          const assigneeId = values.assigneeId || currentUser?.id;
+          const taskValues = {
+            title: values.title,
+            dueDate: values.dueDate,
+            priority: values.priority,
+            status: values.status,
+            assigneeId,
+            relatedType: values.relatedType || "",
+            relatedId: values.relatedId || ""
+          };
+          if (mode === "create") {
+            const task = {
+              id: generateId("task"),
+              createdAt: nowISO(),
+              updatedAt: nowISO(),
+              timeline: [],
+              ...taskValues
+            };
+            state.data.tasks.unshift(task);
+            addTimeline("tasks", task.id, "Görev oluşturuldu");
+          } else {
+            const task = state.data.tasks.find(item => item.id === target.dataset.id);
+            Object.assign(task, taskValues, { updatedAt: nowISO() });
+            addTimeline("tasks", task.id, "Görev güncellendi");
           }
         }
 
@@ -1347,26 +1909,57 @@
       }
     });
 
+    document.addEventListener("input", (event) => {
+      const row = event.target.closest("#quoteItemsTable tr");
+      if (row) {
+        updateQuoteRow(row);
+      }
+    });
+
+    document.addEventListener("change", (event) => {
+      const row = event.target.closest("#quoteItemsTable tr");
+      if (row) {
+        updateQuoteRow(row);
+      }
+      if (event.target.matches('[data-field="relatedType"]')) {
+        const relatedType = event.target.value;
+        const relatedSelect = modalContent.querySelector('[data-field="relatedId"]');
+        if (relatedSelect) {
+          relatedSelect.innerHTML = `<option value="">Seçiniz</option>${getRelatedOptions(relatedType)}`;
+        }
+      }
+    });
+
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") closeModal();
     });
 
     const seedDemoData = () => {
       state.data = emptyData();
-      for (let i = 0; i < 5; i++) {
+      state.settings.panelCatalog = [
+        { id: "panel-1", model: "Alb Mono 550W", watt: 550, pricePerWatt: 0.19 },
+        { id: "panel-2", model: "Alb Mono 600W", watt: 600, pricePerWatt: 0.185 }
+      ];
+      state.data.users = [
+        { id: "user-yonetici", name: "Yönetici", role: "YÖNETİCİ" },
+        { id: "user-satis", name: "Satış Temsilcisi", role: "SATIŞ" },
+        { id: "user-teknik", name: "Teknik Ofis", role: "TEKNİK OFİS" }
+      ];
+
+      for (let i = 0; i < 6; i++) {
         state.data.leads.push({
           id: generateId("lead"),
           createdAt: nowISO(),
           updatedAt: nowISO(),
-          status: "Yeni",
-          source: "Web",
-          companyName: `Lead ${i + 1}`,
+          status: i < 2 ? "Nitelikli" : "Yeni",
+          source: ["Web", "LinkedIn", "Fuar"][i % 3],
+          companyName: `Lead Şirket ${i + 1}`,
           contactName: `Kişi ${i + 1}`,
           phone: "+90 5xx xxx xx xx",
           email: `lead${i + 1}@example.com`,
-          city: "İstanbul",
+          city: ["İstanbul", "Ankara", "İzmir"][i % 3],
           country: "Türkiye",
-          segment: "Konut",
+          segment: ["Konut", "EPC", "Ticari"][i % 3],
           interest: "Panel",
           owner: "SATIŞ",
           tags: ["Yeni"],
@@ -1376,6 +1969,103 @@
           nextActionAt: nowISO()
         });
       }
+
+      state.data.accounts.push({
+        id: generateId("account"),
+        createdAt: nowISO(),
+        updatedAt: nowISO(),
+        type: "EPC",
+        companyName: "Balkan EPC",
+        taxNo: "1234567890",
+        city: "İstanbul",
+        country: "Türkiye",
+        contacts: [],
+        notes: [],
+        timeline: []
+      });
+
+      const firstAccount = state.data.accounts[0];
+      state.data.leads[0].accountId = firstAccount.id;
+      state.data.leads[1].accountId = firstAccount.id;
+
+      for (let i = 0; i < 3; i++) {
+        state.data.opportunities.push({
+          id: generateId("opportunity"),
+          createdAt: nowISO(),
+          updatedAt: nowISO(),
+          title: `Fırsat ${i + 1}`,
+          stage: "Teklif",
+          stageUpdatedAt: nowISO(),
+          expectedPanelsQty: 500 + i * 50,
+          panelModel: "Alb Mono",
+          panelWattage: 550,
+          targetPricePerWatt: 0.19,
+          probability: 40 + i * 10,
+          owner: "SATIŞ",
+          leadId: state.data.leads[i].id,
+          accountId: state.data.leads[i].accountId,
+          sourceEpcAccountId: firstAccount.id
+        });
+      }
+
+      const quoteItems = [
+        {
+          type: "Panel",
+          panelId: "panel-1",
+          panelWattage: 550,
+          pricePerWatt: 0.19,
+          description: "Alb Mono 550W",
+          qty: 500,
+          unit: "Adet",
+          unitPriceUSD: 104.5
+        }
+      ];
+      const totals = computeQuoteTotals(quoteItems, 0, 1500);
+      const acceptedQuoteId = generateId("quote");
+      state.data.quotes.push({
+        id: acceptedQuoteId,
+        createdAt: nowISO(),
+        updatedAt: nowISO(),
+        quoteNo: generateQuoteNo(),
+        status: "Kabul",
+        opportunityId: state.data.opportunities[0].id,
+        paymentTerms: "LC90",
+        deliveryTerms: "FOB",
+        items: quoteItems,
+        totals,
+        timeline: ["Teklif oluşturuldu"]
+      });
+
+      state.data.orders.push({
+        id: generateId("order"),
+        createdAt: nowISO(),
+        updatedAt: nowISO(),
+        quoteId: acceptedQuoteId,
+        opportunityId: state.data.opportunities[0].id,
+        orderNo: generateOrderNo(),
+        status: "Beklemede",
+        promisedShipDate: nowISO().slice(0, 10),
+        warehouse: state.settings.defaultWarehouse,
+        carrier: "DHL",
+        trackingNumber: "TRK-001",
+        logisticsNotes: "Depo çıkışı bekleniyor",
+        timeline: ["Sipariş oluşturuldu"]
+      });
+
+      state.data.tasks.push({
+        id: generateId("task"),
+        createdAt: nowISO(),
+        updatedAt: nowISO(),
+        title: "Lead dönüşüm takip",
+        dueDate: nowISO().slice(0, 10),
+        priority: "Orta",
+        status: "Açık",
+        assigneeId: "user-satis",
+        relatedType: "Lead",
+        relatedId: state.data.leads[0].id,
+        timeline: ["Görev oluşturuldu"]
+      });
+
       saveData();
     };
 
