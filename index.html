@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRMoz - Tek Dosya CRM</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7fb;
+      --surface: #ffffff;
+      --surface-muted: #f0f1f5;
+      --text: #1d1f23;
+      --muted: #6b7280;
+      --primary: #1e5bff;
+      --primary-weak: #e6edff;
+      --danger: #e5484d;
+      --success: #0f9d58;
+      --border: #e2e5ec;
+      --shadow: 0 12px 30px rgba(31, 41, 55, 0.08);
+      --radius: 14px;
+      --radius-sm: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "-apple-system", BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      padding: 24px 32px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -0.02em;
+    }
+
+    nav {
+      display: flex;
+      gap: 10px;
+      background: var(--surface);
+      border-radius: 999px;
+      padding: 6px;
+      box-shadow: var(--shadow);
+    }
+
+    nav button {
+      border: none;
+      background: transparent;
+      padding: 8px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    nav button.active {
+      background: var(--primary-weak);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .toolbar {
+      padding: 0 32px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .toolbar .subtitle {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .btn {
+      border: none;
+      padding: 10px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .btn.primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn.secondary {
+      background: var(--surface);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn.ghost {
+      background: transparent;
+      color: var(--primary);
+    }
+
+    .btn.danger {
+      background: #fdebec;
+      color: var(--danger);
+    }
+
+    .btn.small {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .content {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 20px;
+      padding: 0 32px 32px;
+    }
+
+    .panel {
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      min-height: 240px;
+    }
+
+    .panel h2 {
+      margin-top: 0;
+      margin-bottom: 14px;
+      font-size: 18px;
+    }
+
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .list-item {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--surface);
+    }
+
+    .list-item strong {
+      display: block;
+      font-size: 15px;
+    }
+
+    .list-item span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .list-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .detail-block {
+      display: grid;
+      gap: 12px;
+    }
+
+    .detail-block .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .detail-block .row:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: var(--surface-muted);
+      color: var(--muted);
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .timeline {
+      display: grid;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .timeline-item {
+      background: var(--surface-muted);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 12px;
+    }
+
+    .empty {
+      color: var(--muted);
+      font-size: 14px;
+      text-align: center;
+      padding: 40px 12px;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+    }
+
+    .modal {
+      background: var(--surface);
+      border-radius: var(--radius);
+      width: min(760px, 92vw);
+      max-height: 88vh;
+      overflow: auto;
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .modal h3 {
+      margin-top: 0;
+      margin-bottom: 4px;
+      font-size: 18px;
+    }
+
+    .modal .subtitle {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 18px;
+    }
+
+    form {
+      display: grid;
+      gap: 14px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+
+    label {
+      font-size: 12px;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      font-size: 14px;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 90px;
+    }
+
+    .helper {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .items-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .items-table th,
+    .items-table td {
+      border-bottom: 1px solid var(--border);
+      padding: 8px 6px;
+      text-align: left;
+    }
+
+    .items-table input {
+      font-size: 13px;
+      padding: 6px 8px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--text);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.2s ease;
+      z-index: 60;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 960px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>CRMoz</h1>
+      <nav>
+        <button data-tab="leads" class="active">Lead</button>
+        <button data-tab="accounts">Müşteri</button>
+        <button data-tab="opportunities">Fırsat</button>
+        <button data-tab="quotes">Teklif</button>
+      </nav>
+    </header>
+    <div class="toolbar">
+      <div>
+        <div id="toolbar-title" class="subtitle">Lead yönetimi</div>
+        <strong id="toolbar-count">0 kayıt</strong>
+      </div>
+      <button id="primary-action" class="btn primary">Yeni Lead</button>
+    </div>
+    <div class="content">
+      <section class="panel">
+        <h2 id="list-title">Lead Listesi</h2>
+        <div id="list-container" class="list"></div>
+      </section>
+      <section class="panel">
+        <h2 id="detail-title">Detay</h2>
+        <div id="detail-container" class="detail-block">
+          <div class="empty">Detay görmek için bir kayıt seçin.</div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <div id="modal-root"></div>
+  <div id="toast" class="toast"></div>
+
+  <script>
+    const STORAGE_KEY = "crmoz_state_v2";
+    const state = {
+      data: loadState(),
+      ui: {
+        activeTab: "leads",
+        selectedId: null
+      }
+    };
+
+    const TAB_CONFIG = {
+      leads: {
+        title: "Lead Listesi",
+        toolbar: "Lead yönetimi",
+        actionLabel: "Yeni Lead"
+      },
+      accounts: {
+        title: "Müşteri Listesi",
+        toolbar: "Müşteri yönetimi",
+        actionLabel: "Yeni Müşteri"
+      },
+      opportunities: {
+        title: "Fırsat Listesi",
+        toolbar: "Fırsat yönetimi",
+        actionLabel: "Yeni Fırsat"
+      },
+      quotes: {
+        title: "Teklif Listesi",
+        toolbar: "Teklif yönetimi",
+        actionLabel: "Yeni Teklif"
+      }
+    };
+
+    const stageOptions = ["Yeni", "Değerlendiriliyor", "Teklif", "Müzakere", "Kazanıldı", "Kaybedildi"];
+
+    const elements = {
+      navButtons: document.querySelectorAll("nav button"),
+      toolbarTitle: document.getElementById("toolbar-title"),
+      toolbarCount: document.getElementById("toolbar-count"),
+      primaryAction: document.getElementById("primary-action"),
+      listTitle: document.getElementById("list-title"),
+      listContainer: document.getElementById("list-container"),
+      detailTitle: document.getElementById("detail-title"),
+      detailContainer: document.getElementById("detail-container"),
+      modalRoot: document.getElementById("modal-root"),
+      toast: document.getElementById("toast")
+    };
+
+    function loadState() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        return makeDefaultState();
+      }
+      let parsed;
+      try {
+        parsed = JSON.parse(raw);
+      } catch (error) {
+        return makeDefaultState();
+      }
+      return migrateState(parsed);
+    }
+
+    function makeDefaultState() {
+      return {
+        leads: [],
+        accounts: [],
+        opportunities: [],
+        quotes: [],
+        counters: { quoteSeq: 1 }
+      };
+    }
+
+    function migrateState(data) {
+      const safe = { ...makeDefaultState(), ...data };
+      safe.counters = { quoteSeq: 1, ...(data && data.counters ? data.counters : {}) };
+      safe.leads = (safe.leads || []).map((lead) => ({
+        tags: [],
+        timeline: [],
+        status: "Yeni",
+        source: "",
+        companyName: "",
+        contactName: "",
+        phone: "",
+        email: "",
+        city: "",
+        country: "Türkiye",
+        segment: "",
+        interest: "",
+        owner: "",
+        ...lead,
+        tags: Array.isArray(lead.tags) ? lead.tags : [],
+        timeline: Array.isArray(lead.timeline) ? lead.timeline : []
+      }));
+      safe.accounts = (safe.accounts || []).map((account) => ({
+        type: "Son kullanıcı",
+        contacts: [],
+        notes: [],
+        timeline: [],
+        companyName: "",
+        taxNo: "",
+        city: "",
+        country: "Türkiye",
+        ...account,
+        contacts: Array.isArray(account.contacts) ? account.contacts : [],
+        notes: Array.isArray(account.notes) ? account.notes : [],
+        timeline: Array.isArray(account.timeline) ? account.timeline : []
+      }));
+      safe.opportunities = (safe.opportunities || []).map((opportunity) => ({
+        title: "",
+        stage: "Yeni",
+        stageUpdatedAt: opportunity.stageUpdatedAt || opportunity.updatedAt || nowISO(),
+        expectedPanelsQty: 0,
+        panelModel: "",
+        panelWattage: "",
+        targetPricePerWatt: "",
+        probability: 0,
+        owner: "",
+        ...opportunity
+      }));
+      safe.quotes = (safe.quotes || []).map((quote) => ({
+        status: "Taslak",
+        paymentTerms: "",
+        deliveryTerms: "",
+        items: [],
+        totals: { subtotal: 0, discount: 0, shipping: 0, grandTotal: 0 },
+        timeline: [],
+        ...quote,
+        items: Array.isArray(quote.items) ? quote.items : [],
+        timeline: Array.isArray(quote.timeline) ? quote.timeline : []
+      }));
+      return safe;
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.data));
+    }
+
+    function nowISO() {
+      return new Date().toISOString();
+    }
+
+    function toast(message) {
+      elements.toast.textContent = message;
+      elements.toast.classList.add("show");
+      setTimeout(() => elements.toast.classList.remove("show"), 2200);
+    }
+
+    function setActiveTab(tab) {
+      state.ui.activeTab = tab;
+      state.ui.selectedId = null;
+      elements.navButtons.forEach((button) => {
+        button.classList.toggle("active", button.dataset.tab === tab);
+      });
+      const config = TAB_CONFIG[tab];
+      elements.listTitle.textContent = config.title;
+      elements.toolbarTitle.textContent = config.toolbar;
+      elements.primaryAction.textContent = config.actionLabel;
+      render();
+    }
+
+    function render() {
+      renderList();
+      renderDetail();
+      renderCount();
+    }
+
+    function renderCount() {
+      const count = state.data[state.ui.activeTab].length;
+      elements.toolbarCount.textContent = `${count} kayıt`;
+    }
+
+    function renderList() {
+      const tab = state.ui.activeTab;
+      const records = state.data[tab];
+      if (!records.length) {
+        elements.listContainer.innerHTML = `<div class="empty">Henüz kayıt yok.</div>`;
+        return;
+      }
+      if (tab === "leads") {
+        elements.listContainer.innerHTML = records.map(renderLeadRow).join("");
+      } else if (tab === "accounts") {
+        elements.listContainer.innerHTML = records.map(renderAccountRow).join("");
+      } else if (tab === "opportunities") {
+        elements.listContainer.innerHTML = records.map(renderOpportunityRow).join("");
+      } else {
+        elements.listContainer.innerHTML = records.map(renderQuoteRow).join("");
+      }
+    }
+
+    function renderLeadRow(lead) {
+      const account = lead.accountId ? findById("accounts", lead.accountId) : null;
+      return `
+        <div class="list-item" data-id="${lead.id}">
+          <div>
+            <strong>${escapeHtml(lead.companyName || "İsimsiz Lead")}</strong>
+            <span>${escapeHtml(lead.contactName || "-")} • ${escapeHtml(lead.status)}</span>
+            ${account ? `<div class="badge">Bağlı müşteri: ${escapeHtml(account.companyName)}</div>` : ""}
+          </div>
+          <div class="list-actions">
+            <button class="btn secondary small" data-action="detail">Detay</button>
+            <button class="btn secondary small" data-action="edit">Düzenle</button>
+            <button class="btn secondary small" data-action="convert">Dönüştür</button>
+            <button class="btn danger small" data-action="delete">Sil</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAccountRow(account) {
+      return `
+        <div class="list-item" data-id="${account.id}">
+          <div>
+            <strong>${escapeHtml(account.companyName || "İsimsiz Müşteri")}</strong>
+            <span>${escapeHtml(account.type)} • ${escapeHtml(account.city || "-")}</span>
+          </div>
+          <div class="list-actions">
+            <button class="btn secondary small" data-action="detail">Detay</button>
+            <button class="btn secondary small" data-action="edit">Düzenle</button>
+            <button class="btn danger small" data-action="delete">Sil</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderOpportunityRow(opportunity) {
+      const linkInfo = describeOpportunityLink(opportunity);
+      return `
+        <div class="list-item" data-id="${opportunity.id}">
+          <div>
+            <strong>${escapeHtml(opportunity.title || "İsimsiz Fırsat")}</strong>
+            <span>${escapeHtml(opportunity.stage)} • ${escapeHtml(linkInfo)}</span>
+          </div>
+          <div class="list-actions">
+            <button class="btn secondary small" data-action="detail">Detay</button>
+            <button class="btn secondary small" data-action="edit">Düzenle</button>
+            <button class="btn danger small" data-action="delete">Sil</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderQuoteRow(quote) {
+      const opportunity = findById("opportunities", quote.opportunityId);
+      const target = opportunity ? describeOpportunityLink(opportunity) : "Fırsat yok";
+      return `
+        <div class="list-item" data-id="${quote.id}">
+          <div>
+            <strong>${escapeHtml(quote.quoteNo || "Teklif")}</strong>
+            <span>${escapeHtml(quote.status)} • ${escapeHtml(target)}</span>
+          </div>
+          <div class="list-actions">
+            <button class="btn secondary small" data-action="detail">Detay</button>
+            <button class="btn secondary small" data-action="edit">Düzenle</button>
+            <button class="btn danger small" data-action="delete">Sil</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderDetail() {
+      const tab = state.ui.activeTab;
+      const id = state.ui.selectedId;
+      if (!id) {
+        elements.detailContainer.innerHTML = `<div class="empty">Detay görmek için bir kayıt seçin.</div>`;
+        return;
+      }
+      const record = findById(tab, id);
+      if (!record) {
+        elements.detailContainer.innerHTML = `<div class="empty">Seçili kayıt bulunamadı.</div>`;
+        return;
+      }
+      if (tab === "leads") {
+        elements.detailContainer.innerHTML = renderLeadDetail(record);
+      } else if (tab === "accounts") {
+        elements.detailContainer.innerHTML = renderAccountDetail(record);
+      } else if (tab === "opportunities") {
+        elements.detailContainer.innerHTML = renderOpportunityDetail(record);
+      } else {
+        elements.detailContainer.innerHTML = renderQuoteDetail(record);
+      }
+    }
+
+    function renderLeadDetail(lead) {
+      const account = lead.accountId ? findById("accounts", lead.accountId) : null;
+      return `
+        <div class="detail-block" data-id="${lead.id}">
+          <div class="row">
+            <div>
+              <strong>${escapeHtml(lead.companyName || "İsimsiz Lead")}</strong>
+              <div class="muted">${escapeHtml(lead.contactName || "-")} • ${escapeHtml(lead.status)}</div>
+            </div>
+            <div class="list-actions">
+              <button class="btn secondary small" data-action="edit">Düzenle</button>
+              <button class="btn secondary small" data-action="convert">Müşteriye Dönüştür</button>
+              <button class="btn danger small" data-action="delete">Sil</button>
+            </div>
+          </div>
+          <div class="row">
+            <span>Kaynak</span>
+            <strong>${escapeHtml(lead.source || "-")}</strong>
+          </div>
+          <div class="row">
+            <span>İletişim</span>
+            <strong>${escapeHtml(lead.phone || "-")}</strong>
+          </div>
+          <div class="row">
+            <span>E-posta</span>
+            <strong>${escapeHtml(lead.email || "-")}</strong>
+          </div>
+          <div class="row">
+            <span>Şehir/Ülke</span>
+            <strong>${escapeHtml(`${lead.city || "-"} / ${lead.country || "-"}`)}</strong>
+          </div>
+          <div class="row">
+            <span>Segment</span>
+            <strong>${escapeHtml(lead.segment || "-")}</strong>
+          </div>
+          <div class="row">
+            <span>İlgilendiği ürün</span>
+            <strong>${escapeHtml(lead.interest || "-")}</strong>
+          </div>
+          <div class="row">
+            <span>Atanan</span>
+            <strong>${escapeHtml(lead.owner || "-")}</strong>
+          </div>
+          <div class="row">
+            <span>Bağlı müşteri</span>
+            <strong>${escapeHtml(account ? account.companyName : "-" )}</strong>
+          </div>
+          <div>
+            <div class="muted">Timeline</div>
+            ${renderTimeline(lead.timeline)}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAccountDetail(account) {
+      return `
+        <div class="detail-block" data-id="${account.id}">
+          <div class="row">
+            <div>
+              <strong>${escapeHtml(account.companyName || "İsimsiz Müşteri")}</strong>
+              <div class="muted">${escapeHtml(account.type)}</div>
+            </div>
+            <div class="list-actions">
+              <button class="btn secondary small" data-action="edit">Düzenle</button>
+              <button class="btn danger small" data-action="delete">Sil</button>
+            </div>
+          </div>
+          <div class="row">
+            <span>Vergi No</span>
+            <strong>${escapeHtml(account.taxNo || "-")}</strong>
+          </div>
+          <div class="row">
+            <span>Şehir/Ülke</span>
+            <strong>${escapeHtml(`${account.city || "-"} / ${account.country || "-"}`)}</strong>
+          </div>
+          <div>
+            <div class="muted">Timeline</div>
+            ${renderTimeline(account.timeline)}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderOpportunityDetail(opportunity) {
+      const linkInfo = describeOpportunityLink(opportunity);
+      const epc = opportunity.sourceEpcAccountId ? findById("accounts", opportunity.sourceEpcAccountId) : null;
+      return `
+        <div class="detail-block" data-id="${opportunity.id}">
+          <div class="row">
+            <div>
+              <strong>${escapeHtml(opportunity.title || "İsimsiz Fırsat")}</strong>
+              <div class="muted">${escapeHtml(linkInfo)}</div>
+            </div>
+            <div class="list-actions">
+              <button class="btn secondary small" data-action="edit">Düzenle</button>
+              <button class="btn danger small" data-action="delete">Sil</button>
+            </div>
+          </div>
+          <div class="row">
+            <span>Aşama</span>
+            <div>
+              <select data-action="stage" data-id="${opportunity.id}">
+                ${stageOptions.map((stage) => `<option value="${stage}" ${stage === opportunity.stage ? "selected" : ""}>${stage}</option>`).join("")}
+              </select>
+              <div class="helper">Aşamayı değiştirip otomatik güncelleyin.</div>
+            </div>
+          </div>
+          <div class="row">
+            <span>EPC Kaynağı</span>
+            <strong>${escapeHtml(epc ? epc.companyName : "-")}</strong>
+          </div>
+          <div class="row">
+            <span>Panel Adedi</span>
+            <strong>${escapeHtml(opportunity.expectedPanelsQty || "-")}</strong>
+          </div>
+          <div class="row">
+            <span>Panel Modeli</span>
+            <strong>${escapeHtml(opportunity.panelModel || "-")}</strong>
+          </div>
+          <div class="row">
+            <span>Hedef Fiyat/W</span>
+            <strong>${escapeHtml(opportunity.targetPricePerWatt || "-")}</strong>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderQuoteDetail(quote) {
+      const opportunity = findById("opportunities", quote.opportunityId);
+      const target = opportunity ? describeOpportunityLink(opportunity) : "-";
+      const totals = computeQuoteTotals(quote);
+      const items = quote.items.length
+        ? quote.items.map((item) => `<div class="row"><span>${escapeHtml(item.name)}</span><strong>${formatMoney(item.qty * item.unitPrice)}</strong></div>`).join("")
+        : `<div class="muted">Kalem yok</div>`;
+      return `
+        <div class="detail-block" data-id="${quote.id}">
+          <div class="row">
+            <div>
+              <strong>${escapeHtml(quote.quoteNo)}</strong>
+              <div class="muted">${escapeHtml(quote.status)} • ${escapeHtml(target)}</div>
+            </div>
+            <div class="list-actions">
+              <button class="btn secondary small" data-action="edit">Düzenle</button>
+              <button class="btn danger small" data-action="delete">Sil</button>
+            </div>
+          </div>
+          <div class="row">
+            <span>Ödeme/Termin</span>
+            <strong>${escapeHtml(`${quote.paymentTerms || "-"} / ${quote.deliveryTerms || "-"}`)}</strong>
+          </div>
+          <div class="row">
+            <span>Ara Toplam</span>
+            <strong>${formatMoney(totals.subtotal)}</strong>
+          </div>
+          <div class="row">
+            <span>İndirim</span>
+            <strong>${formatMoney(totals.discount)}</strong>
+          </div>
+          <div class="row">
+            <span>Nihai Toplam</span>
+            <strong>${formatMoney(totals.grandTotal)}</strong>
+          </div>
+          <div>
+            <div class="muted">Teklif Kalemleri</div>
+            ${items}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderTimeline(items) {
+      if (!items || !items.length) {
+        return `<div class="muted">Henüz hareket yok.</div>`;
+      }
+      return `<div class="timeline">${items.map((item) => `<div class="timeline-item">${escapeHtml(formatDate(item.at))} — ${escapeHtml(item.text)}</div>`).join("")}</div>`;
+    }
+
+    function describeOpportunityLink(opportunity) {
+      const lead = opportunity.leadId ? findById("leads", opportunity.leadId) : null;
+      const account = opportunity.accountId ? findById("accounts", opportunity.accountId) : null;
+      if (account) {
+        return `Müşteri: ${account.companyName}`;
+      }
+      if (lead) {
+        return `Lead: ${lead.companyName}`;
+      }
+      return "Bağlantı yok";
+    }
+
+    function formatDate(iso) {
+      if (!iso) return "-";
+      return new Date(iso).toLocaleString("tr-TR", { dateStyle: "medium", timeStyle: "short" });
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;");
+    }
+
+    function findById(collection, id) {
+      return state.data[collection].find((item) => item.id === id);
+    }
+
+    function addTimeline(target, text) {
+      target.timeline = target.timeline || [];
+      target.timeline.unshift({ at: nowISO(), text });
+    }
+
+    function openModal(config) {
+      const { type, mode, id, context, record } = config;
+      const resolvedRecord = record || (mode === "edit" && type !== "convert" ? findById(type, id) : null);
+      const modalContent = buildModalContent(type, mode, resolvedRecord, context);
+      elements.modalRoot.innerHTML = `
+        <div class="modal-overlay" data-modal>
+          <div class="modal" role="dialog" aria-modal="true">
+            ${modalContent}
+          </div>
+        </div>
+      `;
+    }
+
+    function closeModal() {
+      elements.modalRoot.innerHTML = "";
+    }
+
+    function buildModalContent(type, mode, record, context) {
+      if (type === "leads") {
+        return leadFormTemplate(mode, record);
+      }
+      if (type === "accounts") {
+        return accountFormTemplate(mode, record);
+      }
+      if (type === "opportunities") {
+        return opportunityFormTemplate(mode, record, context);
+      }
+      if (type === "quotes") {
+        return quoteFormTemplate(mode, record, context);
+      }
+      if (type === "convert") {
+        return convertFormTemplate(record, context);
+      }
+      return "";
+    }
+
+    function leadFormTemplate(mode, record) {
+      const lead = record || {};
+      return `
+        <h3>${mode === "edit" ? "Lead Düzenle" : "Yeni Lead"}</h3>
+        <div class="subtitle">Lead bilgilerini girin.</div>
+        <form data-form="leads" data-mode="${mode}" data-id="${lead.id || ""}">
+          <div class="grid">
+            ${textInput("Firma", "companyName", lead.companyName)}
+            ${textInput("Yetkili", "contactName", lead.contactName)}
+            ${textInput("Telefon", "phone", lead.phone)}
+            ${textInput("E-posta", "email", lead.email)}
+            ${textInput("Şehir", "city", lead.city)}
+            ${textInput("Ülke", "country", lead.country || "Türkiye")}
+            ${textInput("Segment", "segment", lead.segment)}
+            ${textInput("İlgi", "interest", lead.interest)}
+            ${textInput("Sahip", "owner", lead.owner)}
+            ${textInput("Kaynak", "source", lead.source)}
+            ${selectInput("Durum", "status", ["Yeni", "Nitelikli", "Teklif", "Kaybedildi", "Kazanıldı"], lead.status)}
+          </div>
+          ${textInput("Etiketler (virgülle)", "tags", (lead.tags || []).join(", "))}
+          <div class="form-actions">
+            <button type="button" class="btn secondary" data-action="cancel">Vazgeç</button>
+            <button type="submit" class="btn primary">Kaydet</button>
+          </div>
+        </form>
+      `;
+    }
+
+    function accountFormTemplate(mode, record) {
+      const account = record || {};
+      return `
+        <h3>${mode === "edit" ? "Müşteri Düzenle" : "Yeni Müşteri"}</h3>
+        <div class="subtitle">Müşteri hesabı oluşturun.</div>
+        <form data-form="accounts" data-mode="${mode}" data-id="${account.id || ""}">
+          <div class="grid">
+            ${selectInput("Tip", "type", ["Son kullanıcı", "EPC", "Bayi"], account.type)}
+            ${textInput("Firma Adı", "companyName", account.companyName)}
+            ${textInput("Vergi No", "taxNo", account.taxNo)}
+            ${textInput("Şehir", "city", account.city)}
+            ${textInput("Ülke", "country", account.country || "Türkiye")}
+          </div>
+          ${textInput("Yetkili Kişi", "contactName", account.contacts?.[0]?.name)}
+          ${textInput("Yetkili Telefon", "contactPhone", account.contacts?.[0]?.phone)}
+          ${textArea("Notlar", "note", account.notes?.[0]?.text)}
+          <div class="form-actions">
+            <button type="button" class="btn secondary" data-action="cancel">Vazgeç</button>
+            <button type="submit" class="btn primary">Kaydet</button>
+          </div>
+        </form>
+      `;
+    }
+
+    function opportunityFormTemplate(mode, record, context = {}) {
+      const opportunity = record || {};
+      const leads = state.data.leads;
+      const accounts = state.data.accounts;
+      const epcAccounts = accounts.filter((acc) => acc.type === "EPC");
+      const leadOptions = leadSelectOptions(leads, opportunity.leadId);
+      const accountOptions = accountSelectOptions(accounts, opportunity.accountId);
+      const epcOptions = accountSelectOptions(epcAccounts, opportunity.sourceEpcAccountId, true);
+      const leadHasAccount = opportunity.leadId ? findById("leads", opportunity.leadId)?.accountId : null;
+      return `
+        <h3>${mode === "edit" ? "Fırsat Düzenle" : "Yeni Fırsat"}</h3>
+        <div class="subtitle">Lead veya müşteri bağlayın, EPC kaynağını seçin.</div>
+        <form data-form="opportunities" data-mode="${mode}" data-id="${opportunity.id || ""}" data-context='${JSON.stringify(context)}'>
+          <div class="grid">
+            ${textInput("Başlık", "title", opportunity.title)}
+            ${selectInput("Aşama", "stage", stageOptions, opportunity.stage || "Yeni")}
+            ${selectInput("Lead", "leadId", leadOptions, opportunity.leadId, true)}
+            ${selectInput("Müşteri", "accountId", accountOptions, opportunity.accountId, true)}
+            ${selectInput("EPC Kaynağı", "sourceEpcAccountId", epcOptions, opportunity.sourceEpcAccountId, true)}
+          </div>
+          ${leadHasAccount ? `<button type="button" class="btn ghost" data-action="use-lead-account" data-lead-id="${opportunity.leadId}">Lead'in müşterisini kullan</button>` : ""}
+          <div class="grid">
+            ${numberInput("Panel Adedi", "expectedPanelsQty", opportunity.expectedPanelsQty)}
+            ${textInput("Panel Modeli", "panelModel", opportunity.panelModel)}
+            ${textInput("Panel Wattage", "panelWattage", opportunity.panelWattage)}
+            ${numberInput("Hedef Fiyat/W", "targetPricePerWatt", opportunity.targetPricePerWatt)}
+            ${numberInput("Olasılık %", "probability", opportunity.probability)}
+            ${textInput("Sahip", "owner", opportunity.owner)}
+          </div>
+          <div class="helper">En az Lead veya Müşteri seçmelisiniz.</div>
+          <div class="form-actions">
+            <button type="button" class="btn secondary" data-action="cancel">Vazgeç</button>
+            <button type="submit" class="btn primary">Kaydet</button>
+          </div>
+        </form>
+      `;
+    }
+
+    function quoteFormTemplate(mode, record, context = {}) {
+      const quote = record || {};
+      const opportunityId = context.opportunityId || quote.opportunityId || "";
+      const opportunityOptions = opportunitySelectOptions(state.data.opportunities, opportunityId);
+      const opportunity = opportunityId ? findById("opportunities", opportunityId) : null;
+      const target = opportunity ? describeOpportunityLink(opportunity) : "-";
+      const items = quote.items || [];
+      const totals = computeQuoteTotals(quote);
+      return `
+        <h3>${mode === "edit" ? "Teklif Düzenle" : "Yeni Teklif"}</h3>
+        <div class="subtitle">Teklif mutlaka bir fırsata bağlı olmalıdır.</div>
+        <form data-form="quotes" data-mode="${mode}" data-id="${quote.id || ""}" data-context='${JSON.stringify(context)}'>
+          <div class="grid">
+            ${selectInput("Fırsat", "opportunityId", opportunityOptions, opportunityId, false)}
+            <div>
+              <label>Müşteri/Lead</label>
+              <input type="text" value="${escapeHtml(target)}" data-role="quote-target" disabled />
+              <div class="helper">Fırsattan otomatik türetilir.</div>
+            </div>
+            ${selectInput("Durum", "status", ["Taslak", "Gönderildi", "Revize", "Kazanıldı", "Kaybedildi"], quote.status || "Taslak")}
+            ${textInput("Ödeme Şartları", "paymentTerms", quote.paymentTerms)}
+            ${textInput("Teslim Şartları", "deliveryTerms", quote.deliveryTerms)}
+          </div>
+          <div>
+            <div class="row" style="align-items:center; justify-content: space-between;">
+              <strong>Teklif Kalemleri</strong>
+              <button type="button" class="btn secondary small" data-action="add-item">+ Kalem Ekle</button>
+            </div>
+            <table class="items-table" data-items>
+              <thead>
+                <tr>
+                  <th>Ürün</th>
+                  <th>Miktar</th>
+                  <th>Birim Fiyat</th>
+                  <th>Toplam</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                ${items.map((item) => quoteItemRow(item)).join("")}
+              </tbody>
+            </table>
+          </div>
+          <div class="grid">
+            ${numberInput("İndirim", "discount", totals.discount)}
+            ${numberInput("Nakliye", "shipping", totals.shipping)}
+            <div>
+              <label>Genel Toplam</label>
+              <input type="text" value="${formatMoney(totals.grandTotal)}" data-role="quote-total" disabled />
+              <div class="helper">Kalemlerden otomatik hesaplanır.</div>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn ghost" data-action="create-opportunity-inline">+ Fırsat oluştur</button>
+            <div style="display:flex; gap:10px;">
+              <button type="button" class="btn secondary" data-action="cancel">Vazgeç</button>
+              <button type="submit" class="btn primary">Kaydet</button>
+            </div>
+          </div>
+        </form>
+      `;
+    }
+
+    function convertFormTemplate(lead, context = {}) {
+      const accounts = state.data.accounts;
+      const options = accountSelectOptions(accounts, "", true);
+      return `
+        <h3>Lead'i Müşteriye Dönüştür</h3>
+        <div class="subtitle">Lead'i müşteriyle eşleştirin ve fırsat oluşturun.</div>
+        <form data-form="convert" data-id="${lead.id}" data-context='${JSON.stringify(context)}'>
+          <div>
+            <label><input type="radio" name="convertMode" value="new" checked /> Yeni müşteri oluştur (önerilen)</label>
+            <div class="helper">Lead bilgileri ile yeni müşteri açılır.</div>
+          </div>
+          <div>
+            <label><input type="radio" name="convertMode" value="existing" /> Mevcut müşteriyle eşleştir</label>
+            ${selectInput("Mevcut Müşteri", "existingAccountId", options, "", true)}
+          </div>
+          <div>
+            <label><input type="checkbox" name="createOpportunity" /> Bu lead'den fırsat oluştur</label>
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn secondary" data-action="cancel">Vazgeç</button>
+            <button type="submit" class="btn primary">Dönüştür</button>
+          </div>
+        </form>
+      `;
+    }
+
+    function textInput(labelText, name, value = "") {
+      return `
+        <div>
+          <label>${labelText}</label>
+          <input type="text" name="${name}" value="${escapeHtml(value || "")}" />
+        </div>
+      `;
+    }
+
+    function numberInput(labelText, name, value = "") {
+      return `
+        <div>
+          <label>${labelText}</label>
+          <input type="number" name="${name}" value="${escapeHtml(value || "")}" />
+        </div>
+      `;
+    }
+
+    function textArea(labelText, name, value = "") {
+      return `
+        <div>
+          <label>${labelText}</label>
+          <textarea name="${name}">${escapeHtml(value || "")}</textarea>
+        </div>
+      `;
+    }
+
+    function selectInput(labelText, name, options, selectedValue = "", allowEmpty = false) {
+      const placeholder = allowEmpty ? `<option value="">Seçiniz</option>` : "";
+      const optionMarkup = Array.isArray(options)
+        ? options.map((option) => {
+            if (typeof option === "string") {
+              return `<option value="${option}" ${option === selectedValue ? "selected" : ""}>${option}</option>`;
+            }
+            return `<option value="${option.value}" ${option.value === selectedValue ? "selected" : ""}>${escapeHtml(option.label)}</option>`;
+          }).join("")
+        : "";
+      return `
+        <div>
+          <label>${labelText}</label>
+          <select name="${name}">
+            ${placeholder}${optionMarkup}
+          </select>
+        </div>
+      `;
+    }
+
+    function leadSelectOptions(leads, selectedId = "") {
+      return leads.map((lead) => ({
+        value: lead.id,
+        label: `${lead.companyName || "İsimsiz"} (${lead.status})`
+      }));
+    }
+
+    function accountSelectOptions(accounts, selectedId = "", allowEmpty = false) {
+      if (!accounts.length) {
+        return allowEmpty ? [] : [{ value: "", label: "Kayıt yok" }];
+      }
+      return accounts.map((account) => ({
+        value: account.id,
+        label: `${account.companyName || "İsimsiz"} (${account.type})`
+      }));
+    }
+
+    function opportunitySelectOptions(opportunities, selectedId = "") {
+      if (!opportunities.length) {
+        return [{ value: "", label: "Önce fırsat oluşturun" }];
+      }
+      return opportunities.map((opportunity) => ({
+        value: opportunity.id,
+        label: `${opportunity.title || "İsimsiz"} — ${describeOpportunityLink(opportunity)}`
+      }));
+    }
+
+    function quoteItemRow(item) {
+      return `
+        <tr data-item-id="${item.id}">
+          <td><input type="text" name="name" value="${escapeHtml(item.name || "")}" /></td>
+          <td><input type="number" name="qty" value="${escapeHtml(item.qty || 0)}" /></td>
+          <td><input type="number" name="unitPrice" value="${escapeHtml(item.unitPrice || 0)}" /></td>
+          <td>${formatMoney((item.qty || 0) * (item.unitPrice || 0))}</td>
+          <td><button type="button" class="btn danger small" data-action="remove-item">Sil</button></td>
+        </tr>
+      `;
+    }
+
+    function computeQuoteTotals(quote) {
+      const items = quote.items || [];
+      const subtotal = items.reduce((sum, item) => sum + (Number(item.qty) || 0) * (Number(item.unitPrice) || 0), 0);
+      const discount = Number(quote.discount || quote.totals?.discount || 0);
+      const shipping = Number(quote.shipping || quote.totals?.shipping || 0);
+      const grandTotal = subtotal - discount + shipping;
+      return {
+        subtotal,
+        discount,
+        shipping,
+        grandTotal
+      };
+    }
+
+    function formatMoney(value) {
+      const numberValue = Number(value) || 0;
+      return numberValue.toLocaleString("tr-TR", { style: "currency", currency: "TRY" });
+    }
+
+    function generateQuoteNo() {
+      const year = new Date().getFullYear();
+      const seq = state.data.counters.quoteSeq || 1;
+      state.data.counters.quoteSeq = seq + 1;
+      return `ALB-Q-${year}-${String(seq).padStart(4, "0")}`;
+    }
+
+    function handleFormSubmit(event) {
+      const form = event.target.closest("form");
+      if (!form) return;
+      event.preventDefault();
+      const formType = form.dataset.form;
+      const mode = form.dataset.mode;
+      const context = form.dataset.context ? JSON.parse(form.dataset.context) : {};
+      if (formType === "leads") {
+        saveLead(form, mode);
+      } else if (formType === "accounts") {
+        saveAccount(form, mode);
+      } else if (formType === "opportunities") {
+        saveOpportunity(form, mode, context);
+      } else if (formType === "quotes") {
+        saveQuote(form, mode, context);
+      } else if (formType === "convert") {
+        convertLead(form);
+      }
+    }
+
+    function saveLead(form, mode) {
+      const formData = new FormData(form);
+      const tags = formData.get("tags")
+        ? String(formData.get("tags")).split(",").map((tag) => tag.trim()).filter(Boolean)
+        : [];
+      if (mode === "create") {
+        const lead = {
+          id: crypto.randomUUID(),
+          createdAt: nowISO(),
+          updatedAt: nowISO(),
+          status: formData.get("status") || "Yeni",
+          source: formData.get("source") || "",
+          companyName: formData.get("companyName") || "",
+          contactName: formData.get("contactName") || "",
+          phone: formData.get("phone") || "",
+          email: formData.get("email") || "",
+          city: formData.get("city") || "",
+          country: formData.get("country") || "Türkiye",
+          segment: formData.get("segment") || "",
+          interest: formData.get("interest") || "",
+          owner: formData.get("owner") || "",
+          tags,
+          timeline: []
+        };
+        addTimeline(lead, "Lead oluşturuldu.");
+        state.data.leads.unshift(lead);
+        toast("Lead kaydedildi.");
+      } else {
+        const lead = findById("leads", form.dataset.id);
+        if (!lead) return;
+        lead.updatedAt = nowISO();
+        lead.status = formData.get("status") || lead.status;
+        lead.source = formData.get("source") || "";
+        lead.companyName = formData.get("companyName") || "";
+        lead.contactName = formData.get("contactName") || "";
+        lead.phone = formData.get("phone") || "";
+        lead.email = formData.get("email") || "";
+        lead.city = formData.get("city") || "";
+        lead.country = formData.get("country") || "Türkiye";
+        lead.segment = formData.get("segment") || "";
+        lead.interest = formData.get("interest") || "";
+        lead.owner = formData.get("owner") || "";
+        lead.tags = tags;
+        addTimeline(lead, "Lead güncellendi.");
+        toast("Lead güncellendi.");
+      }
+      saveState();
+      closeModal();
+      render();
+    }
+
+    function saveAccount(form, mode) {
+      const formData = new FormData(form);
+      const contacts = [];
+      const contactName = formData.get("contactName");
+      const contactPhone = formData.get("contactPhone");
+      if (contactName || contactPhone) {
+        contacts.push({ name: contactName || "", phone: contactPhone || "" });
+      }
+      const notes = [];
+      const note = formData.get("note");
+      if (note) {
+        notes.push({ at: nowISO(), text: note });
+      }
+      if (mode === "create") {
+        const account = {
+          id: crypto.randomUUID(),
+          createdAt: nowISO(),
+          updatedAt: nowISO(),
+          type: formData.get("type") || "Son kullanıcı",
+          companyName: formData.get("companyName") || "",
+          taxNo: formData.get("taxNo") || "",
+          city: formData.get("city") || "",
+          country: formData.get("country") || "Türkiye",
+          contacts,
+          notes,
+          timeline: []
+        };
+        addTimeline(account, "Müşteri oluşturuldu.");
+        state.data.accounts.unshift(account);
+        toast("Müşteri kaydedildi.");
+      } else {
+        const account = findById("accounts", form.dataset.id);
+        if (!account) return;
+        account.updatedAt = nowISO();
+        account.type = formData.get("type") || account.type;
+        account.companyName = formData.get("companyName") || "";
+        account.taxNo = formData.get("taxNo") || "";
+        account.city = formData.get("city") || "";
+        account.country = formData.get("country") || "Türkiye";
+        account.contacts = contacts;
+        account.notes = notes;
+        addTimeline(account, "Müşteri güncellendi.");
+        toast("Müşteri güncellendi.");
+      }
+      saveState();
+      closeModal();
+      render();
+    }
+
+    function saveOpportunity(form, mode, context) {
+      const formData = new FormData(form);
+      const leadId = formData.get("leadId") || "";
+      const accountId = formData.get("accountId") || "";
+      if (!leadId && !accountId) {
+        toast("Lütfen en az bir lead veya müşteri seçin.");
+        return;
+      }
+      if (mode === "create") {
+        const opportunity = {
+          id: crypto.randomUUID(),
+          createdAt: nowISO(),
+          updatedAt: nowISO(),
+          title: formData.get("title") || "",
+          stage: formData.get("stage") || "Yeni",
+          stageUpdatedAt: nowISO(),
+          expectedPanelsQty: Number(formData.get("expectedPanelsQty")) || 0,
+          panelModel: formData.get("panelModel") || "",
+          panelWattage: formData.get("panelWattage") || "",
+          targetPricePerWatt: formData.get("targetPricePerWatt") || "",
+          probability: Number(formData.get("probability")) || 0,
+          owner: formData.get("owner") || "",
+          leadId: leadId || null,
+          accountId: accountId || null,
+          sourceEpcAccountId: formData.get("sourceEpcAccountId") || null
+        };
+        state.data.opportunities.unshift(opportunity);
+        toast("Fırsat kaydedildi.");
+        if (context && context.returnTo === "quoteCreate") {
+          saveState();
+          closeModal();
+          openModal({ type: "quotes", mode: "create", context: { opportunityId: opportunity.id } });
+          return;
+        }
+      } else {
+        const opportunity = findById("opportunities", form.dataset.id);
+        if (!opportunity) return;
+        opportunity.updatedAt = nowISO();
+        opportunity.title = formData.get("title") || "";
+        opportunity.stage = formData.get("stage") || "Yeni";
+        opportunity.stageUpdatedAt = nowISO();
+        opportunity.expectedPanelsQty = Number(formData.get("expectedPanelsQty")) || 0;
+        opportunity.panelModel = formData.get("panelModel") || "";
+        opportunity.panelWattage = formData.get("panelWattage") || "";
+        opportunity.targetPricePerWatt = formData.get("targetPricePerWatt") || "";
+        opportunity.probability = Number(formData.get("probability")) || 0;
+        opportunity.owner = formData.get("owner") || "";
+        opportunity.leadId = leadId || null;
+        opportunity.accountId = accountId || null;
+        opportunity.sourceEpcAccountId = formData.get("sourceEpcAccountId") || null;
+        toast("Fırsat güncellendi.");
+      }
+      saveState();
+      closeModal();
+      render();
+    }
+
+    function saveQuote(form, mode, context) {
+      const formData = new FormData(form);
+      const opportunityId = formData.get("opportunityId");
+      if (!opportunityId) {
+        toast("Lütfen bir fırsat seçin.");
+        return;
+      }
+      const items = Array.from(form.querySelectorAll("tbody tr")).map((row) => {
+        return {
+          id: row.dataset.itemId || crypto.randomUUID(),
+          name: row.querySelector('input[name="name"]').value || "",
+          qty: Number(row.querySelector('input[name="qty"]').value) || 0,
+          unitPrice: Number(row.querySelector('input[name="unitPrice"]').value) || 0
+        };
+      }).filter((item) => item.name || item.qty || item.unitPrice);
+      const totals = {
+        ...computeQuoteTotals({
+          items,
+          discount: Number(formData.get("discount")) || 0,
+          shipping: Number(formData.get("shipping")) || 0
+        })
+      };
+      if (mode === "create") {
+        const quote = {
+          id: crypto.randomUUID(),
+          createdAt: nowISO(),
+          updatedAt: nowISO(),
+          quoteNo: generateQuoteNo(),
+          status: formData.get("status") || "Taslak",
+          opportunityId,
+          paymentTerms: formData.get("paymentTerms") || "",
+          deliveryTerms: formData.get("deliveryTerms") || "",
+          items,
+          totals,
+          discount: totals.discount,
+          shipping: totals.shipping,
+          timeline: []
+        };
+        addTimeline(quote, "Teklif oluşturuldu.");
+        state.data.quotes.unshift(quote);
+        toast("Teklif kaydedildi.");
+      } else {
+        const quote = findById("quotes", form.dataset.id);
+        if (!quote) return;
+        quote.updatedAt = nowISO();
+        quote.status = formData.get("status") || quote.status;
+        quote.opportunityId = opportunityId;
+        quote.paymentTerms = formData.get("paymentTerms") || "";
+        quote.deliveryTerms = formData.get("deliveryTerms") || "";
+        quote.items = items;
+        quote.totals = totals;
+        quote.discount = totals.discount;
+        quote.shipping = totals.shipping;
+        addTimeline(quote, "Teklif güncellendi.");
+        toast("Teklif güncellendi.");
+      }
+      saveState();
+      closeModal();
+      render();
+    }
+
+    function convertLead(form) {
+      const lead = findById("leads", form.dataset.id);
+      if (!lead) return;
+      const formData = new FormData(form);
+      const mode = formData.get("convertMode");
+      let account;
+      if (mode === "existing") {
+        const accountId = formData.get("existingAccountId");
+        if (!accountId) {
+          toast("Mevcut müşteri seçmelisiniz.");
+          return;
+        }
+        account = findById("accounts", accountId);
+      } else {
+        account = {
+          id: crypto.randomUUID(),
+          createdAt: nowISO(),
+          updatedAt: nowISO(),
+          type: "Son kullanıcı",
+          companyName: lead.companyName,
+          taxNo: "",
+          city: lead.city,
+          country: lead.country || "Türkiye",
+          contacts: [{ name: lead.contactName || "", phone: lead.phone || "" }],
+          notes: [],
+          timeline: []
+        };
+        addTimeline(account, "Lead'den müşteri oluşturuldu.");
+        state.data.accounts.unshift(account);
+      }
+      lead.accountId = account.id;
+      lead.status = "Nitelikli";
+      lead.updatedAt = nowISO();
+      addTimeline(lead, `Müşteriye dönüştürüldü: ${account.companyName}.`);
+      addTimeline(account, `Lead bağlantısı: ${lead.companyName}.`);
+      if (formData.get("createOpportunity")) {
+        const opportunity = {
+          id: crypto.randomUUID(),
+          createdAt: nowISO(),
+          updatedAt: nowISO(),
+          title: `${lead.companyName} - Yeni fırsat`,
+          stage: "Yeni",
+          stageUpdatedAt: nowISO(),
+          expectedPanelsQty: 0,
+          panelModel: "",
+          panelWattage: "",
+          targetPricePerWatt: "",
+          probability: 0,
+          owner: lead.owner || "",
+          leadId: lead.id,
+          accountId: account.id,
+          sourceEpcAccountId: null
+        };
+        state.data.opportunities.unshift(opportunity);
+      }
+      saveState();
+      closeModal();
+      toast("Lead dönüştürüldü.");
+      render();
+    }
+
+    function handleListClick(event) {
+      const actionButton = event.target.closest("[data-action]");
+      if (!actionButton) return;
+      const item = event.target.closest("[data-id]");
+      const id = item ? item.dataset.id : null;
+      const action = actionButton.dataset.action;
+      const tab = state.ui.activeTab;
+      if (action === "detail") {
+        state.ui.selectedId = id;
+        renderDetail();
+      }
+      if (action === "edit") {
+        openModal({ type: tab, mode: "edit", id });
+      }
+      if (action === "delete") {
+        handleDelete(tab, id);
+      }
+      if (action === "convert") {
+        const lead = findById("leads", id);
+        openModal({ type: "convert", mode: "create", id, context: {}, record: lead });
+      }
+    }
+
+    function handleDetailClick(event) {
+      const actionButton = event.target.closest("[data-action]");
+      if (!actionButton) return;
+      const container = event.target.closest("[data-id]");
+      const id = container ? container.dataset.id : null;
+      const action = actionButton.dataset.action;
+      const tab = state.ui.activeTab;
+      if (action === "edit") {
+        openModal({ type: tab, mode: "edit", id });
+      }
+      if (action === "delete") {
+        handleDelete(tab, id);
+      }
+      if (action === "convert") {
+        const lead = findById("leads", id);
+        openModal({ type: "convert", mode: "create", id, context: {}, record: lead });
+      }
+    }
+
+    function handleDelete(collection, id) {
+      const record = findById(collection, id);
+      if (!record) return;
+      if (!confirm("Silmek istediğinize emin misiniz?")) return;
+      state.data[collection] = state.data[collection].filter((item) => item.id !== id);
+      if (state.ui.selectedId === id) {
+        state.ui.selectedId = null;
+      }
+      saveState();
+      toast("Kayıt silindi.");
+      render();
+    }
+
+    function handleModalClick(event) {
+      const action = event.target.dataset.action;
+      if (!action) return;
+      if (action === "cancel") {
+        closeModal();
+      }
+      if (action === "add-item") {
+        const tbody = elements.modalRoot.querySelector("tbody");
+        const newItem = { id: crypto.randomUUID(), name: "", qty: 1, unitPrice: 0 };
+        tbody.insertAdjacentHTML("beforeend", quoteItemRow(newItem));
+      }
+      if (action === "remove-item") {
+        event.target.closest("tr").remove();
+      }
+      if (action === "create-opportunity-inline") {
+        closeModal();
+        openModal({ type: "opportunities", mode: "create", context: { returnTo: "quoteCreate" } });
+      }
+      if (action === "use-lead-account") {
+        const leadId = event.target.dataset.leadId;
+        const lead = findById("leads", leadId);
+        if (lead && lead.accountId) {
+          const accountSelect = elements.modalRoot.querySelector("select[name='accountId']");
+          if (accountSelect) {
+            accountSelect.value = lead.accountId;
+          }
+        }
+      }
+    }
+
+    function handleModalInput(event) {
+      const form = event.target.closest("form[data-form='quotes']");
+      if (!form) return;
+      const items = Array.from(form.querySelectorAll("tbody tr")).map((row) => ({
+        name: row.querySelector('input[name="name"]').value || "",
+        qty: Number(row.querySelector('input[name="qty"]').value) || 0,
+        unitPrice: Number(row.querySelector('input[name="unitPrice"]').value) || 0
+      }));
+      const discount = Number(form.querySelector('input[name="discount"]').value) || 0;
+      const shipping = Number(form.querySelector('input[name="shipping"]').value) || 0;
+      const totals = computeQuoteTotals({ items, discount, shipping });
+      const totalField = form.querySelector(\"input[data-role='quote-total']\");
+      if (totalField) {
+        totalField.value = formatMoney(totals.grandTotal);
+      }
+    }
+
+    function handleModalChange(event) {
+      const form = event.target.closest("form[data-form='quotes']");
+      if (!form) return;
+      if (event.target.name === "opportunityId") {
+        const opportunity = findById("opportunities", event.target.value);
+        const targetField = form.querySelector(\"input[data-role='quote-target']\");
+        if (targetField) {
+          targetField.value = opportunity ? describeOpportunityLink(opportunity) : "-";
+        }
+      }
+    }
+
+    elements.navButtons.forEach((button) => {
+      button.addEventListener("click", () => setActiveTab(button.dataset.tab));
+    });
+
+    elements.primaryAction.addEventListener("click", () => {
+      if (state.ui.activeTab === "quotes") {
+        openModal({ type: "quotes", mode: "create", context: {} });
+        return;
+      }
+      openModal({ type: state.ui.activeTab, mode: "create" });
+    });
+
+    elements.listContainer.addEventListener("click", handleListClick);
+    elements.detailContainer.addEventListener("click", handleDetailClick);
+    elements.detailContainer.addEventListener("change", (event) => {
+      if (event.target.dataset.action === "stage") {
+        const id = event.target.dataset.id;
+        const opportunity = findById("opportunities", id);
+        if (!opportunity) return;
+        opportunity.stage = event.target.value;
+        opportunity.stageUpdatedAt = nowISO();
+        saveState();
+        toast("Aşama güncellendi.");
+        render();
+      }
+    });
+
+    elements.modalRoot.addEventListener("click", (event) => {
+      if (event.target.matches(".modal-overlay")) {
+        closeModal();
+      }
+      handleModalClick(event);
+    });
+    elements.modalRoot.addEventListener("submit", handleFormSubmit);
+    elements.modalRoot.addEventListener("input", handleModalInput);
+    elements.modalRoot.addEventListener("change", handleModalChange);
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeModal();
+      }
+    });
+
+    function initialize() {
+      setActiveTab("leads");
+    }
+
+    initialize();
+  </script>
+</body>
+</html>
