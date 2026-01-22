@@ -1014,7 +1014,10 @@
       const backlogValue = acceptedQuotes
         .filter(quote => !orders.some(order => order.quoteId === quote.id))
         .reduce((sum, quote) => sum + Number(quote.totals?.grandTotalUSD || 0), 0);
-      const panelItems = acceptedQuotes.flatMap(quote => quote.items || []).filter(item => item.type === "Panel");
+      const panelItems = acceptedQuotes.reduce((items, quote) => {
+        const lineItems = Array.isArray(quote.items) ? quote.items : [];
+        return items.concat(lineItems);
+      }, []).filter(item => item.type === "Panel");
       const totalPanelsSold = panelItems.reduce((sum, item) => sum + Number(item.qty || 0), 0);
       const avgPricePerWatt = panelItems.length
         ? (panelItems.reduce((sum, item) => sum + Number(item.pricePerWatt || 0), 0) / panelItems.length).toFixed(3)
