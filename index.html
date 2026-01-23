@@ -1,0 +1,2136 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Alb Enerji CRM</title>
+  <style>
+    :root {
+      --bg: #f5f6f8;
+      --card: #ffffff;
+      --text: #121417;
+      --muted: #6b7280;
+      --line: #e6e8ec;
+      --accent: #111827;
+      --accent-soft: #eef2ff;
+      --shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      letter-spacing: 0.1px;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: rgba(245, 246, 248, 0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 32px 8px;
+      gap: 16px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .pill-toggle {
+      display: flex;
+      background: var(--card);
+      border-radius: 999px;
+      padding: 4px;
+      box-shadow: var(--shadow);
+      gap: 4px;
+    }
+    .pill-toggle button {
+      border: none;
+      background: transparent;
+      padding: 8px 16px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .pill-toggle button.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    nav {
+      display: flex;
+      gap: 16px;
+      padding: 8px 32px 16px;
+      overflow-x: auto;
+    }
+    nav button {
+      border: none;
+      background: transparent;
+      font-size: 14px;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 6px 0;
+      border-bottom: 2px solid transparent;
+    }
+    nav button.active {
+      color: var(--text);
+      border-color: var(--text);
+    }
+    main {
+      padding: 24px 32px 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    h1 { margin: 0; font-size: 28px; font-weight: 600; }
+    h2 { margin: 0; font-size: 18px; font-weight: 600; }
+    .muted { color: var(--muted); }
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+    }
+    .grid { display: grid; gap: 16px; }
+    .grid.cols-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .grid.cols-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 18px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .btn.primary { background: var(--accent); color: #fff; }
+    .btn.secondary { background: transparent; border: 1px solid var(--line); color: var(--text); }
+    .btn.subtle { background: var(--accent-soft); color: #1f2937; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .button-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .input, select, textarea {
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      padding: 10px 12px;
+      font-size: 13px;
+      background: #fff;
+    }
+    textarea { min-height: 80px; }
+    label { font-size: 12px; color: var(--muted); display: block; margin-bottom: 6px; }
+    .list { display: flex; flex-direction: column; gap: 12px; }
+    .list-item {
+      padding: 14px 16px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    .badge {
+      background: #f3f4f6;
+      color: #374151;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+    .kpi h3 { margin: 0; font-size: 12px; color: var(--muted); font-weight: 500; }
+    .kpi span { font-size: 22px; font-weight: 600; }
+    .detail-tabs {
+      display: flex;
+      gap: 12px;
+      border-bottom: 1px solid var(--line);
+      margin-bottom: 12px;
+    }
+    .detail-tabs button {
+      border: none;
+      background: transparent;
+      padding: 8px 0;
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+    }
+    .detail-tabs button.active { color: var(--text); border-color: var(--text); }
+    .timeline { display: flex; flex-direction: column; gap: 8px; }
+    .timeline-item { border-left: 2px solid var(--line); padding-left: 12px; font-size: 12px; color: var(--muted); }
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--accent);
+      color: #fff;
+      padding: 12px 16px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: 0.3s;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.25);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 20;
+    }
+    .modal-backdrop.active { display: flex; }
+    .modal {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      width: min(760px, 100%);
+      padding: 24px;
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .modal-footer { display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; }
+    .hint { font-size: 11px; color: var(--muted); margin-top: 4px; }
+    .empty {
+      border: 1px dashed var(--line);
+      border-radius: 12px;
+      padding: 16px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+    }
+    .table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .table th, .table td { text-align: left; padding: 8px; border-bottom: 1px solid var(--line); }
+    .table td:last-child { text-align: right; }
+    @media (max-width: 900px) {
+      .topbar { flex-direction: column; align-items: flex-start; gap: 12px; }
+      nav { padding-left: 16px; padding-right: 16px; }
+      main { padding: 20px 16px 60px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="topbar">
+      <div class="brand">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 13.5L12 3l8 10.5" stroke="#111827" stroke-width="1.6" stroke-linecap="round"/><path d="M6 13.5h12l-1.8 7.5H7.8L6 13.5z" stroke="#111827" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Alb Enerji CRM
+      </div>
+      <div class="pill-toggle" id="roleToggle"></div>
+    </div>
+    <nav id="navTabs"></nav>
+  </header>
+  <main id="app"></main>
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal" id="modalContent"></div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const STORAGE_KEY = "alb_crm_data_v3";
+    const SETTINGS_KEY = "alb_crm_settings_v3";
+    const ROLE_KEY = "alb_crm_role";
+    const roles = ["YÖNETİCİ", "SATIŞ", "TEKNİK OFİS"];
+    const tabs = ["Ana Panel", "Lead’ler", "Müşteriler", "Pipeline", "Teklifler", "Siparişler", "Görevler", "Partner Programı", "Ayarlar / Veri"];
+
+    const defaultSettings = {
+      currency: "USD",
+      defaultPanelWattage: 550,
+      defaultWarehouse: "Antalya",
+      panelCatalog: []
+    };
+
+    const emptyData = () => ({
+      leads: [],
+      accounts: [],
+      opportunities: [],
+      quotes: [],
+      orders: [],
+      tasks: [],
+      users: [],
+      partners: [],
+      purchases: [],
+      shipments: [],
+      counters: { lead: 1, account: 1, opportunity: 1, quote: 1, order: 1, task: 1, partner: 1, quoteSeq: 1, orderSeq: 1 }
+    });
+
+    const state = {
+      activeTab: tabs[0],
+      role: localStorage.getItem(ROLE_KEY) || roles[0],
+      data: emptyData(),
+      settings: defaultSettings,
+      selected: { entity: null, id: null },
+      detailTab: "Özet",
+      modal: { type: null, mode: null, context: null }
+    };
+
+    const toast = document.getElementById("toast");
+    const modalBackdrop = document.getElementById("modalBackdrop");
+    const modalContent = document.getElementById("modalContent");
+
+    const showToast = (message) => {
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 2200);
+    };
+
+    const setSettingsStatus = (message, isError = false) => {
+      const status = document.getElementById("settingsStatus");
+      if (!status) return;
+      status.textContent = message;
+      status.style.color = isError ? "#b91c1c" : "var(--muted)";
+    };
+
+    const nowISO = () => new Date().toISOString();
+    const shortDate = (value) => value ? new Date(value).toISOString().slice(0, 10) : "";
+    const formatUSD = (value) => new Intl.NumberFormat("tr-TR", { style: "currency", currency: state.settings.currency, maximumFractionDigits: 0 }).format(value || 0);
+
+    const generateId = (type) => {
+      const id = `${type}-${state.data.counters[type]}`;
+      state.data.counters[type] += 1;
+      return id;
+    };
+
+    const generateQuoteNo = () => {
+      const year = new Date().getFullYear();
+      const seq = String(state.data.counters.quoteSeq).padStart(4, "0");
+      state.data.counters.quoteSeq += 1;
+      return `ALB-Q-${year}-${seq}`;
+    };
+
+    const generateOrderNo = () => {
+      const year = new Date().getFullYear();
+      const seq = String(state.data.counters.orderSeq).padStart(4, "0");
+      state.data.counters.orderSeq += 1;
+      return `ALB-O-${year}-${seq}`;
+    };
+
+    const computeOpportunityValue = (opp) => {
+      const qty = Number(opp.expectedPanelsQty || 0);
+      const watt = Number(opp.panelWattage || state.settings.defaultPanelWattage || 0);
+      const price = Number(opp.targetPricePerWatt || 0);
+      return Math.round(qty * watt * price);
+    };
+
+    const ensureDefaults = () => {
+      const d = state.data;
+      d.leads = Array.isArray(d.leads) ? d.leads : [];
+      d.accounts = Array.isArray(d.accounts) ? d.accounts : [];
+      d.opportunities = Array.isArray(d.opportunities) ? d.opportunities : [];
+      d.quotes = Array.isArray(d.quotes) ? d.quotes : [];
+      d.orders = Array.isArray(d.orders) ? d.orders : [];
+      d.tasks = Array.isArray(d.tasks) ? d.tasks : [];
+      state.settings.panelCatalog = state.settings.panelCatalog || [];
+      d.leads = d.leads.map(lead => ({
+        id: lead.id || generateId("lead"),
+        createdAt: lead.createdAt || nowISO(),
+        updatedAt: lead.updatedAt || nowISO(),
+        status: lead.status || "Yeni",
+        source: lead.source || "Web",
+        companyName: lead.companyName || "",
+        contactName: lead.contactName || "",
+        phone: lead.phone || "",
+        email: lead.email || "",
+        city: lead.city || "",
+        country: lead.country || "Türkiye",
+        segment: lead.segment || "Konut",
+        interest: lead.interest || "Panel",
+        owner: lead.owner || "SATIŞ",
+        tags: lead.tags || [],
+        timeline: lead.timeline || [],
+        accountId: lead.accountId || null,
+        lastTouchAt: lead.lastTouchAt || nowISO(),
+        nextActionAt: lead.nextActionAt || nowISO()
+      }));
+      d.accounts = d.accounts.map(account => ({
+        id: account.id || generateId("account"),
+        createdAt: account.createdAt || nowISO(),
+        updatedAt: account.updatedAt || nowISO(),
+        type: account.type || "Son kullanıcı",
+        companyName: account.companyName || "",
+        taxNo: account.taxNo || "",
+        city: account.city || "",
+        country: account.country || "Türkiye",
+        contacts: account.contacts || [],
+        notes: account.notes || [],
+        timeline: account.timeline || []
+      }));
+      d.opportunities = d.opportunities.map(opp => ({
+        id: opp.id || generateId("opportunity"),
+        createdAt: opp.createdAt || nowISO(),
+        updatedAt: opp.updatedAt || nowISO(),
+        title: opp.title || "",
+        stage: opp.stage || "Lead",
+        stageUpdatedAt: opp.stageUpdatedAt || nowISO(),
+        expectedPanelsQty: opp.expectedPanelsQty ?? 0,
+        panelModel: opp.panelModel || "",
+        panelWattage: opp.panelWattage ?? state.settings.defaultPanelWattage,
+        targetPricePerWatt: opp.targetPricePerWatt ?? 0.19,
+        probability: opp.probability ?? 30,
+        owner: opp.owner || "SATIŞ",
+        leadId: opp.leadId || null,
+        accountId: opp.accountId || null,
+        sourceEpcAccountId: opp.sourceEpcAccountId || null
+      }));
+      d.quotes = d.quotes.map(quote => ({
+        id: quote.id || generateId("quote"),
+        createdAt: quote.createdAt || nowISO(),
+        updatedAt: quote.updatedAt || nowISO(),
+        quoteNo: quote.quoteNo || generateQuoteNo(),
+        status: quote.status || "Taslak",
+        opportunityId: quote.opportunityId || null,
+        paymentTerms: quote.paymentTerms || "LC90",
+        deliveryTerms: quote.deliveryTerms || "FOB",
+        items: (quote.items || []).map(item => ({
+          type: item.type || "Panel",
+          description: item.description || "",
+          qty: item.qty ?? 1,
+          unit: item.unit || "Adet",
+          unitPriceUSD: item.unitPriceUSD ?? 0,
+          panelId: item.panelId || "",
+          panelWattage: item.panelWattage ?? state.settings.defaultPanelWattage,
+          pricePerWatt: item.pricePerWatt ?? 0.19
+        })),
+        totals: quote.totals || { subtotalUSD: 0, discountUSD: 0, shippingUSD: 0, grandTotalUSD: 0 },
+        timeline: quote.timeline || []
+      }));
+      d.orders = d.orders.map(order => ({
+        id: order.id || generateId("order"),
+        createdAt: order.createdAt || nowISO(),
+        updatedAt: order.updatedAt || nowISO(),
+        quoteId: order.quoteId || null,
+        opportunityId: order.opportunityId || null,
+        orderNo: order.orderNo || generateOrderNo(),
+        status: order.status || "Beklemede",
+        promisedShipDate: order.promisedShipDate || nowISO().slice(0, 10),
+        warehouse: order.warehouse || state.settings.defaultWarehouse,
+        carrier: order.carrier || "",
+        trackingNumber: order.trackingNumber || "",
+        logisticsNotes: order.logisticsNotes || "",
+        timeline: order.timeline || []
+      }));
+      d.tasks = d.tasks.map(task => ({
+        id: task.id || generateId("task"),
+        createdAt: task.createdAt || nowISO(),
+        updatedAt: task.updatedAt || nowISO(),
+        title: task.title || "",
+        dueDate: task.dueDate || nowISO().slice(0, 10),
+        priority: task.priority || "Orta",
+        status: task.status || "Açık",
+        assigneeId: task.assigneeId || null,
+        relatedType: task.relatedType || "",
+        relatedId: task.relatedId || "",
+        timeline: task.timeline || []
+      }));
+      d.users = (d.users || []).map(user => ({
+        id: user.id || `user-${Math.random().toString(36).slice(2, 8)}`,
+        name: user.name || "Kullanıcı",
+        role: user.role || "SATIŞ"
+      }));
+      if (!d.users.length) {
+        d.users = [
+          { id: "user-yonetici", name: "Yönetici", role: "YÖNETİCİ" },
+          { id: "user-satis", name: "Satış Temsilcisi", role: "SATIŞ" },
+          { id: "user-teknik", name: "Teknik Ofis", role: "TEKNİK OFİS" }
+        ];
+      }
+    };
+
+    const loadData = () => {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          state.data = { ...emptyData(), ...JSON.parse(saved) };
+        } else {
+          state.data = emptyData();
+        }
+        const savedSettings = localStorage.getItem(SETTINGS_KEY);
+        state.settings = savedSettings ? { ...defaultSettings, ...JSON.parse(savedSettings) } : defaultSettings;
+      } catch (error) {
+        state.data = emptyData();
+        state.settings = { ...defaultSettings };
+      }
+      ensureDefaults();
+    };
+
+    const saveData = () => {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.data));
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(state.settings));
+    };
+
+    const exportData = () => JSON.stringify({ data: state.data, settings: state.settings }, null, 2);
+
+    const importData = (payload) => {
+      const parsed = JSON.parse(payload);
+      if (!parsed || typeof parsed !== "object" || !parsed.data) {
+        throw new Error("Geçersiz veri seti.");
+      }
+      state.data = { ...emptyData(), ...parsed.data };
+      state.settings = parsed.settings ? { ...defaultSettings, ...parsed.settings } : { ...defaultSettings };
+      ensureDefaults();
+      saveData();
+    };
+
+    const addTimeline = (collection, id, message) => {
+      const item = state.data[collection].find(entry => entry.id === id);
+      if (!item) return;
+      item.timeline = item.timeline || [];
+      item.timeline.unshift(`${new Date().toLocaleDateString("tr-TR")} · ${message}`);
+    };
+
+    const getUser = (id) => state.data.users.find(user => user.id === id);
+    const getCurrentUser = () => state.data.users.find(user => user.role === state.role) || state.data.users[0];
+    const getUserLabel = (id) => getUser(id)?.name || "-";
+
+    const getLead = (id) => state.data.leads.find(l => l.id === id);
+    const getAccount = (id) => state.data.accounts.find(a => a.id === id);
+    const getOpportunity = (id) => state.data.opportunities.find(o => o.id === id);
+    const getQuote = (id) => state.data.quotes.find(q => q.id === id);
+    const getOrder = (id) => state.data.orders.find(o => o.id === id);
+    const getPanel = (id) => state.settings.panelCatalog.find(panel => panel.id === id);
+
+    const openModal = ({ type, mode, entityId, context }) => {
+      state.modal = { type, mode, context };
+      const modeLabel = mode === "edit" ? "Düzenle" : "Yeni";
+      let body = "";
+
+      if (type === "lead") {
+        const lead = mode === "edit" ? getLead(entityId) : null;
+        body = `
+          <div class="modal-header">
+            <div>
+              <h2>${modeLabel} Lead</h2>
+              <p class="muted">Lead bilgilerini girin.</p>
+            </div>
+            <button class="btn secondary" data-action="modal-close">Kapat</button>
+          </div>
+          <div style="margin-top:16px;">
+            <div class="grid cols-2">
+              <div><label>Şirket adı</label><input class="input" data-field="companyName" value="${lead?.companyName || ""}" /></div>
+              <div><label>İlgili kişi</label><input class="input" data-field="contactName" value="${lead?.contactName || ""}" /></div>
+              <div><label>Telefon</label><input class="input" data-field="phone" value="${lead?.phone || ""}" /></div>
+              <div><label>E-posta</label><input class="input" data-field="email" value="${lead?.email || ""}" /></div>
+              <div><label>Şehir</label><input class="input" data-field="city" value="${lead?.city || ""}" /></div>
+              <div><label>Ülke</label><input class="input" data-field="country" value="${lead?.country || "Türkiye"}" /></div>
+              <div><label>Kaynak</label>
+                <select class="input" data-field="source">
+                  ${["Instagram","Facebook","LinkedIn","Web","Fuar","Referans"].map(opt => `<option ${opt===lead?.source?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+              <div><label>Durum</label>
+                <select class="input" data-field="status">
+                  ${["Yeni","Temas Edildi","Nitelikli","Elendi"].map(opt => `<option ${opt===lead?.status?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+              <div><label>Segment</label>
+                <select class="input" data-field="segment">
+                  ${["Konut","Ticari","EPC","Bayi"].map(opt => `<option ${opt===lead?.segment?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+              <div><label>İlgi alanı</label>
+                <select class="input" data-field="interest">
+                  ${["Panel","EPC","Depolama","EV Şarj"].map(opt => `<option ${opt===lead?.interest?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+            </div>
+            <div class="hint" id="modalValidation" style="margin-top:10px;"></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn secondary" data-action="modal-close">İptal</button>
+            <button class="btn primary" data-action="modal-save" data-entity="lead" data-mode="${mode}" data-id="${lead?.id || ""}">Kaydet</button>
+          </div>
+        `;
+      }
+
+      if (type === "account") {
+        const account = mode === "edit" ? getAccount(entityId) : null;
+        body = `
+          <div class="modal-header">
+            <div>
+              <h2>${modeLabel} Müşteri</h2>
+              <p class="muted">Müşteri bilgilerini girin.</p>
+            </div>
+            <button class="btn secondary" data-action="modal-close">Kapat</button>
+          </div>
+          <div style="margin-top:16px;">
+            <div class="grid cols-2">
+              <div><label>Şirket adı</label><input class="input" data-field="companyName" value="${account?.companyName || ""}" /></div>
+              <div><label>Tip</label>
+                <select class="input" data-field="type">
+                  ${["Son kullanıcı","EPC","Bayi"].map(opt => `<option ${opt===account?.type?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+              <div><label>Vergi no</label><input class="input" data-field="taxNo" value="${account?.taxNo || ""}" /></div>
+              <div><label>Şehir</label><input class="input" data-field="city" value="${account?.city || ""}" /></div>
+              <div><label>Ülke</label><input class="input" data-field="country" value="${account?.country || "Türkiye"}" /></div>
+            </div>
+            <div class="hint" id="modalValidation" style="margin-top:10px;"></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn secondary" data-action="modal-close">İptal</button>
+            <button class="btn primary" data-action="modal-save" data-entity="account" data-mode="${mode}" data-id="${account?.id || ""}">Kaydet</button>
+          </div>
+        `;
+      }
+
+      if (type === "opportunity") {
+        const opp = mode === "edit" ? getOpportunity(entityId) : null;
+        const leadOptions = state.data.leads.map(lead => `<option value="${lead.id}" ${lead.id===opp?.leadId?"selected":""}>${lead.companyName}</option>`).join("");
+        const accountOptions = state.data.accounts.map(account => `<option value="${account.id}" ${account.id===opp?.accountId?"selected":""}>${account.companyName}</option>`).join("");
+        const epcOptions = state.data.accounts.filter(a => a.type === "EPC").map(account => `<option value="${account.id}" ${account.id===opp?.sourceEpcAccountId?"selected":""}>${account.companyName}</option>`).join("");
+        body = `
+          <div class="modal-header">
+            <div>
+              <h2>${modeLabel} Fırsat</h2>
+              <p class="muted">Müşteri veya lead seçimi zorunludur.</p>
+            </div>
+            <button class="btn secondary" data-action="modal-close">Kapat</button>
+          </div>
+          <div style="margin-top:16px;">
+            <div class="grid cols-2">
+              <div><label>Başlık</label><input class="input" data-field="title" value="${opp?.title || ""}" /></div>
+              <div><label>Sorumlu</label><input class="input" data-field="owner" value="${opp?.owner || state.role}" /></div>
+              <div><label>Bağlı Lead (opsiyonel)</label>
+                <select class="input" data-field="leadId">
+                  <option value="">Seçiniz</option>
+                  ${leadOptions}
+                </select>
+              </div>
+              <div><label>Müşteri (opsiyonel)</label>
+                <select class="input" data-field="accountId">
+                  <option value="">Seçiniz</option>
+                  ${accountOptions}
+                </select>
+              </div>
+              <div><label>Kaynak EPC (opsiyonel)</label>
+                <select class="input" data-field="sourceEpcAccountId">
+                  <option value="">Seçiniz</option>
+                  ${epcOptions}
+                </select>
+              </div>
+              <div><label>Olasılık</label><input class="input" data-field="probability" type="number" value="${opp?.probability ?? 30}" /></div>
+              <div><label>Panel adedi</label><input class="input" data-field="expectedPanelsQty" type="number" value="${opp?.expectedPanelsQty ?? 0}" /></div>
+              <div><label>Panel modeli</label><input class="input" data-field="panelModel" value="${opp?.panelModel || ""}" /></div>
+              <div><label>Panel watt</label><input class="input" data-field="panelWattage" type="number" value="${opp?.panelWattage ?? state.settings.defaultPanelWattage}" /></div>
+              <div><label>Hedef fiyat / W</label><input class="input" data-field="targetPricePerWatt" type="number" value="${opp?.targetPricePerWatt ?? 0.19}" /></div>
+            </div>
+            <div class="hint" id="modalValidation" style="margin-top:10px;"></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn secondary" data-action="modal-close">İptal</button>
+            <button class="btn primary" data-action="modal-save" data-entity="opportunity" data-mode="${mode}" data-id="${opp?.id || ""}">Kaydet</button>
+          </div>
+        `;
+      }
+
+      if (type === "quote") {
+        const quote = mode === "edit" ? getQuote(entityId) : null;
+        const preselectOppId = state.modal.context?.preselectOppId;
+        const selectedOppId = quote?.opportunityId || preselectOppId || "";
+        const oppOptions = state.data.opportunities.map(opp => `<option value="${opp.id}" ${opp.id===selectedOppId?"selected":""}>${opp.title}</option>`).join("");
+        const panelOptions = (itemPanelId) => state.settings.panelCatalog.map(panel => `<option value="${panel.id}" ${panel.id === itemPanelId ? "selected" : ""}>${panel.model} · ${panel.watt}W</option>`).join("");
+        body = `
+          <div class="modal-header">
+            <div>
+              <h2>${modeLabel} Teklif</h2>
+              <p class="muted">Teklif bir fırsata bağlı olmalıdır.</p>
+            </div>
+            <button class="btn secondary" data-action="modal-close">Kapat</button>
+          </div>
+          <div style="margin-top:16px;">
+            <div class="grid cols-2">
+              <div style="grid-column: span 2;">
+                <label>Fırsat</label>
+                <select class="input" data-field="opportunityId">
+                  <option value="">Seçiniz</option>
+                  ${oppOptions}
+                </select>
+                <div class="button-row" style="margin-top:8px;">
+                  <button class="btn subtle" data-action="inline-create-opp">+ Fırsat oluştur</button>
+                </div>
+              </div>
+              <div><label>Ödeme</label>
+                <select class="input" data-field="paymentTerms">
+                  ${["LC90","Kredi Kartı","Nakit","Vade"].map(opt => `<option ${opt===quote?.paymentTerms?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+              <div><label>Teslimat</label>
+                <select class="input" data-field="deliveryTerms">
+                  ${["Exworks","FOB","CIF","CIP"].map(opt => `<option ${opt===quote?.deliveryTerms?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+              <div><label>Durum</label>
+                <select class="input" data-field="status">
+                  ${["Taslak","Gönderildi","Kabul","Red"].map(opt => `<option ${opt===quote?.status?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+              <div><label>İndirim (USD)</label><input class="input" data-field="discountUSD" type="number" value="${quote?.totals?.discountUSD ?? 0}" /></div>
+              <div><label>Sevkiyat (USD)</label><input class="input" data-field="shippingUSD" type="number" value="${quote?.totals?.shippingUSD ?? 0}" /></div>
+            </div>
+            <div style="margin-top:16px;">
+              <h2>Kalemler</h2>
+              <table class="table" id="quoteItemsTable">
+                <thead>
+                  <tr><th>Tip</th><th>Panel / Açıklama</th><th>Watt</th><th>Fiyat/W</th><th>Adet</th><th>Birim</th><th>Birim Fiyat</th><th></th></tr>
+                </thead>
+                <tbody>
+                  ${(quote?.items || [{ type: "Panel", description: "", qty: 1, unit: "Adet", unitPriceUSD: 0, panelId: "", panelWattage: state.settings.defaultPanelWattage, pricePerWatt: 0.19 }]).map((item, idx) => `
+                    <tr data-idx="${idx}">
+                      <td>
+                        <select class="input" data-item="type">
+                          ${["Panel","İnverter","Konstrüksiyon","Kablo","İşçilik","Diğer"].map(opt => `<option ${opt===item.type?"selected":""}>${opt}</option>`).join("")}
+                        </select>
+                      </td>
+                      <td>
+                        <select class="input" data-item="panelId" style="${item.type === "Panel" ? "" : "display:none;"}">
+                          <option value="">Panel seçin</option>
+                          ${panelOptions(item.panelId)}
+                        </select>
+                        <input class="input" data-item="description" value="${item.description}" style="${item.type === "Panel" ? "display:none;" : ""}" />
+                      </td>
+                      <td><input class="input" data-item="panelWattage" type="number" value="${item.panelWattage ?? state.settings.defaultPanelWattage}" ${item.type === "Panel" ? "readonly" : "disabled"} /></td>
+                      <td><input class="input" data-item="pricePerWatt" type="number" value="${item.pricePerWatt ?? 0.19}" ${item.type === "Panel" ? "" : "disabled"} /></td>
+                      <td><input class="input" data-item="qty" type="number" value="${item.qty}" /></td>
+                      <td><input class="input" data-item="unit" value="${item.unit}" /></td>
+                      <td><input class="input" data-item="unitPriceUSD" type="number" value="${item.unitPriceUSD}" ${item.type === "Panel" ? "readonly" : ""} /></td>
+                      <td><button class="btn secondary" data-action="remove-quote-item">Sil</button></td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+              <div class="button-row" style="margin-top:8px;">
+                <button class="btn secondary" data-action="add-quote-item">Kalem ekle</button>
+              </div>
+              <div class="hint" style="margin-top:8px;">
+                Panel kalemi için zorunlu: panel seçimi, adet ve $/W. Panel dışı kalemlerde açıklama, adet ve birim fiyat girilmelidir.
+              </div>
+              ${state.settings.panelCatalog.length ? "" : `<div class="hint" style="margin-top:8px;">Panel kataloğu boş. Ayarlar / Veri bölümünden panel ekleyin.</div>`}
+            </div>
+            <div class="hint" id="modalValidation" style="margin-top:10px;"></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn secondary" data-action="modal-close">İptal</button>
+            <button class="btn primary" data-action="modal-save" data-entity="quote" data-mode="${mode}" data-id="${quote?.id || ""}">Kaydet</button>
+          </div>
+        `;
+      }
+
+      if (type === "convertLead") {
+        const lead = getLead(entityId);
+        const accountOptions = state.data.accounts.map(account => `<option value="${account.id}">${account.companyName}</option>`).join("");
+        body = `
+          <div class="modal-header">
+            <div>
+              <h2>Müşteriye Dönüştür</h2>
+              <p class="muted">Lead'i müşteri hesabına bağlayın.</p>
+            </div>
+            <button class="btn secondary" data-action="modal-close">Kapat</button>
+          </div>
+          <div style="margin-top:16px;">
+            <label>Seçenek</label>
+            <select class="input" data-field="convertMode">
+              <option value="new">Yeni müşteri oluştur</option>
+              <option value="existing">Mevcut müşteriyle eşleştir</option>
+            </select>
+            <div style="margin-top:12px;">
+              <label>Mevcut müşteri</label>
+              <select class="input" data-field="existingAccountId">
+                <option value="">Seçiniz</option>
+                ${accountOptions}
+              </select>
+            </div>
+            <div style="margin-top:12px;">
+              <label><input type="checkbox" data-field="createOpp" /> Bu lead’den fırsat oluştur</label>
+            </div>
+            <div class="hint" id="modalValidation" style="margin-top:10px;"></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn secondary" data-action="modal-close">İptal</button>
+            <button class="btn primary" data-action="modal-save" data-entity="convertLead" data-mode="create" data-id="${lead?.id || ""}">Dönüştür</button>
+          </div>
+        `;
+      }
+
+      if (type === "order") {
+        const order = mode === "edit" ? getOrder(entityId) : null;
+        const acceptedQuotes = state.data.quotes.filter(quote => quote.status === "Kabul");
+        const selectedQuoteId = state.modal.context?.quoteId || order?.quoteId || "";
+        if (!acceptedQuotes.length && mode === "create") {
+          body = `
+            <div class="modal-header">
+              <div>
+                <h2>Yeni Sipariş</h2>
+                <p class="muted">Sipariş için önce kabul edilmiş teklif gerekir.</p>
+              </div>
+              <button class="btn secondary" data-action="modal-close">Kapat</button>
+            </div>
+            <div style="margin-top:16px;">
+              <div class="empty">Kabul edilmiş teklif yok.</div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn secondary" data-action="modal-close">Tamam</button>
+            </div>
+          `;
+        } else {
+          body = `
+            <div class="modal-header">
+              <div>
+                <h2>${modeLabel} Sipariş</h2>
+                <p class="muted">Siparişler yalnızca kabul edilmiş tekliflere bağlanır.</p>
+              </div>
+              <button class="btn secondary" data-action="modal-close">Kapat</button>
+            </div>
+            <div style="margin-top:16px;">
+              <div class="grid cols-2">
+                <div style="grid-column: span 2;">
+                  <label>Teklif</label>
+                  <select class="input" data-field="quoteId">
+                    <option value="">Seçiniz</option>
+                    ${acceptedQuotes.map(quote => `<option value="${quote.id}" ${quote.id === selectedQuoteId ? "selected" : ""}>${quote.quoteNo}</option>`).join("")}
+                  </select>
+                </div>
+                <div><label>Durum</label>
+                  <select class="input" data-field="status">
+                    ${["Beklemede","Alındı","Üretimde","Hazır","Sevk","Tamamlandı"].map(opt => `<option ${opt===order?.status?"selected":""}>${opt}</option>`).join("")}
+                  </select>
+                </div>
+                <div><label>Vaat edilen sevk</label><input class="input" data-field="promisedShipDate" type="date" value="${order?.promisedShipDate || nowISO().slice(0, 10)}" /></div>
+                <div><label>Depo</label><input class="input" data-field="warehouse" value="${order?.warehouse || state.settings.defaultWarehouse}" /></div>
+                <div><label>Taşıyıcı</label><input class="input" data-field="carrier" value="${order?.carrier || ""}" /></div>
+                <div><label>Takip No</label><input class="input" data-field="trackingNumber" value="${order?.trackingNumber || ""}" /></div>
+                <div style="grid-column: span 2;"><label>Lojistik notu</label><textarea class="input" data-field="logisticsNotes">${order?.logisticsNotes || ""}</textarea></div>
+              </div>
+              <div class="hint" id="modalValidation" style="margin-top:10px;"></div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn secondary" data-action="modal-close">İptal</button>
+              <button class="btn primary" data-action="modal-save" data-entity="order" data-mode="${mode}" data-id="${order?.id || ""}">Kaydet</button>
+            </div>
+          `;
+        }
+      }
+
+      if (type === "task") {
+        const task = mode === "edit" ? state.data.tasks.find(t => t.id === entityId) : null;
+        const currentUser = getCurrentUser();
+        const canAssign = state.role === "YÖNETİCİ";
+        const relatedType = task?.relatedType || "";
+        body = `
+          <div class="modal-header">
+            <div>
+              <h2>${modeLabel} Görev</h2>
+              <p class="muted">Görevler satış akışını hızlandırmak için atanır.</p>
+            </div>
+            <button class="btn secondary" data-action="modal-close">Kapat</button>
+          </div>
+          <div style="margin-top:16px;">
+            <div class="grid cols-2">
+              <div><label>Başlık</label><input class="input" data-field="title" value="${task?.title || ""}" /></div>
+              <div><label>Atanan</label>
+                <select class="input" data-field="assigneeId" ${canAssign ? "" : "disabled"}>
+                  ${state.data.users.map(user => `<option value="${user.id}" ${(task?.assigneeId || currentUser?.id) === user.id ? "selected" : ""}>${user.name}</option>`).join("")}
+                </select>
+                ${canAssign ? "" : `<div class="hint">Görev ataması için yönetici onayı gerekir.</div>`}
+              </div>
+              <div><label>Vade</label><input class="input" data-field="dueDate" type="date" value="${task?.dueDate || nowISO().slice(0, 10)}" /></div>
+              <div><label>Öncelik</label>
+                <select class="input" data-field="priority">
+                  ${["Düşük","Orta","Yüksek"].map(opt => `<option ${opt===task?.priority?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+              <div><label>Durum</label>
+                <select class="input" data-field="status">
+                  ${["Açık","Bitti"].map(opt => `<option ${opt===task?.status?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+              <div><label>İlişki türü</label>
+                <select class="input" data-field="relatedType">
+                  <option value="">Genel</option>
+                  ${["Lead","Müşteri","Fırsat","Teklif","Sipariş"].map(opt => `<option value="${opt}" ${opt===relatedType?"selected":""}>${opt}</option>`).join("")}
+                </select>
+              </div>
+              <div style="grid-column: span 2;">
+                <label>İlgili kayıt</label>
+                <select class="input" data-field="relatedId">
+                  <option value="">Seçiniz</option>
+                  ${getRelatedOptions(relatedType)}
+                </select>
+              </div>
+            </div>
+            <div class="hint" id="modalValidation" style="margin-top:10px;"></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn secondary" data-action="modal-close">İptal</button>
+            <button class="btn primary" data-action="modal-save" data-entity="task" data-mode="${mode}" data-id="${task?.id || ""}">Kaydet</button>
+          </div>
+        `;
+      }
+
+      modalContent.innerHTML = body;
+      modalBackdrop.classList.add("active");
+      if (type === "quote") {
+        modalContent.querySelectorAll("#quoteItemsTable tr").forEach(row => updateQuoteRow(row));
+      }
+    };
+
+    const closeModal = () => {
+      modalBackdrop.classList.remove("active");
+      state.modal = { type: null, mode: null, context: null };
+    };
+
+    const collectModalFields = () => {
+      const values = {};
+      modalContent.querySelectorAll("[data-field]").forEach(el => {
+        const name = el.dataset.field;
+        if (el.type === "checkbox") {
+          values[name] = el.checked;
+        } else {
+          values[name] = el.value;
+        }
+      });
+      return values;
+    };
+
+    const computeQuoteTotals = (items, discountUSD, shippingUSD) => {
+      const subtotalUSD = items.reduce((sum, item) => sum + (Number(item.qty || 0) * Number(item.unitPriceUSD || 0)), 0);
+      const grandTotalUSD = Math.max(0, subtotalUSD - Number(discountUSD || 0) + Number(shippingUSD || 0));
+      return { subtotalUSD, discountUSD: Number(discountUSD || 0), shippingUSD: Number(shippingUSD || 0), grandTotalUSD };
+    };
+
+    const updateQuoteRow = (row) => {
+      if (!row) return;
+      const type = row.querySelector('[data-item="type"]')?.value;
+      const panelSelect = row.querySelector('[data-item="panelId"]');
+      const descriptionInput = row.querySelector('[data-item="description"]');
+      const wattInput = row.querySelector('[data-item="panelWattage"]');
+      const pricePerWattInput = row.querySelector('[data-item="pricePerWatt"]');
+      const unitPriceInput = row.querySelector('[data-item="unitPriceUSD"]');
+      if (type === "Panel") {
+        if (panelSelect) panelSelect.style.display = "";
+        if (descriptionInput) descriptionInput.style.display = "none";
+        if (wattInput) {
+          wattInput.disabled = false;
+          wattInput.readOnly = true;
+        }
+        if (pricePerWattInput) {
+          pricePerWattInput.disabled = false;
+        }
+        if (unitPriceInput) unitPriceInput.readOnly = true;
+        const panel = getPanel(panelSelect?.value);
+        if (panel) {
+          if (wattInput) wattInput.value = panel.watt;
+          if (descriptionInput) descriptionInput.value = panel.model;
+          if (pricePerWattInput && (!pricePerWattInput.value || Number(pricePerWattInput.value) === 0)) {
+            pricePerWattInput.value = panel.pricePerWatt ?? 0.19;
+          }
+        }
+        const watt = Number(wattInput?.value || 0);
+        const pricePerWatt = Number(pricePerWattInput?.value || 0);
+        if (unitPriceInput) unitPriceInput.value = (watt * pricePerWatt).toFixed(2);
+      } else {
+        if (panelSelect) panelSelect.style.display = "none";
+        if (descriptionInput) descriptionInput.style.display = "";
+        if (wattInput) {
+          wattInput.disabled = true;
+        }
+        if (pricePerWattInput) pricePerWattInput.disabled = true;
+        if (unitPriceInput) unitPriceInput.readOnly = false;
+      }
+    };
+
+    const getRelatedOptions = (typeValue) => {
+      if (typeValue === "Lead") return state.data.leads.map(item => `<option value="${item.id}">${item.companyName}</option>`).join("");
+      if (typeValue === "Müşteri") return state.data.accounts.map(item => `<option value="${item.id}">${item.companyName}</option>`).join("");
+      if (typeValue === "Fırsat") return state.data.opportunities.map(item => `<option value="${item.id}">${item.title}</option>`).join("");
+      if (typeValue === "Teklif") return state.data.quotes.map(item => `<option value="${item.id}">${item.quoteNo}</option>`).join("");
+      if (typeValue === "Sipariş") return state.data.orders.map(item => `<option value="${item.id}">${item.orderNo}</option>`).join("");
+      return "";
+    };
+
+    const getRelatedLabel = (typeValue, id) => {
+      if (typeValue === "Lead") return getLead(id)?.companyName || "-";
+      if (typeValue === "Müşteri") return getAccount(id)?.companyName || "-";
+      if (typeValue === "Fırsat") return getOpportunity(id)?.title || "-";
+      if (typeValue === "Teklif") return getQuote(id)?.quoteNo || "-";
+      if (typeValue === "Sipariş") return getOrder(id)?.orderNo || "-";
+      return "-";
+    };
+
+    const collectPanelCatalog = () => {
+      const rows = [...document.querySelectorAll("#panelCatalog tbody tr[data-panel-id]")];
+      return rows.map((row, index) => ({
+        id: row.dataset.panelId || `panel-${Date.now()}-${index}`,
+        model: row.querySelector('[data-panel-field="model"]').value.trim(),
+        watt: Number(row.querySelector('[data-panel-field="watt"]').value || 0),
+        pricePerWatt: Number(row.querySelector('[data-panel-field="pricePerWatt"]').value || 0.19)
+      })).filter(panel => panel.model && panel.watt > 0);
+    };
+
+    const collectUsers = () => {
+      const rows = [...document.querySelectorAll("#userList tbody tr[data-user-id]")];
+      return rows.map((row, index) => ({
+        id: row.dataset.userId || `user-${Date.now()}-${index}`,
+        name: row.querySelector('[data-user-field="name"]').value.trim(),
+        role: row.querySelector('[data-user-field="role"]').value
+      })).filter(user => user.name);
+    };
+
+    const renderRoleToggle = () => {
+      const container = document.getElementById("roleToggle");
+      container.innerHTML = roles.map(role => `<button class="${state.role === role ? "active" : ""}" data-role="${role}">${role}</button>`).join("");
+    };
+
+    const renderTabs = () => {
+      const nav = document.getElementById("navTabs");
+      nav.innerHTML = tabs.map(tab => `<button class="${state.activeTab === tab ? "active" : ""}" data-tab="${tab}">${tab}</button>`).join("");
+    };
+
+    const renderDashboard = () => {
+      try {
+      const leads = Array.isArray(state.data.leads) ? state.data.leads : [];
+      const opportunities = Array.isArray(state.data.opportunities) ? state.data.opportunities : [];
+      const quotes = Array.isArray(state.data.quotes) ? state.data.quotes : [];
+      const orders = Array.isArray(state.data.orders) ? state.data.orders : [];
+      const month = new Date().getMonth();
+      const monthLeads = leads.filter(lead => new Date(lead.createdAt).getMonth() === month);
+      const pipelineValue = opportunities.reduce((sum, opp) => sum + computeOpportunityValue(opp), 0);
+      const quotesByStatus = quotes.reduce((acc, quote) => {
+        acc[quote.status] = (acc[quote.status] || 0) + 1;
+        return acc;
+      }, {});
+      const openOpportunities = opportunities.filter(opp => !["Tamamlandı", "Kaybedildi"].includes(opp.stage)).length;
+      const openTasks = Array.isArray(state.data.tasks)
+        ? state.data.tasks.filter(task => task.status !== "Bitti").length
+        : 0;
+      const overdueTasks = Array.isArray(state.data.tasks)
+        ? state.data.tasks.filter(task => task.status !== "Bitti" && new Date(task.dueDate) < new Date()).length
+        : 0;
+      const acceptedQuotes = quotes.filter(quote => quote.status === "Kabul").length;
+      const totalOrders = orders.length;
+      return `
+        <div class="page-title">
+          <div>
+            <h1>Ana Panel</h1>
+            <p class="muted">Bugün satış akışını netleştirmek için hazırlanmış özet.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn secondary" data-action="seed-demo">Demo verisi yükle</button>
+          </div>
+        </div>
+        <section class="grid cols-3">
+          <div class="card kpi"><h3>Bu ay yeni lead</h3><span>${monthLeads.length}</span></div>
+          <div class="card kpi"><h3>Pipeline toplam değeri</h3><span>${formatUSD(pipelineValue)}</span></div>
+          <div class="card kpi"><h3>Teklifler</h3><span>${quotesByStatus.Taslak || 0} Taslak · ${quotesByStatus.Gönderildi || 0} Gönderildi · ${quotesByStatus.Kabul || 0} Kabul</span></div>
+        </section>
+        <section class="grid cols-3">
+          <div class="card kpi"><h3>Açık fırsatlar</h3><span>${openOpportunities}</span></div>
+          <div class="card kpi"><h3>Açık görevler</h3><span>${openTasks} · ${overdueTasks} gecikmiş</span></div>
+          <div class="card kpi"><h3>Kabul edilen teklifler</h3><span>${acceptedQuotes} · ${totalOrders} sipariş</span></div>
+        </section>
+      `;
+      } catch (error) {
+        return `
+          <div class="card">
+            <h2>Ana Panel</h2>
+            <p class="muted">Ana panel verileri yüklenemedi. Ayarlar / Veri bölümünden demo verisini yeniden yükleyin veya veriyi sıfırlayın.</p>
+          </div>
+        `;
+      }
+    };
+
+    const renderLeads = () => {
+      const selectedLead = getLead(state.selected.id);
+      const listItems = state.data.leads.map(lead => `
+        <div class="list-item">
+          <div>
+            <strong>${lead.companyName || "Adsız Lead"}</strong>
+            <div class="muted">${lead.contactName || "Kişi yok"} · ${lead.city || "-"}</div>
+          </div>
+          <div class="button-row">
+            <button class="btn secondary" data-action="detail" data-entity="lead" data-id="${lead.id}">Detay</button>
+            <button class="btn secondary" data-action="edit" data-entity="lead" data-id="${lead.id}">Düzenle</button>
+            <button class="btn secondary" data-action="delete" data-entity="lead" data-id="${lead.id}">Sil</button>
+          </div>
+        </div>
+      `).join("") || `<div class="empty">Henüz lead yok.</div>`;
+
+      const detail = selectedLead ? `
+        <h2>${selectedLead.companyName}</h2>
+        <p class="muted">${selectedLead.contactName} · ${selectedLead.phone || "Telefon yok"}</p>
+        ${renderDetailTabs()}
+        ${state.detailTab === "Özet" ? `
+          <div class="list">
+            <div class="list-item"><span>Durum</span><span class="badge">${selectedLead.status}</span></div>
+            <div class="list-item"><span>Kaynak</span><span>${selectedLead.source}</span></div>
+            <div class="list-item"><span>Müşteri</span><span>${selectedLead.accountId ? "Bağlı" : "Yok"}</span></div>
+          </div>
+          <div class="button-row" style="margin-top:12px;">
+            <button class="btn primary" data-action="convert" data-entity="lead" data-id="${selectedLead.id}">Müşteriye Dönüştür</button>
+            <button class="btn secondary" data-action="edit" data-entity="lead" data-id="${selectedLead.id}">Düzenle</button>
+          </div>
+        ` : ""}
+        ${state.detailTab === "Zaman Çizgisi" ? renderTimeline(selectedLead.timeline) : ""}
+      ` : `<div class="empty">Detay için bir lead seçin.</div>`;
+
+      return `
+        <div class="page-title">
+          <div>
+            <h1>Lead’ler</h1>
+            <p class="muted">Lead → Müşteri dönüşümü buradan yönetilir.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" data-action="create" data-entity="lead">Yeni Lead</button>
+          </div>
+        </div>
+        <div class="grid cols-2">
+          <div class="card" id="leadList">${listItems}</div>
+          <div class="card">${detail}</div>
+        </div>
+      `;
+    };
+
+    const renderAccounts = () => {
+      const selectedAccount = getAccount(state.selected.id);
+      const listItems = state.data.accounts.map(account => `
+        <div class="list-item">
+          <div>
+            <strong>${account.companyName}</strong>
+            <div class="muted">${account.city || "-"} · ${account.type}</div>
+          </div>
+          <div class="button-row">
+            <button class="btn secondary" data-action="detail" data-entity="account" data-id="${account.id}">Detay</button>
+            <button class="btn secondary" data-action="edit" data-entity="account" data-id="${account.id}">Düzenle</button>
+            <button class="btn secondary" data-action="delete" data-entity="account" data-id="${account.id}">Sil</button>
+          </div>
+        </div>
+      `).join("") || `<div class="empty">Müşteri yok.</div>`;
+
+      const detail = selectedAccount ? `
+        <h2>${selectedAccount.companyName}</h2>
+        <p class="muted">${selectedAccount.city || "-"} · ${selectedAccount.type}</p>
+        ${renderDetailTabs()}
+        ${state.detailTab === "Özet" ? `
+          <div class="list">
+            <div class="list-item"><span>Vergi No</span><span>${selectedAccount.taxNo || "-"}</span></div>
+            <div class="list-item"><span>Kontak sayısı</span><span>${selectedAccount.contacts.length}</span></div>
+          </div>
+        ` : ""}
+        ${state.detailTab === "Zaman Çizgisi" ? renderTimeline(selectedAccount.timeline) : ""}
+      ` : `<div class="empty">Detay için müşteri seçin.</div>`;
+
+      return `
+        <div class="page-title">
+          <div>
+            <h1>Müşteriler</h1>
+            <p class="muted">Lead dönüşümleri ile oluşan hesaplar.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" data-action="create" data-entity="account">Yeni Müşteri</button>
+          </div>
+        </div>
+        <div class="grid cols-2">
+          <div class="card" id="accountList">${listItems}</div>
+          <div class="card">${detail}</div>
+        </div>
+      `;
+    };
+
+    const renderOpportunities = () => {
+      const selectedOpp = getOpportunity(state.selected.id);
+      const listItems = state.data.opportunities.map(opp => `
+        <div class="list-item">
+          <div>
+            <strong>${opp.title}</strong>
+            <div class="muted">${opp.stage} · ${formatUSD(computeOpportunityValue(opp))}</div>
+          </div>
+          <div class="button-row">
+            <button class="btn secondary" data-action="detail" data-entity="opportunity" data-id="${opp.id}">Detay</button>
+            <button class="btn secondary" data-action="edit" data-entity="opportunity" data-id="${opp.id}">Düzenle</button>
+            <button class="btn secondary" data-action="delete" data-entity="opportunity" data-id="${opp.id}">Sil</button>
+          </div>
+        </div>
+      `).join("") || `<div class="empty">Fırsat yok.</div>`;
+
+      const lead = selectedOpp?.leadId ? getLead(selectedOpp.leadId) : null;
+      const account = selectedOpp?.accountId ? getAccount(selectedOpp.accountId) : null;
+      const epc = selectedOpp?.sourceEpcAccountId ? getAccount(selectedOpp.sourceEpcAccountId) : null;
+      const detail = selectedOpp ? `
+        <h2>${selectedOpp.title}</h2>
+        <p class="muted">${selectedOpp.stage} · ${selectedOpp.owner}</p>
+        ${renderDetailTabs()}
+        ${state.detailTab === "Özet" ? `
+          <div class="list">
+            <div class="list-item"><span>Lead</span><span>${lead?.companyName || "-"}</span></div>
+            <div class="list-item"><span>Müşteri</span><span>${account?.companyName || "-"}</span></div>
+            <div class="list-item"><span>Kaynak EPC</span><span>${epc?.companyName || "-"}</span></div>
+          </div>
+        ` : ""}
+        ${state.detailTab === "Zaman Çizgisi" ? renderTimeline(selectedOpp.timeline || []) : ""}
+      ` : `<div class="empty">Detay için fırsat seçin.</div>`;
+
+      return `
+        <div class="page-title">
+          <div>
+            <h1>Pipeline</h1>
+            <p class="muted">Fırsatlarınızı müşteri ve kaynakla bağlayın.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" data-action="create" data-entity="opportunity">Yeni Fırsat</button>
+          </div>
+        </div>
+        <div class="grid cols-2">
+          <div class="card" id="oppList">${listItems}</div>
+          <div class="card">${detail}</div>
+        </div>
+      `;
+    };
+
+    const renderQuotes = () => {
+      const selectedQuote = getQuote(state.selected.id);
+      const listItems = state.data.quotes.map(quote => `
+        <div class="list-item">
+          <div>
+            <strong>${quote.quoteNo}</strong>
+            <div class="muted">${quote.status}</div>
+          </div>
+          <div class="button-row">
+            <button class="btn secondary" data-action="detail" data-entity="quote" data-id="${quote.id}">Detay</button>
+            <button class="btn secondary" data-action="edit" data-entity="quote" data-id="${quote.id}">Düzenle</button>
+            <button class="btn secondary" data-action="delete" data-entity="quote" data-id="${quote.id}">Sil</button>
+          </div>
+        </div>
+      `).join("") || `<div class="empty">Teklif yok.</div>`;
+
+      const opp = selectedQuote?.opportunityId ? getOpportunity(selectedQuote.opportunityId) : null;
+      const lead = opp?.leadId ? getLead(opp.leadId) : null;
+      const account = opp?.accountId ? getAccount(opp.accountId) : null;
+      const existingOrder = selectedQuote ? state.data.orders.find(order => order.quoteId === selectedQuote.id) : null;
+      const detail = selectedQuote ? `
+        <h2>${selectedQuote.quoteNo}</h2>
+        <p class="muted">${selectedQuote.status} · ${opp?.title || "-"}</p>
+        ${renderDetailTabs()}
+        ${state.detailTab === "Özet" ? `
+          <div class="list">
+            <div class="list-item"><span>Müşteri/Lead</span><span>${account?.companyName || lead?.companyName || "-"}</span></div>
+            <div class="list-item"><span>Toplam</span><span>${formatUSD(selectedQuote.totals.grandTotalUSD)}</span></div>
+            <div class="list-item"><span>Sipariş</span><span>${existingOrder ? existingOrder.orderNo : "Henüz yok"}</span></div>
+          </div>
+          <div class="button-row" style="margin-top:12px;">
+            <button class="btn primary" data-action="convert-order" data-id="${selectedQuote.id}" ${selectedQuote.status === "Kabul" && state.role === "YÖNETİCİ" && !existingOrder ? "" : "disabled"}>Siparişe dönüştür</button>
+          </div>
+          ${selectedQuote.status !== "Kabul" ? `<div class="hint">Sipariş için teklif durumu "Kabul" olmalıdır.</div>` : ""}
+          ${state.role !== "YÖNETİCİ" ? `<div class="hint">Siparişe dönüşüm için yönetici onayı gerekir.</div>` : ""}
+        ` : ""}
+        ${state.detailTab === "Zaman Çizgisi" ? renderTimeline(selectedQuote.timeline || []) : ""}
+      ` : `<div class="empty">Detay için teklif seçin.</div>`;
+
+      return `
+        <div class="page-title">
+          <div>
+            <h1>Teklifler</h1>
+            <p class="muted">Teklifler fırsatlara bağlıdır.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" data-action="create" data-entity="quote">Yeni Teklif</button>
+          </div>
+        </div>
+        <div class="grid cols-2">
+          <div class="card" id="quoteList">${listItems}</div>
+          <div class="card">${detail}</div>
+        </div>
+      `;
+    };
+
+    const renderOrders = () => {
+      const selectedOrder = getOrder(state.selected.id);
+      const listItems = state.data.orders.map(order => {
+        const quote = order.quoteId ? getQuote(order.quoteId) : null;
+        return `
+          <div class="list-item">
+            <div>
+              <strong>${order.orderNo}</strong>
+              <div class="muted">${order.status} · ${quote?.quoteNo || "-"}</div>
+            </div>
+            <div class="button-row">
+              <button class="btn secondary" data-action="detail" data-entity="order" data-id="${order.id}">Detay</button>
+              <button class="btn secondary" data-action="edit" data-entity="order" data-id="${order.id}">Düzenle</button>
+              <button class="btn secondary" data-action="delete" data-entity="order" data-id="${order.id}">Sil</button>
+            </div>
+          </div>
+        `;
+      }).join("") || `<div class="empty">Henüz sipariş yok.</div>`;
+
+      const quote = selectedOrder?.quoteId ? getQuote(selectedOrder.quoteId) : null;
+      const opp = quote?.opportunityId ? getOpportunity(quote.opportunityId) : null;
+      const lead = opp?.leadId ? getLead(opp.leadId) : null;
+      const account = opp?.accountId ? getAccount(opp.accountId) : null;
+      const detail = selectedOrder ? `
+        <h2>${selectedOrder.orderNo}</h2>
+        <p class="muted">${selectedOrder.status} · ${quote?.quoteNo || "-"}</p>
+        ${renderDetailTabs()}
+        ${state.detailTab === "Özet" ? `
+          <div class="list">
+            <div class="list-item"><span>Müşteri/Lead</span><span>${account?.companyName || lead?.companyName || "-"}</span></div>
+            <div class="list-item"><span>Depo</span><span>${selectedOrder.warehouse}</span></div>
+            <div class="list-item"><span>Taşıyıcı</span><span>${selectedOrder.carrier || "-"}</span></div>
+            <div class="list-item"><span>Takip No</span><span>${selectedOrder.trackingNumber || "-"}</span></div>
+            <div class="list-item"><span>Vaat edilen sevk</span><span>${selectedOrder.promisedShipDate || "-"}</span></div>
+          </div>
+        ` : ""}
+        ${state.detailTab === "Zaman Çizgisi" ? renderTimeline(selectedOrder.timeline || []) : ""}
+      ` : `<div class="empty">Detay için sipariş seçin.</div>`;
+
+      const canCreateOrder = state.role === "YÖNETİCİ" && state.data.quotes.some(q => q.status === "Kabul");
+      return `
+        <div class="page-title">
+          <div>
+            <h1>Siparişler</h1>
+            <p class="muted">Siparişler yalnızca kabul edilmiş tekliflerden oluşur.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" data-action="create" data-entity="order" ${canCreateOrder ? "" : "disabled"}>Yeni Sipariş</button>
+          </div>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">${listItems}</div>
+          <div class="card">${detail}</div>
+        </div>
+      `;
+    };
+
+    const renderTasks = () => {
+      const selectedTask = state.data.tasks.find(task => task.id === state.selected.id);
+      const listItems = state.data.tasks.map(task => `
+        <div class="list-item">
+          <div>
+            <strong>${task.title || "Görev"}</strong>
+            <div class="muted">${getUserLabel(task.assigneeId)} · ${task.dueDate || "-"}</div>
+            ${task.relatedType ? `<span class="badge">${task.relatedType}</span>` : ""}
+          </div>
+          <div class="button-row">
+            <button class="btn secondary" data-action="detail" data-entity="task" data-id="${task.id}">Detay</button>
+            <button class="btn secondary" data-action="edit" data-entity="task" data-id="${task.id}">Düzenle</button>
+            <button class="btn secondary" data-action="delete" data-entity="task" data-id="${task.id}">Sil</button>
+          </div>
+        </div>
+      `).join("") || `<div class="empty">Görev yok.</div>`;
+
+      const detail = selectedTask ? `
+        <h2>${selectedTask.title}</h2>
+        <p class="muted">${selectedTask.status} · ${selectedTask.priority}</p>
+        ${renderDetailTabs()}
+        ${state.detailTab === "Özet" ? `
+          <div class="list">
+            <div class="list-item"><span>Atanan</span><span>${getUserLabel(selectedTask.assigneeId)}</span></div>
+            <div class="list-item"><span>Vade</span><span>${selectedTask.dueDate || "-"}</span></div>
+            <div class="list-item"><span>İlişki</span><span>${selectedTask.relatedType || "Genel"} ${selectedTask.relatedId ? `· ${getRelatedLabel(selectedTask.relatedType, selectedTask.relatedId)}` : ""}</span></div>
+          </div>
+        ` : ""}
+        ${state.detailTab === "Zaman Çizgisi" ? renderTimeline(selectedTask.timeline || []) : ""}
+      ` : `<div class="empty">Detay için görev seçin.</div>`;
+
+      return `
+        <div class="page-title">
+          <div>
+            <h1>Görevler</h1>
+            <p class="muted">Yönetici, satış ekiplerine görev atayabilir.</p>
+          </div>
+          <div class="button-row">
+            <button class="btn primary" data-action="create" data-entity="task">Yeni Görev</button>
+          </div>
+        </div>
+        <div class="grid cols-2">
+          <div class="card">${listItems}</div>
+          <div class="card">${detail}</div>
+        </div>
+      `;
+    };
+
+    const renderPartners = () => `
+      <div class="page-title">
+        <div>
+          <h1>Partner Programı</h1>
+          <p class="muted">Bayi ve EPC partnerlerini yönetin.</p>
+        </div>
+        <div class="button-row">
+          <button class="btn secondary" disabled>Yeni partner</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="empty">Henüz partner kaydı yok. İlerleyen sürümde aktif hale getirilecek.</div>
+      </div>
+    `;
+
+    const renderSettings = () => `
+      <div class="page-title">
+        <div>
+          <h1>Ayarlar / Veri</h1>
+          <p class="muted">Temel varsayılanlar ve çalışma parametreleri.</p>
+        </div>
+        <div class="button-row">
+          <button class="btn primary" data-action="save-settings">Kaydet</button>
+        </div>
+      </div>
+      <div class="card" id="settingsForm">
+        <div class="grid cols-2">
+          <div>
+            <label>Varsayılan para birimi</label>
+            <select class="input" data-setting="currency">
+              ${["USD", "EUR", "TRY"].map(opt => `<option value="${opt}" ${state.settings.currency === opt ? "selected" : ""}>${opt}</option>`).join("")}
+            </select>
+          </div>
+          <div>
+            <label>Varsayılan panel gücü (W)</label>
+            <input class="input" data-setting="defaultPanelWattage" type="number" min="0" value="${state.settings.defaultPanelWattage}" />
+          </div>
+          <div>
+            <label>Varsayılan depo</label>
+            <input class="input" data-setting="defaultWarehouse" value="${state.settings.defaultWarehouse}" />
+          </div>
+        </div>
+        <p class="hint">Değişiklikler yeni kayıtlar için uygulanır.</p>
+      </div>
+      <div class="card" id="panelCatalog">
+        <h2>Panel Kataloğu</h2>
+        <p class="muted">Tekliflerde kullanılacak panel modellerini buradan yönetin.</p>
+        <table class="table">
+          <thead>
+            <tr><th>Model</th><th>Watt</th><th>Varsayılan $/W</th><th></th></tr>
+          </thead>
+          <tbody>
+            ${state.settings.panelCatalog.map(panel => `
+              <tr data-panel-id="${panel.id}">
+                <td><input class="input" data-panel-field="model" value="${panel.model}" /></td>
+                <td><input class="input" data-panel-field="watt" type="number" value="${panel.watt}" /></td>
+                <td><input class="input" data-panel-field="pricePerWatt" type="number" value="${panel.pricePerWatt ?? ""}" /></td>
+                <td><button class="btn secondary" data-action="remove-panel" data-id="${panel.id}">Sil</button></td>
+              </tr>
+            `).join("") || `<tr><td colspan="4" class="muted">Henüz panel eklenmedi.</td></tr>`}
+          </tbody>
+        </table>
+        <div class="button-row" style="margin-top: 12px;">
+          <button class="btn secondary" data-action="add-panel">Panel ekle</button>
+          <button class="btn primary" data-action="save-panels">Panel kataloğunu kaydet</button>
+        </div>
+      </div>
+      <div class="card" id="userList">
+        <h2>Kullanıcılar</h2>
+        <p class="muted">Görev atamalarında kullanılacak kullanıcıları yönetin.</p>
+        <table class="table">
+          <thead>
+            <tr><th>Ad Soyad</th><th>Rol</th><th></th></tr>
+          </thead>
+          <tbody>
+            ${state.data.users.map(user => `
+              <tr data-user-id="${user.id}">
+                <td><input class="input" data-user-field="name" value="${user.name}" /></td>
+                <td>
+                  <select class="input" data-user-field="role">
+                    ${roles.map(role => `<option value="${role}" ${user.role === role ? "selected" : ""}>${role}</option>`).join("")}
+                  </select>
+                </td>
+                <td><button class="btn secondary" data-action="remove-user" data-id="${user.id}">Sil</button></td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+        <div class="button-row" style="margin-top: 12px;">
+          <button class="btn secondary" data-action="add-user">Kullanıcı ekle</button>
+          <button class="btn primary" data-action="save-users">Kullanıcıları kaydet</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Veri seti yönetimi</h2>
+        <p class="muted">Demo verisi yükleyin, mevcut veriyi temizleyin veya JSON olarak içe/dışa aktarın.</p>
+        <div class="button-row" style="margin: 12px 0;">
+          <button class="btn secondary" data-action="seed-demo">Demo verisi yükle</button>
+          <button class="btn secondary" data-action="clear-data">Tüm veriyi sil</button>
+          <button class="btn subtle" data-action="export-data">Veri setini dışa aktar</button>
+        </div>
+        <label>JSON veri seti</label>
+        <textarea class="input" data-setting="dataset" id="datasetPayload" placeholder="Buraya JSON veri setinizi yapıştırın veya dışa aktarılan veriyi görüntüleyin."></textarea>
+        <div class="button-row" style="margin-top: 10px;">
+          <button class="btn primary" data-action="import-data">Veri setini yükle</button>
+        </div>
+        <p class="hint" id="settingsStatus">Bu alan sadece demo amaçlıdır.</p>
+      </div>
+    `;
+
+    const renderDetailTabs = () => `
+      <div class="detail-tabs">
+        ${["Özet","Zaman Çizgisi"].map(tab => `<button class="${state.detailTab===tab?"active":""}" data-action="detail-tab" data-tab="${tab}">${tab}</button>`).join("")}
+      </div>
+    `;
+
+    const renderTimeline = (items = []) => `
+      <div class="timeline">
+        ${items.length ? items.map(item => `<div class="timeline-item">${item}</div>`).join("") : `<div class="empty">Henüz kayıt yok.</div>`}
+      </div>
+    `;
+
+    const renderApp = () => {
+      renderRoleToggle();
+      renderTabs();
+      const app = document.getElementById("app");
+      const fallbackView = `
+        <div class="card">
+          <h2>Ana Panel</h2>
+          <p class="muted">Veriler yüklenemedi. Lütfen Ayarlar / Veri bölümünden demo verisi yükleyin veya tüm veriyi sıfırlayın.</p>
+        </div>
+      `;
+      const viewMap = {
+        "Ana Panel": renderDashboard,
+        "Lead’ler": renderLeads,
+        "Müşteriler": renderAccounts,
+        "Pipeline": renderOpportunities,
+        "Teklifler": renderQuotes,
+        "Siparişler": renderOrders,
+        "Görevler": renderTasks,
+        "Partner Programı": renderPartners,
+        "Ayarlar / Veri": renderSettings
+      };
+      const renderFn = viewMap[state.activeTab] || renderDashboard;
+      app.innerHTML = renderFn() || fallbackView;
+    };
+
+    document.addEventListener("click", (event) => {
+      const roleTarget = event.target.closest("[data-role]");
+      if (roleTarget) {
+        state.role = roleTarget.dataset.role;
+        localStorage.setItem(ROLE_KEY, state.role);
+        renderApp();
+        return;
+      }
+
+      const tabTarget = event.target.closest("[data-tab]");
+      if (tabTarget && !tabTarget.dataset.action) {
+        state.activeTab = tabTarget.dataset.tab;
+        state.selected = { entity: null, id: null };
+        state.detailTab = "Özet";
+        renderApp();
+        return;
+      }
+
+      const target = event.target.closest("[data-action]");
+      if (!target) return;
+      const action = target.dataset.action;
+      const entity = target.dataset.entity;
+      const id = target.dataset.id;
+
+      if (action === "seed-demo") {
+        seedDemoData();
+        showToast("Demo verisi yüklendi");
+        setSettingsStatus("Demo verisi yüklendi.");
+        renderApp();
+      }
+
+      if (action === "clear-data") {
+        if (!confirm("Tüm kayıtlar silinsin mi?")) return;
+        state.data = emptyData();
+        saveData();
+        showToast("Veriler temizlendi");
+        setSettingsStatus("Veriler temizlendi.");
+        renderApp();
+      }
+
+      if (action === "export-data") {
+        const dataset = exportData();
+        const textarea = document.getElementById("datasetPayload");
+        if (textarea) {
+          textarea.value = dataset;
+          textarea.focus();
+        }
+        setSettingsStatus("Veri seti dışa aktarıldı.");
+        showToast("Veri seti hazır");
+      }
+
+      if (action === "import-data") {
+        const textarea = document.getElementById("datasetPayload");
+        if (!textarea || !textarea.value.trim()) {
+          setSettingsStatus("JSON veri seti giriniz.", true);
+          return;
+        }
+        try {
+          importData(textarea.value.trim());
+          showToast("Veri seti yüklendi");
+          setSettingsStatus("Veri seti yüklendi.");
+          renderApp();
+        } catch (error) {
+          setSettingsStatus(error.message || "Veri seti yüklenemedi.", true);
+        }
+      }
+
+      if (action === "create") {
+        if (entity === "order" && state.role !== "YÖNETİCİ") {
+          showToast("Sipariş oluşturmak için yönetici onayı gerekir");
+          return;
+        }
+        openModal({ type: entity, mode: "create", context: null });
+      }
+
+      if (action === "edit") {
+        openModal({ type: entity, mode: "edit", entityId: id });
+      }
+
+      if (action === "detail") {
+        state.selected = { entity, id };
+        state.detailTab = "Özet";
+        renderApp();
+      }
+
+      if (action === "delete") {
+        if (!confirm("Bu kayıt silinsin mi?")) return;
+        state.data[entity + "s"] = state.data[entity + "s"].filter(item => item.id !== id);
+        saveData();
+        showToast("Kayıt silindi");
+        renderApp();
+      }
+
+      if (action === "convert") {
+        openModal({ type: "convertLead", mode: "create", entityId: id });
+      }
+
+      if (action === "convert-order") {
+        const quote = getQuote(id);
+        if (state.role !== "YÖNETİCİ") {
+          showToast("Siparişe dönüşüm için yönetici onayı gerekir");
+          return;
+        }
+        if (!quote || quote.status !== "Kabul") {
+          showToast("Sipariş için teklif durumu Kabul olmalıdır");
+          return;
+        }
+        const existingOrder = state.data.orders.find(order => order.quoteId === quote.id);
+        if (existingOrder) {
+          showToast("Bu teklif için sipariş zaten oluşturuldu");
+          return;
+        }
+        openModal({ type: "order", mode: "create", context: { quoteId: quote.id } });
+      }
+
+      if (action === "detail-tab") {
+        state.detailTab = target.dataset.tab;
+        renderApp();
+      }
+
+      if (action === "save-settings") {
+        const settingsForm = document.getElementById("settingsForm");
+        if (!settingsForm) return;
+        const updates = {};
+        settingsForm.querySelectorAll("[data-setting]").forEach(el => {
+          const key = el.dataset.setting;
+          if (el.type === "number") {
+            updates[key] = Number(el.value || 0);
+          } else {
+            updates[key] = el.value;
+          }
+        });
+        state.settings = { ...state.settings, ...updates };
+        saveData();
+        showToast("Ayarlar kaydedildi");
+        renderApp();
+      }
+
+      if (action === "add-panel") {
+        state.settings.panelCatalog.push({
+          id: `panel-${Date.now()}`,
+          model: "Yeni Panel",
+          watt: state.settings.defaultPanelWattage,
+          pricePerWatt: 0.19
+        });
+        saveData();
+        renderApp();
+      }
+
+      if (action === "remove-panel") {
+        state.settings.panelCatalog = state.settings.panelCatalog.filter(panel => panel.id !== id);
+        saveData();
+        renderApp();
+      }
+
+      if (action === "save-panels") {
+        state.settings.panelCatalog = collectPanelCatalog();
+        saveData();
+        showToast("Panel kataloğu kaydedildi");
+        renderApp();
+      }
+
+      if (action === "add-user") {
+        state.data.users.push({
+          id: `user-${Date.now()}`,
+          name: "Yeni Kullanıcı",
+          role: "SATIŞ"
+        });
+        saveData();
+        renderApp();
+      }
+
+      if (action === "remove-user") {
+        state.data.users = state.data.users.filter(user => user.id !== id);
+        saveData();
+        renderApp();
+      }
+
+      if (action === "save-users") {
+        state.data.users = collectUsers();
+        saveData();
+        showToast("Kullanıcılar kaydedildi");
+        renderApp();
+      }
+
+      if (action === "modal-close") {
+        closeModal();
+      }
+
+      if (action === "add-quote-item") {
+        const tbody = modalContent.querySelector("#quoteItemsTable tbody");
+        const idx = tbody.children.length;
+        tbody.insertAdjacentHTML("beforeend", `
+          <tr data-idx="${idx}">
+            <td>
+              <select class="input" data-item="type">
+                ${["Panel","İnverter","Konstrüksiyon","Kablo","İşçilik","Diğer"].map(opt => `<option>${opt}</option>`).join("")}
+              </select>
+            </td>
+            <td>
+              <select class="input" data-item="panelId">
+                <option value="">Panel seçin</option>
+                ${state.settings.panelCatalog.map(panel => `<option value="${panel.id}">${panel.model} · ${panel.watt}W</option>`).join("")}
+              </select>
+              <input class="input" data-item="description" value="" style="display:none;" />
+            </td>
+            <td><input class="input" data-item="panelWattage" type="number" value="${state.settings.defaultPanelWattage}" readonly /></td>
+            <td><input class="input" data-item="pricePerWatt" type="number" value="0.19" /></td>
+            <td><input class="input" data-item="qty" type="number" value="1" /></td>
+            <td><input class="input" data-item="unit" value="Adet" /></td>
+            <td><input class="input" data-item="unitPriceUSD" type="number" value="0" readonly /></td>
+            <td><button class="btn secondary" data-action="remove-quote-item">Sil</button></td>
+          </tr>
+        `);
+      }
+
+      if (action === "remove-quote-item") {
+        const row = target.closest("tr");
+        if (row) row.remove();
+      }
+
+      if (action === "inline-create-opp") {
+        closeModal();
+        openModal({ type: "opportunity", mode: "create", context: { returnTo: "quote" } });
+      }
+
+      if (action === "modal-save") {
+        const mode = target.dataset.mode;
+        const saveEntity = target.dataset.entity;
+        const values = collectModalFields();
+
+        if (saveEntity === "lead") {
+          if (!values.companyName) {
+            document.getElementById("modalValidation").textContent = "Şirket adı zorunludur.";
+            return;
+          }
+          if (mode === "create") {
+            const lead = { id: generateId("lead"), createdAt: nowISO(), updatedAt: nowISO(), timeline: [], tags: [], accountId: null, lastTouchAt: nowISO(), nextActionAt: nowISO(), ...values };
+            state.data.leads.unshift(lead);
+            addTimeline("leads", lead.id, "Lead oluşturuldu");
+          } else {
+            const lead = getLead(target.dataset.id);
+            Object.assign(lead, values, { updatedAt: nowISO() });
+            addTimeline("leads", lead.id, "Lead güncellendi");
+          }
+        }
+
+        if (saveEntity === "account") {
+          if (!values.companyName) {
+            document.getElementById("modalValidation").textContent = "Şirket adı zorunludur.";
+            return;
+          }
+          if (mode === "create") {
+            const account = { id: generateId("account"), createdAt: nowISO(), updatedAt: nowISO(), contacts: [], notes: [], timeline: [], ...values };
+            state.data.accounts.unshift(account);
+            addTimeline("accounts", account.id, "Müşteri oluşturuldu");
+          } else {
+            const account = getAccount(target.dataset.id);
+            Object.assign(account, values, { updatedAt: nowISO() });
+            addTimeline("accounts", account.id, "Müşteri güncellendi");
+          }
+        }
+
+        if (saveEntity === "opportunity") {
+          if (!values.title) {
+            document.getElementById("modalValidation").textContent = "Başlık zorunludur.";
+            return;
+          }
+          if (!values.leadId && !values.accountId) {
+            document.getElementById("modalValidation").textContent = "Lead veya müşteri seçmelisiniz.";
+            return;
+          }
+          if (mode === "create") {
+            const opp = {
+              id: generateId("opportunity"),
+              createdAt: nowISO(),
+              updatedAt: nowISO(),
+              stage: "Lead",
+              stageUpdatedAt: nowISO(),
+              ...values
+            };
+            state.data.opportunities.unshift(opp);
+            addTimeline("opportunities", opp.id, "Fırsat oluşturuldu");
+            if (state.modal.context?.returnTo === "quote") {
+              closeModal();
+              openModal({ type: "quote", mode: "create", context: { preselectOppId: opp.id } });
+              return;
+            }
+          } else {
+            const opp = getOpportunity(target.dataset.id);
+            Object.assign(opp, values, { updatedAt: nowISO() });
+            addTimeline("opportunities", opp.id, "Fırsat güncellendi");
+          }
+        }
+
+        if (saveEntity === "quote") {
+          if (!values.opportunityId) {
+            document.getElementById("modalValidation").textContent = "Fırsat seçiniz.";
+            return;
+          }
+          const rows = [...modalContent.querySelectorAll("#quoteItemsTable tbody tr")];
+          const items = rows.map(row => {
+            const type = row.querySelector('[data-item="type"]').value;
+            const panelId = row.querySelector('[data-item="panelId"]')?.value || "";
+            const panelWattage = Number(row.querySelector('[data-item="panelWattage"]').value || 0);
+            const pricePerWatt = Number(row.querySelector('[data-item="pricePerWatt"]').value || 0);
+            const qty = Number(row.querySelector('[data-item="qty"]').value || 0);
+            const unit = row.querySelector('[data-item="unit"]').value;
+            const unitPriceUSD = type === "Panel" ? panelWattage * pricePerWatt : Number(row.querySelector('[data-item="unitPriceUSD"]').value || 0);
+            const description = type === "Panel" ? (getPanel(panelId)?.model || "") : row.querySelector('[data-item="description"]').value;
+            return {
+              type,
+              panelId,
+              panelWattage,
+              pricePerWatt,
+              description,
+              qty,
+              unit,
+              unitPriceUSD
+            };
+          });
+          if (items.some(item => item.type === "Panel" && !item.panelId)) {
+            document.getElementById("modalValidation").textContent = "Panel kalemi için panel seçimi zorunludur.";
+            return;
+          }
+          if (items.some(item => item.type !== "Panel" && (!item.description || !item.unitPriceUSD))) {
+            document.getElementById("modalValidation").textContent = "Panel dışı kalemlerde açıklama ve birim fiyat zorunludur.";
+            return;
+          }
+          const totals = computeQuoteTotals(items, values.discountUSD, values.shippingUSD);
+          if (mode === "create") {
+            const quote = {
+              id: generateId("quote"),
+              createdAt: nowISO(),
+              updatedAt: nowISO(),
+              quoteNo: generateQuoteNo(),
+              status: values.status || "Taslak",
+              opportunityId: values.opportunityId,
+              paymentTerms: values.paymentTerms || "LC90",
+              deliveryTerms: values.deliveryTerms || "FOB",
+              items,
+              totals,
+              timeline: []
+            };
+            state.data.quotes.unshift(quote);
+            addTimeline("quotes", quote.id, "Teklif oluşturuldu");
+          } else {
+            const quote = getQuote(target.dataset.id);
+            Object.assign(quote, values, { items, totals, updatedAt: nowISO() });
+            addTimeline("quotes", quote.id, "Teklif güncellendi");
+          }
+        }
+
+        if (saveEntity === "order") {
+          if (!values.quoteId) {
+            document.getElementById("modalValidation").textContent = "Teklif seçiniz.";
+            return;
+          }
+          const quote = getQuote(values.quoteId);
+          if (!quote || quote.status !== "Kabul") {
+            document.getElementById("modalValidation").textContent = "Sipariş için teklif durumu Kabul olmalıdır.";
+            return;
+          }
+          const oppId = quote.opportunityId;
+          if (mode === "create") {
+            const order = {
+              id: generateId("order"),
+              createdAt: nowISO(),
+              updatedAt: nowISO(),
+              quoteId: values.quoteId,
+              opportunityId: oppId,
+              orderNo: generateOrderNo(),
+              status: values.status || "Beklemede",
+              promisedShipDate: values.promisedShipDate,
+              warehouse: values.warehouse,
+              carrier: values.carrier,
+              trackingNumber: values.trackingNumber,
+              logisticsNotes: values.logisticsNotes || "",
+              timeline: []
+            };
+            state.data.orders.unshift(order);
+            addTimeline("orders", order.id, "Sipariş oluşturuldu");
+          } else {
+            const order = getOrder(target.dataset.id);
+            Object.assign(order, values, { opportunityId: oppId, updatedAt: nowISO() });
+            addTimeline("orders", order.id, "Sipariş güncellendi");
+          }
+        }
+
+        if (saveEntity === "task") {
+          if (!values.title) {
+            document.getElementById("modalValidation").textContent = "Başlık zorunludur.";
+            return;
+          }
+          const currentUser = getCurrentUser();
+          const assigneeId = values.assigneeId || currentUser?.id;
+          const taskValues = {
+            title: values.title,
+            dueDate: values.dueDate,
+            priority: values.priority,
+            status: values.status,
+            assigneeId,
+            relatedType: values.relatedType || "",
+            relatedId: values.relatedId || ""
+          };
+          if (mode === "create") {
+            const task = {
+              id: generateId("task"),
+              createdAt: nowISO(),
+              updatedAt: nowISO(),
+              timeline: [],
+              ...taskValues
+            };
+            state.data.tasks.unshift(task);
+            addTimeline("tasks", task.id, "Görev oluşturuldu");
+          } else {
+            const task = state.data.tasks.find(item => item.id === target.dataset.id);
+            Object.assign(task, taskValues, { updatedAt: nowISO() });
+            addTimeline("tasks", task.id, "Görev güncellendi");
+          }
+        }
+
+        if (saveEntity === "convertLead") {
+          const lead = getLead(target.dataset.id);
+          if (!lead) return;
+          if (values.convertMode === "existing") {
+            if (!values.existingAccountId) {
+              document.getElementById("modalValidation").textContent = "Mevcut müşteri seçiniz.";
+              return;
+            }
+            lead.accountId = values.existingAccountId;
+          } else {
+            const account = {
+              id: generateId("account"),
+              createdAt: nowISO(),
+              updatedAt: nowISO(),
+              type: lead.segment === "Bayi" ? "Bayi" : lead.segment === "EPC" ? "EPC" : "Son kullanıcı",
+              companyName: lead.companyName,
+              taxNo: "",
+              city: lead.city,
+              country: lead.country || "Türkiye",
+              contacts: lead.contactName ? [{ name: lead.contactName, role: "İlgili kişi", phone: lead.phone, email: lead.email }] : [],
+              notes: [],
+              timeline: []
+            };
+            state.data.accounts.unshift(account);
+            lead.accountId = account.id;
+            addTimeline("accounts", account.id, "Lead’den müşteri oluşturuldu");
+          }
+          lead.status = "Nitelikli";
+          lead.updatedAt = nowISO();
+          addTimeline("leads", lead.id, "Müşteriye dönüştürüldü");
+
+          if (values.createOpp) {
+            closeModal();
+            openModal({ type: "opportunity", mode: "create", context: null });
+            return;
+          }
+        }
+
+        saveData();
+        closeModal();
+        showToast("Kaydedildi");
+        renderApp();
+      }
+    });
+
+    document.addEventListener("input", (event) => {
+      const row = event.target.closest("#quoteItemsTable tr");
+      if (row) {
+        updateQuoteRow(row);
+      }
+    });
+
+    document.addEventListener("change", (event) => {
+      const row = event.target.closest("#quoteItemsTable tr");
+      if (row) {
+        updateQuoteRow(row);
+      }
+      if (event.target.matches('[data-field="relatedType"]')) {
+        const relatedType = event.target.value;
+        const relatedSelect = modalContent.querySelector('[data-field="relatedId"]');
+        if (relatedSelect) {
+          relatedSelect.innerHTML = `<option value="">Seçiniz</option>${getRelatedOptions(relatedType)}`;
+        }
+      }
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeModal();
+    });
+
+    const seedDemoData = () => {
+      state.data = emptyData();
+      state.settings.panelCatalog = [
+        { id: "panel-1", model: "Alb Mono 550W", watt: 550, pricePerWatt: 0.19 },
+        { id: "panel-2", model: "Alb Mono 600W", watt: 600, pricePerWatt: 0.185 }
+      ];
+      state.data.users = [
+        { id: "user-yonetici", name: "Yönetici", role: "YÖNETİCİ" },
+        { id: "user-satis", name: "Satış Temsilcisi", role: "SATIŞ" },
+        { id: "user-teknik", name: "Teknik Ofis", role: "TEKNİK OFİS" }
+      ];
+
+      for (let i = 0; i < 6; i++) {
+        state.data.leads.push({
+          id: generateId("lead"),
+          createdAt: nowISO(),
+          updatedAt: nowISO(),
+          status: i < 2 ? "Nitelikli" : "Yeni",
+          source: ["Web", "LinkedIn", "Fuar"][i % 3],
+          companyName: `Lead Şirket ${i + 1}`,
+          contactName: `Kişi ${i + 1}`,
+          phone: "+90 5xx xxx xx xx",
+          email: `lead${i + 1}@example.com`,
+          city: ["İstanbul", "Ankara", "İzmir"][i % 3],
+          country: "Türkiye",
+          segment: ["Konut", "EPC", "Ticari"][i % 3],
+          interest: "Panel",
+          owner: "SATIŞ",
+          tags: ["Yeni"],
+          timeline: ["Lead oluşturuldu"],
+          accountId: null,
+          lastTouchAt: nowISO(),
+          nextActionAt: nowISO()
+        });
+      }
+
+      state.data.accounts.push({
+        id: generateId("account"),
+        createdAt: nowISO(),
+        updatedAt: nowISO(),
+        type: "EPC",
+        companyName: "Balkan EPC",
+        taxNo: "1234567890",
+        city: "İstanbul",
+        country: "Türkiye",
+        contacts: [],
+        notes: [],
+        timeline: []
+      });
+
+      const firstAccount = state.data.accounts[0];
+      state.data.leads[0].accountId = firstAccount.id;
+      state.data.leads[1].accountId = firstAccount.id;
+
+      for (let i = 0; i < 3; i++) {
+        state.data.opportunities.push({
+          id: generateId("opportunity"),
+          createdAt: nowISO(),
+          updatedAt: nowISO(),
+          title: `Fırsat ${i + 1}`,
+          stage: "Teklif",
+          stageUpdatedAt: nowISO(),
+          expectedPanelsQty: 500 + i * 50,
+          panelModel: "Alb Mono",
+          panelWattage: 550,
+          targetPricePerWatt: 0.19,
+          probability: 40 + i * 10,
+          owner: "SATIŞ",
+          leadId: state.data.leads[i].id,
+          accountId: state.data.leads[i].accountId,
+          sourceEpcAccountId: firstAccount.id
+        });
+      }
+
+      const quoteItems = [
+        {
+          type: "Panel",
+          panelId: "panel-1",
+          panelWattage: 550,
+          pricePerWatt: 0.19,
+          description: "Alb Mono 550W",
+          qty: 500,
+          unit: "Adet",
+          unitPriceUSD: 104.5
+        }
+      ];
+      const totals = computeQuoteTotals(quoteItems, 0, 1500);
+      const acceptedQuoteId = generateId("quote");
+      state.data.quotes.push({
+        id: acceptedQuoteId,
+        createdAt: nowISO(),
+        updatedAt: nowISO(),
+        quoteNo: generateQuoteNo(),
+        status: "Kabul",
+        opportunityId: state.data.opportunities[0].id,
+        paymentTerms: "LC90",
+        deliveryTerms: "FOB",
+        items: quoteItems,
+        totals,
+        timeline: ["Teklif oluşturuldu"]
+      });
+
+      state.data.orders.push({
+        id: generateId("order"),
+        createdAt: nowISO(),
+        updatedAt: nowISO(),
+        quoteId: acceptedQuoteId,
+        opportunityId: state.data.opportunities[0].id,
+        orderNo: generateOrderNo(),
+        status: "Beklemede",
+        promisedShipDate: nowISO().slice(0, 10),
+        warehouse: state.settings.defaultWarehouse,
+        carrier: "DHL",
+        trackingNumber: "TRK-001",
+        logisticsNotes: "Depo çıkışı bekleniyor",
+        timeline: ["Sipariş oluşturuldu"]
+      });
+
+      state.data.tasks.push({
+        id: generateId("task"),
+        createdAt: nowISO(),
+        updatedAt: nowISO(),
+        title: "Lead dönüşüm takip",
+        dueDate: nowISO().slice(0, 10),
+        priority: "Orta",
+        status: "Açık",
+        assigneeId: "user-satis",
+        relatedType: "Lead",
+        relatedId: state.data.leads[0].id,
+        timeline: ["Görev oluşturuldu"]
+      });
+
+      ensureDefaults();
+      saveData();
+    };
+
+    loadData();
+    renderApp();
+  </script>
+</body>
+</html>
