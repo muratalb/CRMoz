@@ -1006,6 +1006,15 @@
         acc[quote.status] = (acc[quote.status] || 0) + 1;
         return acc;
       }, {});
+      const openOpportunities = opportunities.filter(opp => !["Tamamlandı", "Kaybedildi"].includes(opp.stage)).length;
+      const openTasks = Array.isArray(state.data.tasks)
+        ? state.data.tasks.filter(task => task.status !== "Bitti").length
+        : 0;
+      const overdueTasks = Array.isArray(state.data.tasks)
+        ? state.data.tasks.filter(task => task.status !== "Bitti" && new Date(task.dueDate) < new Date()).length
+        : 0;
+      const acceptedQuotes = quotes.filter(quote => quote.status === "Kabul").length;
+      const totalOrders = orders.length;
       return `
         <div class="page-title">
           <div>
@@ -1020,6 +1029,11 @@
           <div class="card kpi"><h3>Bu ay yeni lead</h3><span>${monthLeads.length}</span></div>
           <div class="card kpi"><h3>Pipeline toplam değeri</h3><span>${formatUSD(pipelineValue)}</span></div>
           <div class="card kpi"><h3>Teklifler</h3><span>${quotesByStatus.Taslak || 0} Taslak · ${quotesByStatus.Gönderildi || 0} Gönderildi · ${quotesByStatus.Kabul || 0} Kabul</span></div>
+        </section>
+        <section class="grid cols-3">
+          <div class="card kpi"><h3>Açık fırsatlar</h3><span>${openOpportunities}</span></div>
+          <div class="card kpi"><h3>Açık görevler</h3><span>${openTasks} · ${overdueTasks} gecikmiş</span></div>
+          <div class="card kpi"><h3>Kabul edilen teklifler</h3><span>${acceptedQuotes} · ${totalOrders} sipariş</span></div>
         </section>
       `;
       } catch (error) {
